@@ -473,8 +473,8 @@ if st.session_state.page == "result":
               <div class="value">{total} <span class="small-muted">/ 27</span></div></div>
             <div class="metric"><div class="label">중증도</div>
               <div class="value">{sev}</div></div>
-            <div class="metric"><div class="label">치료 반응</div>
-              <div class="value">{tr}</div></div>
+            <!--<div class="metric"><div class="label">치료 반응</div>
+              <div class="value">{tr}</div></div>-->
           </div>
         </div>
         """,
