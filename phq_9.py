@@ -1,16 +1,38 @@
 # -*- coding: utf-8 -*-
 import os
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
-# 상단 import들
+import io
 import streamlit as st
 import plotly.graph_objects as go
-from streamlit.components.v1 import html as st_html
+import plotly.io as pio
+from PIL import Image, ImageDraw, ImageFont  # PNG 합성용
+import platform, shutil  # ← ORCA 자동탐지용
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 페이지 설정
 st.set_page_config(page_title="PHQ-9 자기보고 검사", page_icon="📝", layout="centered")
+
+# ──────────────────────────────────────────────────────────────────────────────
+# ORCA 초기화 (필수: ORCA만 사용)
+def _init_orca():
+    """
+    ORCA 실행파일을 환경변수 PLOTLY_ORCA 또는 PATH에서 찾고 plotly에 등록한다.
+    리눅스/맥 헤드리스 환경은 xvfb 사용을 활성화한다.
+    """
+    orca_path = os.environ.get("PLOTLY_ORCA", "").strip() or shutil.which("orca")
+    if orca_path:
+        pio.orca.config.executable = orca_path
+    # 리눅스/맥에서 헤드리스일 수 있으니 xvfb 사용
+    if platform.system() != "Windows":
+        try:
+            pio.orca.config.use_xvfb = True
+        except Exception:
+            pass
+    return orca_path
+
+_ORCA_PATH = _init_orca()
 
 # 색상 토큰 (라이트 테마)
 INK     = "#0f172a"   # 본문 텍스트
@@ -22,11 +44,12 @@ BRAND   = "#2563eb"   # 브랜드/포커스
 ACCENT  = "#e11d48"   # 경고/강조
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 전역 스타일 (단일 블록)
+# 전역 스타일
 st.markdown(f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
 
+/* 토큰 */
 :root {{
   --ink:{INK}; --subtle:{SUBTLE}; --bg:{APP_BG}; --card:{CARD_BG};
   --border:{BORDER}; --brand:{BRAND}; --accent:{ACCENT};
@@ -36,107 +59,142 @@ html, body, [data-testid="stAppViewContainer"] {{
   background: var(--bg);
   color: var(--ink);
   font-family: "Inter","Noto Sans KR",system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Helvetica,Arial,sans-serif;
-}}
-
-[data-testid="stAppViewContainer"] .main .block-container {{
-  max-width: 980px;
-  padding-top: 14px;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
 }}
 
 .block-card {{
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 18px 18px 14px 18px;
-  margin-bottom: 16px;
-  box-shadow: 0 6px 18px rgba(15,23,42,.04);
+  border-radius: 14px;
+  padding: 18px 18px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  margin: 10px 0 14px;
 }}
 
 .badge {{
-  display:inline-block; padding:6px 12px; border-radius:14px;
-  background:#e8f0ff; color:#1d4ed8; border:1px solid #c7d2fe;
-  font-weight:800; font-size:.92rem; letter-spacing:-.2px;
+  display:inline-block; background: rgba(37,99,235,0.10); color: var(--brand);
+  border: 1px solid rgba(37,99,235,0.25); padding: 3px 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 700; letter-spacing:.2px;
 }}
 
 .chip {{
-  display:inline-block; padding:6px 12px; border-radius:999px;
-  background:#f8fafc; color:var(--ink); border:1px solid var(--border);
-  font-size:.9rem;
+  display:inline-block; background: #f1f5f9; color:#0f172a; border:1px solid #e2e8f0;
+  padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight:600;
 }}
 
-.section-title {{ font-weight:900; font-size:1.08rem; margin:2px 0 10px; color:var(--ink); }}
-.small-muted   {{ color:var(--subtle); font-size:.92rem; }}
+.small-muted {{ color: var(--subtle); font-size: 12.5px; }}
+.section-title {{ font-size: 1.05rem; font-weight: 800; letter-spacing: -0.2px; }}
 
-.divider {{
-  height: 1px; background: linear-gradient(90deg, transparent, #e8ecf3, transparent);
-  margin: 14px 0;
-}}
+.k-list {{ margin: 6px 0 0 0; padding-left: 18px; color: var(--ink); }}
+.k-list li {{ margin: 6px 0; }}
 
-ul.k-list {{ margin:0; padding-left:1.2rem; color:var(--ink); }}
-ul.k-list li {{ margin: .2rem 0; }}
-
-/* 문항 카드 & 라디오 */
-.item-card {{
-  border:1.5px solid var(--border);
-  border-radius:16px;
-  padding:14px 12px;
-  margin-bottom:12px;
-  background:#fff;
-  box-shadow: 0 1px 5px rgba(15,23,42,.03);
-}}
-.item-no {{ min-width:2.2em; font-weight:900; font-size:1.05rem; color:var(--ink); }}
-.item-domain {{
-  display:inline-block; padding:4px 10px; border-radius:999px; border:1px solid #cbd5e1;
-  background:#f1f5f9; color:var(--ink); font-size:.84rem; margin-top:6px;
-}}
-
-div[role="radiogroup"] label, div[role="radiogroup"] span {{
-  color: var(--ink) !important;
-  opacity: 1 !important;
-}}
-.stRadio > div {{ gap: 10px; }}
-.stRadio [role="radio"] {{ padding: 6px 8px; border-radius:10px; }}
-.stRadio [role="radio"]:hover {{ background:#f3f6fb; }}
-
-/* 경고/안전/메트릭 */
-.warn {{
-  background:#fff7d6; color:#8a6d00; border:1px solid #ffe594;
-  border-radius:10px; padding:12px; margin:10px 0;
-}}
-.safety {{
-  border:2px solid var(--accent); background:#fff1f4; border-radius:12px; padding:14px;
-}}
-.metric-box {{ display:flex; gap:10px; flex-wrap:wrap; }}
+.metric-box {{ display:grid; grid-template-columns: repeat(3,1fr); gap:10px; }}
 .metric {{
-  flex:1 1 200px; border:1px dashed var(--border); border-radius:14px; padding:14px; background:#f8fafc;
+  border:1px solid var(--border); border-radius: 12px; padding: 14px 14px; background:#f8fafc;
 }}
-.metric .label {{ color:var(--subtle); font-weight:600; }}
-.metric .value {{ font-size:1.9rem; font-weight:900; color:var(--ink); line-height:1.1; }}
+.metric .label {{ color: var(--subtle); font-weight:700; font-size: 12px; }}
+.metric .value {{ color: var(--ink); font-weight: 800; font-size: 20px; margin-top: 6px; }}
 
-/* 차트 라운드 */
-.js-plotly-plot, .plotly, .main-svg {{ border-radius:12px; }}
-
-/* 버튼 - 글자색 확실히 흰색으로 고정 */
-.stButton > button {{
-  background: var(--brand); color:#fff !important; border:none; border-radius:12px;
-  padding: 12px 16px; font-weight:800; letter-spacing:.1px;
-  box-shadow:0 6px 16px rgba(37,99,235,.25);
+.item-card {{
+  background:#fff; border:1px solid var(--border); border-radius:12px; padding:14px; margin:10px 0 4px;
 }}
-.stButton > button:hover {{ filter: brightness(1.05); }}
+.item-no {{
+  background: #eef2ff; color:#3730a3; border:1px solid #c7d2fe;
+  width:28px; height:28px; border-radius: 9px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;
+}}
+.item-domain {{ color: var(--subtle); font-size: 12px; margin-top: 2px; }}
 
-button#save-btn:hover {{ filter: brightness(1.05); }}
+.warn {{
+  background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; border-radius:12px; padding:12px 14px; margin-top:6px;
+}}
 
-/* 전역 타이포 가독성 */
-html, body, [data-testid="stMarkdownContainer"], p, li, label, span, h1,h2,h3,h4,h5,h6 {{
+.safety {{
+  background:#fff1f4; border:1px solid #fecdd3; border-radius:12px; padding:14px;
+}}
+
+[data-testid="stToolbar"], #MainMenu, header, footer {{ display: none !important; }}
+
+/* ───── 라디오(가로 칩 스타일) ───── */
+.stRadio > div[role="radiogroup"] {{
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+}}
+.stRadio [role="radio"] {{
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 12px !important;
+  border-radius: 999px !important;
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  cursor: pointer !important;
+  transition: transform .02s ease-out, background .2s ease;
+}}
+.stRadio [role="radio"]:hover {{ transform: translateY(-1px); }}
+.stRadio [role="radio"] > div:first-child {{ display:none !important; }} /* 기본 점 아이콘 숨김 */
+
+/* 텍스트 항상 선명하게 */
+.stRadio [role="radio"] [data-testid="stMarkdownContainer"] *,
+.stRadio [role="radio"] span, .stRadio [role="radio"] p {{
+  color: var(--ink) !important; -webkit-text-fill-color: var(--ink) !important; opacity:1 !important;
+}}
+/* 선택 상태: 브랜드 배경 + 흰 글자 */
+.stRadio [role="radio"][aria-checked="true"] {{
+  background: var(--brand) !important; border-color: var(--brand) !important;
+}}
+.stRadio [role="radio"][aria-checked="true"] * {{
+  color:#ffffff !important; -webkit-text-fill-color:#ffffff !important;
+}}
+
+/* ───── 버튼 스타일 (Primary/Secondary) ───── */
+.stButton > button[data-testid="baseButton-primary"],
+.stButton > button[kind="primary"]{{
+  background: var(--brand) !important;
+  color: #fff !important;
+  border: 1.5px solid var(--brand) !important;
+  border-radius: 12px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04) !important;
+}}
+.stButton > button[data-testid="baseButton-primary"]:hover,
+.stButton > button[kind="primary"]:hover{{ filter: brightness(1.03) !important; }}
+
+.stButton > button:not([data-testid="baseButton-primary"]) {{
+  background: #fff !important;
+  color: var(--brand) !important;
+  border: 1.5px solid var(--brand) !important;
+  border-radius: 12px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04) !important;
+}}
+.stButton > button:not([data-testid="baseButton-primary"]):hover {{
+  background: rgba(37,99,235,0.08) !important;
+}}
+.stButton > button * {{ color: inherit !important; }}
+
+/* ───── 가독성 핫픽스: 카드 밖(라디오/캡션) ───── */
+.stRadio, .stRadio * {{
   color: var(--ink) !important;
+  -webkit-text-fill-color: var(--ink) !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+  text-shadow: none !important;
 }}
-.stCaption, [data-testid="stMarkdownContainer"] em {{ color: var(--subtle) !important; }}
+.block-card ~ div .stRadio, .block-card ~ div .stRadio * {{
+  color: var(--ink) !important;
+  -webkit-text-fill-color: var(--ink) !important;
+}}
+[data-testid="stAppViewContainer"], [data-testid="stAppViewContainer"] * {{ color-scheme: light; }}
 
-/* 프린트 최적화 */
-@media print {{
-  body {{ -webkit-print-color-adjust: exact; print-color-adjust: exact; }}
-  [data-testid="stSidebar"], #save-area {{ display:none !important; }}
+/* 타이트 헤더 전용 여백 */
+.block-card.tight-head {{ 
+  margin: 8px 0 6px !important; 
+  padding: 14px 18px 10px !important; 
 }}
+/* 첫 질문 카드 위쪽 간격 더 줄이기 */
+.item-card {{ margin: 2px 0 4px !important; }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -167,6 +225,8 @@ QUESTIONS = [
 LABELS = ["전혀 아님 (0)", "며칠 동안 (1)", "절반 이상 (2)", "거의 매일 (3)"]
 LABEL2SCORE = {LABELS[0]:0, LABELS[1]:1, LABELS[2]:2, LABELS[3]:3}
 
+# ──────────────────────────────────────────────────────────────────────────────
+# 유틸: 중증도/반응 라벨
 def phq_severity(total: int) -> str:
     return ("최소" if total<=4 else
             "경도" if total<=9 else
@@ -179,38 +239,150 @@ def treatment_response_label(total: int) -> str:
     if total < 10: return "부분 반응(partial response)"
     return "해당 없음"
 
-def build_plot(scores: List[int]) -> go.Figure:
-    x = [f"Q{i}" for i in range(1, 10)]
-    y = scores
-    line = go.Scatter(
-        x=x, y=y, mode="lines+markers",
-        line=dict(shape="spline", width=3),
-        marker=dict(size=10, line=dict(width=1, color="#ffffff")),
-        hovertemplate="%{x}<br>점수 %{y}<extra></extra>",
-        name="점수"
-    )
-    area = go.Scatter(
-        x=x, y=y, mode="lines",
-        line=dict(shape="spline", width=0),
-        fill="tozeroy", opacity=0.20,
-        hoverinfo="skip", showlegend=False
-    )
-    labels = go.Scatter(
-        x=x, y=[min(3, v)+0.08 for v in y], mode="text",
-        text=[str(v) for v in y], textposition="top center",
-        textfont=dict(size=12), showlegend=False, hoverinfo="skip"
-    )
-    fig = go.Figure([area, line, labels])
+# ──────────────────────────────────────────────────────────────────────────────
+# 새 시각화 ①: 총점 게이지(권장)
+def build_severity_gauge(total: int) -> go.Figure:
+    fig = go.Figure(go.Indicator(
+        mode="gauge+number",
+        value=total,
+        number={'suffix': " / 27", 'font': {'size': 26}},
+        gauge={
+            'axis': {'range': [0, 27], 'tickwidth': 1, 'tickcolor': '#e2e8f0'},
+            'bar': {'color': BRAND, 'thickness': 0.22},
+            'steps': [
+                {'range': [0, 5],  'color': '#e5f3ff', 'name':'최소'},
+                {'range': [5, 10], 'color': '#dbeafe', 'name':'경도'},
+                {'range': [10, 15],'color': '#fef9c3', 'name':'중등도'},
+                {'range': [15, 20],'color': '#fee2e2', 'name':'중등도-중증'},
+                {'range': [20, 27],'color': '#fecaca', 'name':'중증'},
+            ],
+            'threshold': {
+                'line': {'color': ACCENT, 'width': 4},
+                'thickness': 0.9, 'value': total
+            }
+        },
+        title={'text': "총점 및 중증도 대역", 'font': {'size': 18}}
+    ))
     fig.update_layout(
-        title="문항별 점수",
+        margin=dict(l=30, r=30, t=60, b=30),
         paper_bgcolor="#ffffff",
-        plot_bgcolor="#ffffff",
-        margin=dict(l=40, r=20, t=60, b=40),
-        xaxis=dict(title="문항", showgrid=False, zeroline=False, tickfont=dict(size=12)),
-        yaxis=dict(title="점수(0–3)", range=[0, 3.2], dtick=1, gridcolor="#eaeef6", zeroline=False),
-        font=dict(color=INK, size=14),
+        font=dict(color=INK, family="Inter, 'Noto Sans KR', Arial, sans-serif")
     )
     return fig
+
+# 새 시각화 ②: 2영역 비교(인지·정서 vs 신체)
+COG_AFF = [1,2,6,7,9]
+SOMATIC = [3,4,5,8]
+
+def build_domain_split(scores: List[int]) -> Tuple[go.Figure, Tuple[int,int]]:
+    cog = sum(scores[i-1] for i in COG_AFF)
+    som = sum(scores[i-1] for i in SOMATIC)
+    fig = go.Figure()
+    fig.add_bar(x=["인지·정서(5문항)","신체/생리(4문항)"],
+                y=[cog, som], text=[cog, som], textposition="outside",
+                marker_line_width=0.5, textfont=dict(color=INK))
+    fig.update_layout(
+        title="증상 영역 합계 비교",
+        yaxis=dict(title="합계 점수", range=[0, max(9, cog, som)+2], gridcolor="#eaeef6"),
+        xaxis=dict(showgrid=False),
+        paper_bgcolor="#ffffff", plot_bgcolor="#ffffff",
+        margin=dict(l=40, r=20, t=56, b=40),
+        font=dict(color=INK, size=14, family="Inter, 'Noto Sans KR', Arial, sans-serif"),
+    )
+    fig.update_xaxes(title_font=dict(color=INK), tickfont=dict(color=INK), color=INK)
+    fig.update_yaxes(title_font=dict(color=INK), tickfont=dict(color=INK), color=INK)
+    return fig, (cog, som)
+
+# (이전 9문항 라인 그래프는 제거)
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 서버 사이드 결과 PNG 생성 (ORCA 전용)
+def _find_font_path() -> str | None:
+    candidates = [
+        "C:/Windows/Fonts/malgun.ttf",
+        "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
+        "/System/Library/Fonts/AppleSDGothicNeo.ttc",
+    ]
+    for p in candidates:
+        if os.path.exists(p):
+            return p
+    return None
+
+_FONT_PATH = _find_font_path()
+
+def _font(size: int):
+    try:
+        if _FONT_PATH:
+            return ImageFont.truetype(_FONT_PATH, size)
+    except Exception:
+        pass
+    return ImageFont.load_default()
+
+def make_result_png(summary) -> bytes:
+    """summary = (total, sev, tr, functional, scores, ts, unanswered)"""
+    total, sev, tr, functional, scores, ts, unanswered = summary
+
+    # 1) 게이지 PNG (ORCA)
+    gauge = build_severity_gauge(total)
+    chart_png = pio.to_image(gauge, format="png", width=1100, height=420, engine="orca")
+    gauge_img = Image.open(io.BytesIO(chart_png))
+
+    # 2) 2영역 바 PNG (ORCA)
+    dom_fig, (cog, som) = build_domain_split(scores)
+    dom_png = pio.to_image(dom_fig, format="png", width=1100, height=420, engine="orca")
+    dom_img = Image.open(io.BytesIO(dom_png))
+
+    # 3) 캔버스 구성
+    W = 1400; P = 40; cur_y = P
+    canvas = Image.new("RGB", (W, 1700), "white")
+    d = ImageDraw.Draw(canvas)
+
+    font24 = _font(24); font28 = _font(28); font32 = _font(32); font40 = _font(40)
+
+    d.text((P, cur_y), "PHQ-9 결과 요약", fill=INK, font=font40); cur_y += 56
+    d.text((P, cur_y), f"검사 일시: {ts}", fill=SUBTLE, font=font24); cur_y += 32
+
+    # 메트릭
+    cur_y += 12
+    box_h = 110; box_w = (W - P*2 - 20) // 3
+    labels = [("총점", f"{total} / 27"), ("중증도", sev), ("치료 반응", tr)]
+    for i, (lab, val) in enumerate(labels):
+        x0 = P + i*(box_w+10); y0 = cur_y
+        d.rectangle([x0, y0, x0+box_w, y0+box_h], outline=BORDER, fill="#f8fafc", width=2)
+        d.text((x0+16, y0+14), lab, fill=SUBTLE, font=font24)
+        d.text((x0+16, y0+54), val, fill=INK, font=font32)
+    cur_y += box_h + 24
+
+    if functional:
+        d.text((P, cur_y), f"기능 손상: {functional}", fill=SUBTLE, font=font24); cur_y += 34
+    if unanswered > 0:
+        d.rectangle([P, cur_y, W-P, cur_y+64], outline="#ffe594", fill="#fff7d6")
+        d.text((P+14, cur_y+18), f"⚠ 미응답 {unanswered}개 문항은 0점으로 계산됨", fill="#8a6d00", font=font24)
+        cur_y += 80
+
+    # 게이지
+    canvas.paste(gauge_img, (P, cur_y)); cur_y += gauge_img.height + 16
+    # 2영역 그래프
+    canvas.paste(dom_img, (P, cur_y)); cur_y += dom_img.height + 16
+
+    # 안전 안내
+    if scores[8] > 0:
+        d.rectangle([P, cur_y, W-P, cur_y+120], outline=ACCENT, fill="#fff1f4", width=2)
+        d.text((P+16, cur_y+12), "안전 안내 (문항 9 관련)", fill="#9f1239", font=font28)
+        d.text((P+16, cur_y+48), "자살·자해 생각이 있을 때 즉시 도움 받기", fill=SUBTLE, font=font24)
+        d.text((P+16, cur_y+78), "한국: 1393 자살예방상담(24시간), 정신건강상담 1577-0199 · 긴급 시 112/119.", fill=INK, font=font24)
+        cur_y += 140
+
+    # 저작권
+    d.text((P, cur_y),
+           "PHQ-9는 공공 도메인(Pfizer 별도 허가 불필요).\n"
+           "Kroenke, Spitzer, & Williams (2001) JGIM · Spitzer, Kroenke, & Williams (1999) JAMA.",
+           fill=SUBTLE, font=font24, align="left")
+    cur_y += 70
+
+    cropped = canvas.crop((0, 0, W, min(cur_y + 20, canvas.height)))
+    out = io.BytesIO(); cropped.save(out, format="PNG"); out.seek(0)
+    return out.getvalue()
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 상단 헤더
@@ -236,7 +408,7 @@ if st.session_state.page == "survey":
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="block-card"><div class="section-title">질문지 (지난 2주)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="block-card tight-head"><div class="section-title">질문지 (지난 2주)</div>', unsafe_allow_html=True)
     st.caption("표준 PHQ-9 · 빈도 0–3점 척도")
     for q in QUESTIONS:
         st.markdown(
@@ -245,7 +417,7 @@ if st.session_state.page == "survey":
               <div style="display:flex; gap:10px; align-items:flex-start;">
                 <div class="item-no">{q['no']}</div>
                 <div style="flex:1;">
-                  <div style="font-weight:600; line-height:1.55;">{q['ko']}</div>
+                  <div style="font-weight:600; line-height:1.55; color:#0f172a;">{q['ko']}</div>
                   <div class="item-domain">{q['domain']}</div>
                 </div>
               </div>
@@ -269,8 +441,7 @@ if st.session_state.page == "survey":
         for i in range(1,10):
             lab = st.session_state.answers.get(i)
             if lab is None:
-                unanswered += 1
-                scores.append(0)
+                unanswered += 1; scores.append(0)
             else:
                 scores.append(LABEL2SCORE[lab])
         total = sum(scores)
@@ -278,26 +449,19 @@ if st.session_state.page == "survey":
         tr    = treatment_response_label(total)
         ts    = datetime.now().strftime("%Y-%m-%d %H:%M")
         st.session_state.summary = (total, sev, tr, st.session_state.functional, scores, ts, unanswered)
-        st.session_state.page = "result"
-        st.rerun()
+        st.session_state.page = "result"; st.rerun()
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 결과 페이지
 if st.session_state.page == "result":
     if not st.session_state.summary:
-        st.warning("먼저 설문을 완료해 주세요.")
-        st.stop()
+        st.warning("먼저 설문을 완료해 주세요."); st.stop()
 
     total, sev, tr, functional, scores, ts, unanswered = st.session_state.summary
 
     if st.button("← 응답 수정하기", use_container_width=True):
-        st.session_state.page = "survey"
-        st.rerun()
+        st.session_state.page = "survey"; st.rerun()
 
-    # ====== 캡처 시작 마커 ======
-    st.markdown('<div id="cap-start"></div>', unsafe_allow_html=True)
-
-    # 결과 내용
     st.markdown(
         f"""
         <div class="block-card">
@@ -321,9 +485,12 @@ if st.session_state.page == "result":
     if unanswered > 0:
         st.markdown(f'<div class="warn">⚠️ 미응답 {unanswered}개 문항은 0점으로 계산되었습니다.</div>', unsafe_allow_html=True)
 
-    fig = build_plot(scores)
-    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+    # 새 시각화 출력 (표시는 그대로 Plotly; 저장은 ORCA)
+    st.plotly_chart(build_severity_gauge(total), use_container_width=True, config={"displayModeBar": False})
+    dom_fig, (cog, som) = build_domain_split(scores)
+    st.plotly_chart(dom_fig, use_container_width=True, config={"displayModeBar": False})
 
+    # 안전 안내
     if scores[8] > 0:
         st.markdown("""
         <div class="safety">
@@ -340,142 +507,25 @@ if st.session_state.page == "result":
     </div>
     """, unsafe_allow_html=True)
 
-    # ====== 캡처 종료 마커 ======
-    st.markdown('<div id="cap-end"></div>', unsafe_allow_html=True)
-
-    # 결과 저장 버튼(캡처 제외)
-    st.markdown("""
-    <div class="block-card" id="save-area">
-      <div class="section-title">결과 저장</div>
-      <div class="small-muted">아래 버튼을 누르면 <b>위에 보이는 결과 영역</b>만 이미지(PNG)로 저장됩니다.</div>
-      <div style="margin-top:10px;">
-        <button data-skip-capture id="save-btn" style="
-          background: #2563eb; color: #fff; border: none; border-radius: 10px;
-          padding: 10px 16px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(37,99,235,.25);
-        ">📸 결과 화면 이미지로 저장</button>
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-# ──────────────────────────────────────────────────────────────────────────────
-# 캡처 스크립트 (마커 사이 영역을 좌표로 캡처)
-# ↓↓↓ 이 블록만 통째로 교체 ↓↓↓
-st_html(
-    """
-<script>
-(async function(){
-  const P = parent, PD = parent.document;
-  const btn = PD.getElementById("save-btn");
-  if (!btn) return;
-
-  // html2canvas 로드
-  async function ensure(src, globalName){
-    if (P[globalName]) return;
-    await new Promise((res, rej)=>{
-      const s = PD.createElement("script");
-      s.src = src; s.onload = res; s.onerror = rej;
-      PD.head.appendChild(s);
-    });
-  }
-  await ensure("https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js","html2canvas");
-
-  // Plotly div → PNG dataURL
-  async function plotlyDivToPng(plotDiv, widthPx){
-    if (!plotDiv || !P.Plotly) return null;
-    try{
-      const w = Math.max(600, Math.floor(widthPx));
-      const h = Math.max(300, Math.floor(w * 0.5));
-      return await P.Plotly.toImage(plotDiv, {format:"png", width:w*2, height:h*2, scale:1});
-    }catch(e){ console.warn("Plotly.toImage 실패:", e); return null; }
-  }
-
-  function download(url, prefix){
-    const a = PD.createElement("a");
-    const ts = new Date().toISOString().slice(0,16).replace(/[:-]/g,"").replace("T","_");
-    a.href = url; a.download = `${prefix}_${ts}.png`;
-    PD.body.appendChild(a); a.click(); a.remove();
-  }
-
-  btn.onclick = async () => {
-    const start = PD.getElementById("cap-start");
-    const end   = PD.getElementById("cap-end");
-    if (!start || !end){ alert("캡처 영역 마커를 찾을 수 없습니다."); return; }
-
-    // 메인 컨테이너
-    const container = PD.querySelector('[data-testid="stAppViewContainer"] .main .block-container') || PD.body;
-
-    // 좌표
-    const crect = container.getBoundingClientRect();
-    const srect = start.getBoundingClientRect();
-    const erect = end.getBoundingClientRect();
-
-    // 넉넉한 여백 (잘림 방지)
-    const padLeftRight = 16;   // 좌우 여백
-    const padTop       = 32;   // 위 여백
-    const padBottom    = 32;   // 아래 여백
-
-    // 클리핑 계산: 세로는 cap-start의 'top'부터 cap-end의 'bottom'까지
-    const clipX = Math.max(0, Math.floor(crect.left) + P.scrollX - padLeftRight);
-    const clipW = Math.ceil(crect.width) + padLeftRight*2;
-
-    const topY    = Math.min(srect.top, srect.bottom);   // 마커가 0px 높이라도 안전
-    const bottomY = Math.max(erect.top, erect.bottom);
-
-    let clipY = Math.max(0, Math.floor(topY) + P.scrollY - padTop);
-    let clipH = Math.ceil(bottomY - topY) + padTop + padBottom;
-
-    if (clipH <= 0){ alert("캡처할 내용이 없습니다."); return; }
-
-    // 영역 안의 Plotly만 임시 PNG로 치환
-    const plots = Array.from(container.querySelectorAll('.js-plotly-plot'));
-    const replacements = [];
-    for (const plot of plots){
-      const r = plot.getBoundingClientRect();
-      const midY = (r.top + r.bottom)/2;
-      if (midY >= topY && midY <= bottomY){
-        try{
-          const png = await plotlyDivToPng(plot, r.width);
-          if (png){
-            const img = PD.createElement("img");
-            img.src = png;
-            img.style.width = "100%";
-            img.style.height = "auto";
-            img.style.borderRadius = "12px";
-            plot.parentNode.replaceChild(img, plot);
-            replacements.push({img, plot});
-          }
-        }catch(e){ console.warn("Plotly 치환 실패:", e); }
-      }
-    }
-
-    // 캡처 실행
-    try{
-      try{ await PD.fonts.ready; }catch(e){}
-      const canvas = await P.html2canvas(PD.body, {
-        backgroundColor:"#ffffff",
-        useCORS:true,
-        scale:2,
-        x: clipX, y: clipY, width: clipW, height: clipH,
-        scrollX: 0, scrollY: 0
-      });
-      download(canvas.toDataURL("image/png"), "PHQ9");
-    }catch(e){
-      console.error("캡처 실패:", e);
-      alert("이미지 저장에 실패했습니다. 브라우저 확대/축소를 100%로 맞춘 뒤 다시 시도해 주세요.");
-    }finally{
-      // Plotly 원복
-      for (const {img, plot} of replacements){
-        img.parentNode?.replaceChild(plot, img);
-      }
-    }
-  };
-})();
-</script>
-""",
-    height=0,
-)
-
-
+  # ───────── 결과 PNG 다운로드 (게이지+2영역 포함) — ORCA 전용 ─────────
+    if False:  # ✅ 결과지 저장 기능 비활성화 (주석 처리 대용)
+        st.markdown('<div class="block-card"><div class="section-title">결과 저장</div>', unsafe_allow_html=True)
+        try:
+            if not _ORCA_PATH:
+                raise RuntimeError("ORCA 실행파일을 찾지 못했습니다. 서버 환경변수 PLOTLY_ORCA 또는 PATH에 orca를 등록해 주세요.")
+            png_bytes = make_result_png(st.session_state.summary)
+            st.download_button(
+                label="🖼 결과지 PNG 다운로드 (ORCA)",
+                data=png_bytes,
+                file_name=f"PHQ9_{datetime.now().strftime('%Y%m%d_%H%M')}.png",
+                mime="image/png",
+                use_container_width=True
+            )
+            st.caption(f"엔진: **ORCA** · 경로: `{_ORCA_PATH}`")
+        except Exception as e:
+            st.warning("서버에서 ORCA 엔진을 찾지 못해 PNG를 생성할 수 없습니다.")
+            st.error(str(e))
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 끝. 서버 저장 없음(세션 내 계산), 공개 테스트용.
+# 끝
