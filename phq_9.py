@@ -390,7 +390,6 @@ st.markdown("""
 <div class="block-card" style="position:sticky; top:0; z-index:5;">
   <span class="badge">PHQ-9</span>
   <span style="font-weight:900; font-size:1.15rem; margin-left:8px;">우울 증상 자기보고 검사</span>
-  <span style="float:right;"><span class="chip">초기 응답 미선택</span></span>
   <div class="small-muted" style="margin-top:4px;">지난 2주 동안의 증상 빈도(0~3점)를 선택합니다.</div>
 </div>
 """, unsafe_allow_html=True)
