@@ -324,12 +324,12 @@ def make_result_png(summary) -> bytes:
 
     # 1) 게이지 PNG (ORCA)
     gauge = build_severity_gauge(total)
-    chart_png = pio.to_image(gauge, format="png", width=900, height=300, engine="orca")
+    chart_png = pio.to_image(gauge, format="png", width=600, height=300, engine="orca")
     gauge_img = Image.open(io.BytesIO(chart_png))
 
     # 2) 2영역 바 PNG (ORCA)
     dom_fig, (cog, som) = build_domain_split(scores)
-    dom_png = pio.to_image(dom_fig, format="png", width=900, height=300, engine="orca")
+    dom_png = pio.to_image(dom_fig, format="png", width=600, height=300, engine="orca")
     dom_img = Image.open(io.BytesIO(dom_png))
 
     # 3) 캔버스 구성
