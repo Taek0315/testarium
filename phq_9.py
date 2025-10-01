@@ -43,6 +43,22 @@ BORDER  = "#e5e7eb"   # 경계선
 BRAND   = "#2563eb"   # 브랜드/포커스
 ACCENT  = "#e11d48"   # 경고/강조
 
+# 절제된 중립 팔레트
+GAUGE_STEPS = {
+    "min":  "#EEF2F7",   # 0~5
+    "low":  "#E7ECF3",   # 5~10
+    "mid":  "#DEE6EE",   # 10~15
+    "high": "#F1E6EA",   # 15~20
+    "vhi":  "#EAD5DB",   # 20~27
+}
+BULLET_BANDS = {  # 불릿 배경
+    "low":  "#EEF2F7",
+    "mid":  "#E7ECF3",
+    "high": "#F1E6EA",
+}
+MEASURE_COLOR = "#1D4ED8"   # 측정 막대(진한 인디고 블루)
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # 전역 스타일
 st.markdown(f"""
@@ -245,7 +261,6 @@ COG_AFF = [1, 2, 6, 7, 9]   # 인지·정서(5문항)
 SOMATIC = [3, 4, 5, 8]      # 신체/생리(4문항)
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 새 시각화 ①: 총점 게이지(컴팩트)
 def build_severity_gauge(total: int) -> go.Figure:
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
@@ -253,13 +268,13 @@ def build_severity_gauge(total: int) -> go.Figure:
         number={'suffix': " / 27", 'font': {'size': 22}},
         gauge={
             'axis': {'range': [0, 27], 'tickwidth': 0, 'tickcolor': '#e5e7eb'},
-            'bar': {'color': BRAND, 'thickness': 0.18},
+            'bar': {'color': MEASURE_COLOR, 'thickness': 0.18},
             'steps': [
-                {'range': [0, 5],  'color': '#eef2ff'},
-                {'range': [5, 10], 'color': '#e2e8f0'},
-                {'range': [10, 15],'color': '#fde68a'},
-                {'range': [15, 20],'color': '#fecaca'},
-                {'range': [20, 27],'color': '#fda4af'},
+                {'range': [0, 5],  'color': GAUGE_STEPS["min"]},
+                {'range': [5, 10], 'color': GAUGE_STEPS["low"]},
+                {'range': [10, 15],'color': GAUGE_STEPS["mid"]},
+                {'range': [15, 20],'color': GAUGE_STEPS["high"]},
+                {'range': [20, 27],'color': GAUGE_STEPS["vhi"]},
             ],
             'threshold': {
                 'line': {'color': ACCENT, 'width': 3},
@@ -268,14 +283,17 @@ def build_severity_gauge(total: int) -> go.Figure:
         },
         title={'text': "총점 및 중증도 대역", 'font': {'size': 15}}
     ))
+    # 고정 크기(폭 720, 높이 230)
     fig.update_layout(
+        width=720, height=230,
         margin=dict(l=20, r=20, t=40, b=10),
         paper_bgcolor="#ffffff",
         plot_bgcolor="#ffffff",
         font=dict(color=INK, family="Inter, 'Noto Sans KR', Arial, sans-serif"),
-        height=230
+        showlegend=False
     )
     return fig
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 새 시각화 ②: 가로형 불릿 2개(인지·정서 vs 신체/생리)
@@ -286,7 +304,6 @@ BULLET_BANDS = {
 }
 
 def build_bullet_pair(scores: List[int]) -> go.Figure:
-    # 점수 배열 길이 보정(예외 방지)
     if len(scores) < 9:
         scores = (scores + [0]*9)[:9]
 
@@ -301,12 +318,11 @@ def build_bullet_pair(scores: List[int]) -> go.Figure:
 
     # 배경 대역(불릿 레인지)
     for cat, m in zip(cats, max_vals):
-        bands = [
+        for start, end, c in [
             (0, m*0.33, BULLET_BANDS["low"]),
             (m*0.33, m*0.66, BULLET_BANDS["mid"]),
             (m*0.66, m, BULLET_BANDS["high"]),
-        ]
-        for start, end, c in bands:
+        ]:
             fig.add_trace(go.Bar(
                 x=[end-start], y=[cat], base=start, orientation='h',
                 marker=dict(color=c), hoverinfo='skip', showlegend=False
@@ -315,7 +331,7 @@ def build_bullet_pair(scores: List[int]) -> go.Figure:
     # 실제 값(측정치)
     fig.add_trace(go.Bar(
         x=vals, y=cats, orientation='h',
-        marker=dict(color=BRAND, line=dict(color=BRAND, width=0)),
+        marker=dict(color=MEASURE_COLOR, line=dict(color=MEASURE_COLOR, width=0)),
         width=0.35, name="합계",
         text=vals, textposition="outside", textfont=dict(size=12, color=INK)
     ))
@@ -325,14 +341,35 @@ def build_bullet_pair(scores: List[int]) -> go.Figure:
         xaxis=dict(showgrid=False, zeroline=False, range=[0, max(max_vals)],
                    tickfont=dict(color=SUBTLE), title="점수"),
         yaxis=dict(showgrid=False, tickfont=dict(color=INK)),
-        margin=dict(l=10, r=20, t=28, b=10),
-        height=180,
+        margin=dict(l=10, r=20, t=12, b=6),
+        height=160,
         paper_bgcolor="#ffffff", plot_bgcolor="#ffffff",
         font=dict(color=INK, family="Inter, 'Noto Sans KR', Arial, sans-serif"),
         legend=dict(orientation='h', yanchor='bottom', y=1.02, x=0)
     )
     fig.update_traces(marker_line_width=0)
     return fig
+
+def render_gauge_legend():
+    st.markdown(f"""
+    <div style="display:flex; gap:14px; align-items:center; margin:6px 6px 12px 6px; font-size:12px; color:{SUBTLE};">
+      <span style="display:inline-flex; align-items:center; gap:6px;">
+        <i style="display:inline-block; width:14px; height:10px; background:{GAUGE_STEPS['min']}; border:1px solid #e5e7eb;"></i> 0–4(최소)
+      </span>
+      <span style="display:inline-flex; align-items:center; gap:6px;">
+        <i style="display:inline-block; width:14px; height:10px; background:{GAUGE_STEPS['low']}; border:1px solid #e5e7eb;"></i> 5–9(경도)
+      </span>
+      <span style="display:inline-flex; align-items:center; gap:6px;">
+        <i style="display:inline-block; width:14px; height:10px; background:{GAUGE_STEPS['mid']}; border:1px solid #e5e7eb;"></i> 10–14(중등도)
+      </span>
+      <span style="display:inline-flex; align-items:center; gap:6px;">
+        <i style="display:inline-block; width:14px; height:10px; background:{GAUGE_STEPS['high']}; border:1px solid #e5e7eb;"></i> 15–19(중등–중증)
+      </span>
+      <span style="display:inline-flex; align-items:center; gap:6px;">
+        <i style="display:inline-block; width:14px; height:10px; background:{GAUGE_STEPS['vhi']}; border:1px solid #e5e7eb;"></i> 20–27(중증)
+      </span>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 서버 사이드 결과 PNG 생성 (ORCA 전용)
@@ -530,10 +567,13 @@ if st.session_state.page == "result":
         st.markdown(f'<div class="warn">⚠️ 미응답 {unanswered}개 문항은 0점으로 계산되었습니다.</div>', unsafe_allow_html=True)
 
     # 상단 메트릭과 균형 잡힌 컴팩트 게이지
-    st.plotly_chart(build_severity_gauge(total), use_container_width=True, config={"displayModeBar": False})
+    # 게이지(폭 고정) – container_width=False
+    st.plotly_chart(build_severity_gauge(total), use_container_width=False, config={"displayModeBar": False})
+    render_gauge_legend()  # 밴드 설명(레전드) 표시
 
-    # 세로 막대 → 가로형 불릿 2개
+    # 가로형 불릿 2개
     st.plotly_chart(build_bullet_pair(scores), use_container_width=True, config={"displayModeBar": False})
+
 
     # 안전 안내
     if scores[8] > 0:
