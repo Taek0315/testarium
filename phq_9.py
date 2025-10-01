@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from datetime import datetime
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 import io
 import streamlit as st
@@ -240,9 +240,13 @@ def treatment_response_label(total: int) -> str:
     return "해당 없음"
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 새 시각화 ①: 총점 게이지(권장)
+# PHQ-9 도메인 인덱스(1-based)
+COG_AFF = [1, 2, 6, 7, 9]   # 인지·정서(5문항)
+SOMATIC = [3, 4, 5, 8]      # 신체/생리(4문항)
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 새 시각화 ①: 총점 게이지(컴팩트)
 def build_severity_gauge(total: int) -> go.Figure:
-    # 더 컴팩트(높이 230), 절제된 팔레트, 숫자 작게
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=total,
@@ -251,11 +255,11 @@ def build_severity_gauge(total: int) -> go.Figure:
             'axis': {'range': [0, 27], 'tickwidth': 0, 'tickcolor': '#e5e7eb'},
             'bar': {'color': BRAND, 'thickness': 0.18},
             'steps': [
-                {'range': [0, 5],  'color': '#eef2ff'},   # 최소
-                {'range': [5, 10], 'color': '#e2e8f0'},   # 경도
-                {'range': [10, 15],'color': '#fde68a'},   # 중등도
-                {'range': [15, 20],'color': '#fecaca'},   # 중등-중증
-                {'range': [20, 27],'color': '#fda4af'},   # 중증
+                {'range': [0, 5],  'color': '#eef2ff'},
+                {'range': [5, 10], 'color': '#e2e8f0'},
+                {'range': [10, 15],'color': '#fde68a'},
+                {'range': [15, 20],'color': '#fecaca'},
+                {'range': [20, 27],'color': '#fda4af'},
             ],
             'threshold': {
                 'line': {'color': ACCENT, 'width': 3},
@@ -273,8 +277,8 @@ def build_severity_gauge(total: int) -> go.Figure:
     )
     return fig
 
-
-# 불릿 팔레트(절제된 중립톤)
+# ──────────────────────────────────────────────────────────────────────────────
+# 새 시각화 ②: 가로형 불릿 2개(인지·정서 vs 신체/생리)
 BULLET_BANDS = {
     "low":   "#eef2ff",
     "mid":   "#e2e8f0",
@@ -282,9 +286,12 @@ BULLET_BANDS = {
 }
 
 def build_bullet_pair(scores: List[int]) -> go.Figure:
-    # 도메인 합계
-    cog = sum(scores[i-1] for i in COG_AFF)   # 5문항, 최대 15
-    som = sum(scores[i-1] for i in SOMATIC)   # 4문항, 최대 12
+    # 점수 배열 길이 보정(예외 방지)
+    if len(scores) < 9:
+        scores = (scores + [0]*9)[:9]
+
+    cog = sum(scores[i-1] for i in COG_AFF)   # 최대 15
+    som = sum(scores[i-1] for i in SOMATIC)   # 최대 12
 
     cats = ["인지·정서 (최대 15)", "신체/생리 (최대 12)"]
     max_vals = [15, 12]
@@ -292,11 +299,8 @@ def build_bullet_pair(scores: List[int]) -> go.Figure:
 
     fig = go.Figure()
 
-    # ① 질적 구간(불릿 배경) – low/mid/high 대역
-    for i, (cat, m) in enumerate(zip(cats, max_vals)):
-        # 각 카테고리 y축 위치: 위에서 아래로 2개→ 간격 보정용 yanchor
-        y = i
-        # low(0~33%), mid(33~66%), high(66~100%)
+    # 배경 대역(불릿 레인지)
+    for cat, m in zip(cats, max_vals):
         bands = [
             (0, m*0.33, BULLET_BANDS["low"]),
             (m*0.33, m*0.66, BULLET_BANDS["mid"]),
@@ -304,41 +308,31 @@ def build_bullet_pair(scores: List[int]) -> go.Figure:
         ]
         for start, end, c in bands:
             fig.add_trace(go.Bar(
-                x=[end-start], y=[cat],
-                base=start, orientation='h',
-                marker=dict(color=c),
-                hoverinfo='skip',
-                showlegend=False
+                x=[end-start], y=[cat], base=start, orientation='h',
+                marker=dict(color=c), hoverinfo='skip', showlegend=False
             ))
 
-    # ② 실제 값(측정치) – 얇은 진한 막대(메저)
+    # 실제 값(측정치)
     fig.add_trace(go.Bar(
         x=vals, y=cats, orientation='h',
         marker=dict(color=BRAND, line=dict(color=BRAND, width=0)),
-        width=0.35,  # 얇게
-        name="합계",
+        width=0.35, name="합계",
         text=vals, textposition="outside", textfont=dict(size=12, color=INK)
     ))
 
-    # 레이아웃
     fig.update_layout(
         barmode='overlay',
         xaxis=dict(showgrid=False, zeroline=False, range=[0, max(max_vals)],
                    tickfont=dict(color=SUBTLE), title="점수"),
         yaxis=dict(showgrid=False, tickfont=dict(color=INK)),
         margin=dict(l=10, r=20, t=28, b=10),
-        height=180,  # 결과 카드와 균형
-        paper_bgcolor="#ffffff",
-        plot_bgcolor="#ffffff",
+        height=180,
+        paper_bgcolor="#ffffff", plot_bgcolor="#ffffff",
         font=dict(color=INK, family="Inter, 'Noto Sans KR', Arial, sans-serif"),
         legend=dict(orientation='h', yanchor='bottom', y=1.02, x=0)
     )
-    # 불릿처럼 보이도록 배경 막대의 테두리 제거
     fig.update_traces(marker_line_width=0)
     return fig
-
-
-# (이전 9문항 라인 그래프는 제거)
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 서버 사이드 결과 PNG 생성 (ORCA 전용)
@@ -374,12 +368,12 @@ def make_result_png(summary) -> bytes:
     gauge_img = Image.open(io.BytesIO(gauge_png))
 
     # 불릿 2개: 가로형(180px)
-    bullet_fig = build_bullet_pair(scores)  # ← tuple 언패킹 없음
+    bullet_fig = build_bullet_pair(scores)  # ← Figure 단일 반환
     bullet_png = pio.to_image(bullet_fig, format="png", width=820, height=180, engine="orca")
     bullet_img = Image.open(io.BytesIO(bullet_png))
 
     # ── 캔버스 구성
-    W = 1200                # 결과지 전체 폭 (조금 더 타이트)
+    W = 1200                # 결과지 전체 폭 (타이트)
     P = 40                  # 좌우 여백
     cur_y = P
     canvas = Image.new("RGB", (W, 1200), "white")
@@ -412,7 +406,7 @@ def make_result_png(summary) -> bytes:
         d.text((P+12, cur_y+16), f"⚠ 미응답 {unanswered}개 문항은 0점으로 계산됨", fill="#8a6d00", font=font24)
         cur_y += 70
 
-    # 차트 배치 (가로 정렬)
+    # 차트 배치
     canvas.paste(gauge_img, (P, cur_y)); cur_y += gauge_img.height + 10
     canvas.paste(bullet_img, (P, cur_y)); cur_y += bullet_img.height + 12
 
@@ -435,7 +429,6 @@ def make_result_png(summary) -> bytes:
     cropped = canvas.crop((0, 0, W, min(cur_y + 16, canvas.height)))
     out = io.BytesIO(); cropped.save(out, format="PNG"); out.seek(0)
     return out.getvalue()
-
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 상단 헤더
@@ -462,6 +455,7 @@ if st.session_state.page == "survey":
 
     st.markdown('<div class="block-card tight-head"><div class="section-title">질문지 (지난 2주)</div>', unsafe_allow_html=True)
     st.caption("표준 PHQ-9 · 빈도 0–3점 척도")
+
     for q in QUESTIONS:
         st.markdown(
             f"""
@@ -525,8 +519,6 @@ if st.session_state.page == "result":
               <div class="value">{total} <span class="small-muted">/ 27</span></div></div>
             <div class="metric"><div class="label">중증도</div>
               <div class="value">{sev}</div></div>
-            <!--<div class="metric"><div class="label">치료 반응</div>
-              <div class="value">{tr}</div></div>-->
           </div>
         </div>
         """,
@@ -537,13 +529,11 @@ if st.session_state.page == "result":
     if unanswered > 0:
         st.markdown(f'<div class="warn">⚠️ 미응답 {unanswered}개 문항은 0점으로 계산되었습니다.</div>', unsafe_allow_html=True)
 
-    # 새 시각화 출력 (표시는 그대로 Plotly; 저장은 ORCA)
     # 상단 메트릭과 균형 잡힌 컴팩트 게이지
     st.plotly_chart(build_severity_gauge(total), use_container_width=True, config={"displayModeBar": False})
 
     # 세로 막대 → 가로형 불릿 2개
     st.plotly_chart(build_bullet_pair(scores), use_container_width=True, config={"displayModeBar": False})
-
 
     # 안전 안내
     if scores[8] > 0:
@@ -562,8 +552,8 @@ if st.session_state.page == "result":
     </div>
     """, unsafe_allow_html=True)
 
-  # ───────── 결과 PNG 다운로드 (게이지+2영역 포함) — ORCA 전용 ─────────
-    if False:  # ✅ 결과지 저장 기능 비활성화 (주석 처리 대용)
+    # ───────── 결과 PNG 다운로드(비활성화 예시) ─────────
+    if False:
         st.markdown('<div class="block-card"><div class="section-title">결과 저장</div>', unsafe_allow_html=True)
         try:
             if not _ORCA_PATH:
