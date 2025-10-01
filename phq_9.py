@@ -10,6 +10,16 @@ import plotly.io as pio
 from PIL import Image, ImageDraw, ImageFont  # PNG 합성용
 import platform, shutil  # ← ORCA 자동탐지용
 
+import streamlit.components.v1 as components  # ← 창 닫기용
+
+def _reset_to_survey():
+    """앱 상태 초기화 후 설문 첫 화면으로 이동"""
+    st.session_state.answers = {}
+    st.session_state.functional = None
+    st.session_state.summary = None
+    st.session_state.page = "survey"
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # 페이지 설정
 st.set_page_config(page_title="PHQ-9 자기보고 검사", page_icon="📝", layout="centered")
@@ -592,6 +602,20 @@ if st.session_state.page == "result":
 
     # 불릿: 동일 길이 트랙(정규화 버전)
     st.plotly_chart(build_bullet_pair_uniform(scores), use_container_width=True, config={"displayModeBar": False})
+
+        # —— 결과 화면 나가기/닫기 버튼 (두 가지 동작 제공)
+    left, right = st.columns([1,1])
+    with left:
+        if st.button("📝 새 검사 시작", use_container_width=True):
+            _reset_to_survey()
+            st.rerun()
+    with right:
+        # 팝업/새 탭으로 열렸다면 실제 창 닫기 시도, 안 되면 안내
+        if st.button("✖️ 닫기", use_container_width=True):
+            components.html("<script>window.close();</script>", height=0)
+            # 일부 환경에서는 브라우저 보안 정책으로 창이 닫히지 않을 수 있음
+            st.info("창이 닫히지 않으면 브라우저 탭을 직접 닫거나 ‘새 검사 시작’을 눌러 주세요.", icon="ℹ️")
+
 
 
 
