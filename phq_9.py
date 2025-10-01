@@ -285,7 +285,7 @@ def build_severity_gauge(total: int) -> go.Figure:
     # ← 폭 고정
     fig.update_layout(
         width=720, height=230,
-        margin=dict(l=20, r=20, t=40, b=10),
+        margin=dict(l=20, r=20, t=80, b=10),
         paper_bgcolor="#ffffff", plot_bgcolor="#ffffff",
         font=dict(color=INK, family="Inter, 'Noto Sans KR', Arial, sans-serif"),
         showlegend=False
@@ -369,111 +369,121 @@ def build_bullet_pair_uniform(scores: List[int]) -> go.Figure:
         barmode='overlay',
         xaxis=dict(range=[0, 1.08], showgrid=False, zeroline=False, showticklabels=False),
         yaxis=dict(showgrid=False, tickfont=dict(color=INK)),
-        margin=dict(l=10, r=30, t=8, b=6),
+        # ⬇⬇⬇ 레전드를 아래로 내리고 보더/배경 추가
+        legend=dict(
+            orientation='h',
+            yanchor='top', y=-0.22,  # 그래프 아래로 이동
+            xanchor='left', x=0,
+            bgcolor='rgba(255,255,255,0.8)',
+            bordercolor='#e5e7eb', borderwidth=1,
+            font=dict(size=12, color=INK)
+        ),
+        # ⬇⬇⬇ 레전드가 들어갈 하단 여백
+        margin=dict(l=10, r=30, t=8, b=46),
         height=150,
         paper_bgcolor="#ffffff", plot_bgcolor="#ffffff",
-        font=dict(color=INK, family="Inter, 'Noto Sans KR', Arial, sans-serif"),
-        legend=dict(orientation='h', yanchor='bottom', y=1.02, x=0)
+        font=dict(color=INK, family="Inter, 'Noto Sans KR', Arial, sans-serif")
     )
+
     fig.update_traces(marker_line_width=0)
     return fig
 
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 서버 사이드 결과 PNG 생성 (ORCA 전용)
-def _find_font_path() -> str | None:
-    candidates = [
-        "C:/Windows/Fonts/malgun.ttf",
-        "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
-        "/System/Library/Fonts/AppleSDGothicNeo.ttc",
-    ]
-    for p in candidates:
-        if os.path.exists(p):
-            return p
-    return None
+# def _find_font_path() -> str | None:
+#     candidates = [
+#         "C:/Windows/Fonts/malgun.ttf",
+#         "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
+#         "/System/Library/Fonts/AppleSDGothicNeo.ttc",
+#     ]
+#     for p in candidates:
+#         if os.path.exists(p):
+#             return p
+#     return None
 
-_FONT_PATH = _find_font_path()
+# _FONT_PATH = _find_font_path()
 
-def _font(size: int):
-    try:
-        if _FONT_PATH:
-            return ImageFont.truetype(_FONT_PATH, size)
-    except Exception:
-        pass
-    return ImageFont.load_default()
+# def _font(size: int):
+#     try:
+#         if _FONT_PATH:
+#             return ImageFont.truetype(_FONT_PATH, size)
+#     except Exception:
+#         pass
+#     return ImageFont.load_default()
 
-def make_result_png(summary) -> bytes:
-    """summary = (total, sev, tr, functional, scores, ts, unanswered)"""
-    total, sev, tr, functional, scores, ts, unanswered = summary
+# def make_result_png(summary) -> bytes:
+#     """summary = (total, sev, tr, functional, scores, ts, unanswered)"""
+#     total, sev, tr, functional, scores, ts, unanswered = summary
 
-    # ── 차트 PNG (ORCA)
-    # 게이지: 컴팩트(230px)
-    gauge_fig = build_severity_gauge(total)
-    gauge_png = pio.to_image(gauge_fig, format="png", width=820, height=230, engine="orca")
-    gauge_img = Image.open(io.BytesIO(gauge_png))
+#     # ── 차트 PNG (ORCA)
+#     # 게이지: 컴팩트(230px)
+#     gauge_fig = build_severity_gauge(total)
+#     gauge_png = pio.to_image(gauge_fig, format="png", width=820, height=230, engine="orca")
+#     gauge_img = Image.open(io.BytesIO(gauge_png))
 
-    # 불릿 2개: 가로형(180px)
-    bullet_fig = build_bullet_pair(scores)  # ← Figure 단일 반환
-    bullet_png = pio.to_image(bullet_fig, format="png", width=820, height=180, engine="orca")
-    bullet_img = Image.open(io.BytesIO(bullet_png))
+#     # 불릿 2개: 가로형(180px)
+#     bullet_fig = build_bullet_pair(scores)  # ← Figure 단일 반환
+#     bullet_png = pio.to_image(bullet_fig, format="png", width=820, height=180, engine="orca")
+#     bullet_img = Image.open(io.BytesIO(bullet_png))
 
-    # ── 캔버스 구성
-    W = 1200                # 결과지 전체 폭 (타이트)
-    P = 40                  # 좌우 여백
-    cur_y = P
-    canvas = Image.new("RGB", (W, 1200), "white")
-    d = ImageDraw.Draw(canvas)
+#     # ── 캔버스 구성
+#     W = 1200                # 결과지 전체 폭 (타이트)
+#     P = 40                  # 좌우 여백
+#     cur_y = P
+#     canvas = Image.new("RGB", (W, 1200), "white")
+#     d = ImageDraw.Draw(canvas)
 
-    # 폰트
-    font24 = _font(24); font28 = _font(28); font32 = _font(32); font40 = _font(40)
+#     # 폰트
+#     font24 = _font(24); font28 = _font(28); font32 = _font(32); font40 = _font(40)
 
-    # 헤더
-    d.text((P, cur_y), "PHQ-9 결과 요약", fill=INK, font=font40); cur_y += 52
-    d.text((P, cur_y), f"검사 일시: {ts}", fill=SUBTLE, font=font24); cur_y += 28
+#     # 헤더
+#     d.text((P, cur_y), "PHQ-9 결과 요약", fill=INK, font=font40); cur_y += 52
+#     d.text((P, cur_y), f"검사 일시: {ts}", fill=SUBTLE, font=font24); cur_y += 28
 
-    # 메트릭(3열)
-    cur_y += 8
-    box_h = 96; box_w = (W - P*2 - 20) // 3
-    for i, (lab, val) in enumerate([("총점", f"{total} / 27"),
-                                    ("중증도", sev),
-                                    ("치료 반응", tr)]):
-        x0 = P + i*(box_w+10); y0 = cur_y
-        d.rectangle([x0, y0, x0+box_w, y0+box_h], outline=BORDER, fill="#f8fafc", width=2)
-        d.text((x0+14, y0+12), lab, fill=SUBTLE, font=font24)
-        d.text((x0+14, y0+48), val, fill=INK, font=font32)
-    cur_y += box_h + 18
+#     # 메트릭(3열)
+#     cur_y += 8
+#     box_h = 96; box_w = (W - P*2 - 20) // 3
+#     for i, (lab, val) in enumerate([("총점", f"{total} / 27"),
+#                                     ("중증도", sev),
+#                                     ("치료 반응", tr)]):
+#         x0 = P + i*(box_w+10); y0 = cur_y
+#         d.rectangle([x0, y0, x0+box_w, y0+box_h], outline=BORDER, fill="#f8fafc", width=2)
+#         d.text((x0+14, y0+12), lab, fill=SUBTLE, font=font24)
+#         d.text((x0+14, y0+48), val, fill=INK, font=font32)
+#     cur_y += box_h + 18
 
-    # 부가 정보
-    if functional:
-        d.text((P, cur_y), f"기능 손상: {functional}", fill=SUBTLE, font=font24); cur_y += 30
-    if unanswered > 0:
-        d.rectangle([P, cur_y, W-P, cur_y+58], outline="#ffe594", fill="#fff7d6")
-        d.text((P+12, cur_y+16), f"⚠ 미응답 {unanswered}개 문항은 0점으로 계산됨", fill="#8a6d00", font=font24)
-        cur_y += 70
+#     # 부가 정보
+#     if functional:
+#         d.text((P, cur_y), f"기능 손상: {functional}", fill=SUBTLE, font=font24); cur_y += 30
+#     if unanswered > 0:
+#         d.rectangle([P, cur_y, W-P, cur_y+58], outline="#ffe594", fill="#fff7d6")
+#         d.text((P+12, cur_y+16), f"⚠ 미응답 {unanswered}개 문항은 0점으로 계산됨", fill="#8a6d00", font=font24)
+#         cur_y += 70
 
-    # 차트 배치
-    canvas.paste(gauge_img, (P, cur_y)); cur_y += gauge_img.height + 10
-    canvas.paste(bullet_img, (P, cur_y)); cur_y += bullet_img.height + 12
+#     # 차트 배치
+#     canvas.paste(gauge_img, (P, cur_y)); cur_y += gauge_img.height + 10
+#     canvas.paste(bullet_img, (P, cur_y)); cur_y += bullet_img.height + 12
 
-    # 안전 안내
-    if scores[8] > 0:
-        d.rectangle([P, cur_y, W-P, cur_y+110], outline=ACCENT, fill="#fff1f4", width=2)
-        d.text((P+14, cur_y+10), "안전 안내 (문항 9 관련)", fill="#9f1239", font=font28)
-        d.text((P+14, cur_y+44), "자살·자해 생각이 있을 때 즉시 도움 받기", fill=SUBTLE, font=font24)
-        d.text((P+14, cur_y+74), "한국: 1393(24시간), 1577-0199 · 긴급 시 112/119.", fill=INK, font=font24)
-        cur_y += 126
+#     # 안전 안내
+#     if scores[8] > 0:
+#         d.rectangle([P, cur_y, W-P, cur_y+110], outline=ACCENT, fill="#fff1f4", width=2)
+#         d.text((P+14, cur_y+10), "안전 안내 (문항 9 관련)", fill="#9f1239", font=font28)
+#         d.text((P+14, cur_y+44), "자살·자해 생각이 있을 때 즉시 도움 받기", fill=SUBTLE, font=font24)
+#         d.text((P+14, cur_y+74), "한국: 1393(24시간), 1577-0199 · 긴급 시 112/119.", fill=INK, font=font24)
+#         cur_y += 126
 
-    # 저작권
-    d.text((P, cur_y),
-           "PHQ-9는 공공 도메인(Pfizer 별도 허가 불필요).\n"
-           "Kroenke, Spitzer, & Williams (2001) JGIM · Spitzer, Kroenke, & Williams (1999) JAMA.",
-           fill=SUBTLE, font=font24, align="left")
-    cur_y += 60
+#     # 저작권
+#     d.text((P, cur_y),
+#            "PHQ-9는 공공 도메인(Pfizer 별도 허가 불필요).\n"
+#            "Kroenke, Spitzer, & Williams (2001) JGIM · Spitzer, Kroenke, & Williams (1999) JAMA.",
+#            fill=SUBTLE, font=font24, align="left")
+#     cur_y += 60
 
-    # 캔버스 트리밍 & 반환
-    cropped = canvas.crop((0, 0, W, min(cur_y + 16, canvas.height)))
-    out = io.BytesIO(); cropped.save(out, format="PNG"); out.seek(0)
-    return out.getvalue()
+#     # 캔버스 트리밍 & 반환
+#     cropped = canvas.crop((0, 0, W, min(cur_y + 16, canvas.height)))
+#     out = io.BytesIO(); cropped.save(out, format="PNG"); out.seek(0)
+#     return out.getvalue()
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 상단 헤더
