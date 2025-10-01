@@ -324,12 +324,12 @@ def make_result_png(summary) -> bytes:
 
     # 1) 게이지 PNG (ORCA)
     gauge = build_severity_gauge(total)
-    chart_png = pio.to_image(gauge, format="png", width=1100, height=420, engine="orca")
+    chart_png = pio.to_image(gauge, format="png", width=900, height=300, engine="orca")
     gauge_img = Image.open(io.BytesIO(chart_png))
 
     # 2) 2영역 바 PNG (ORCA)
     dom_fig, (cog, som) = build_domain_split(scores)
-    dom_png = pio.to_image(dom_fig, format="png", width=1100, height=420, engine="orca")
+    dom_png = pio.to_image(dom_fig, format="png", width=900, height=300, engine="orca")
     dom_img = Image.open(io.BytesIO(dom_png))
 
     # 3) 캔버스 구성
@@ -481,7 +481,7 @@ if st.session_state.page == "result":
         unsafe_allow_html=True
     )
     if functional:
-        st.caption(f"기능 손상: {functional}")
+         st.caption(f"기능 손상: {functional}")
     if unanswered > 0:
         st.markdown(f'<div class="warn">⚠️ 미응답 {unanswered}개 문항은 0점으로 계산되었습니다.</div>', unsafe_allow_html=True)
 
