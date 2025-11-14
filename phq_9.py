@@ -202,19 +202,123 @@ body, p, div, span, li, button, label {{
   letter-spacing: -0.1px;
 }}
 
-.report-grid {{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-}}
+  .report-grid {{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }}
 
-.report-card {{
-  background: var(--inner-card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 18px 42px rgba(15,23,42,0.12);
-}}
+  .report-card {{
+    background: var(--inner-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 18px 42px rgba(15,23,42,0.12);
+  }}
+
+  .summary-layout {{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px;
+    align-items: stretch;
+    margin-top: 28px;
+  }}
+
+  .gauge-card {{
+    background: var(--inner-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px 24px 36px;
+    text-align: center;
+    box-shadow: 0 18px 42px rgba(15,23,42,0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }}
+
+  .gauge-circle {{
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 1px 4px rgba(15,23,42,0.15);
+  }}
+
+  .gauge-circle::after {{
+    content: "";
+    position: absolute;
+    inset: 24px;
+    border-radius: 50%;
+    background: var(--shell-bg);
+    box-shadow: inset 0 1px 2px rgba(15,23,42,0.08);
+  }}
+
+  .gauge-inner {{
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }}
+
+  .gauge-number {{
+    font-size: 3.2rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--ink);
+  }}
+
+  .gauge-denom {{
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--subtle);
+  }}
+
+  .gauge-severity {{
+    display: inline-flex;
+    padding: 6px 20px;
+    border-radius: 999px;
+    font-weight: 800;
+    border: 1.5px solid currentColor;
+    font-size: 1rem;
+  }}
+
+  .narrative-card {{
+    background: var(--inner-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 28px 30px;
+    box-shadow: 0 18px 42px rgba(15,23,42,0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }}
+
+  .narrative-title {{
+    font-weight: 800;
+    font-size: 1rem;
+  }}
+
+  .functional-highlight {{
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }}
+
+  .functional-title {{
+    font-size: 0.92rem;
+    color: var(--subtle);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }}
+
+  .functional-value {{
+    font-size: 1.05rem;
+  }}
 
 .report-score-card {{
   display: flex;
@@ -298,17 +402,6 @@ body, p, div, span, li, button, label {{
   font-weight: 700;
   font-size: 1.02rem;
   line-height: 1.5;
-}}
-
-.question-domain {{
-  font-size: 0.9rem;
-  color: #4c1d95;
-  background: rgba(124,58,237,0.12);
-  border: 1px solid rgba(124,58,237,0.28);
-  width: fit-content;
-  border-radius: 999px;
-  padding: 4px 12px;
-  font-weight: 600;
 }}
 
 div[data-testid="stVerticalBlock"]:has(.question-meta),
@@ -589,6 +682,10 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
   .report-shell {{
     padding: 24px;
   }}
+  .gauge-circle {{
+    width: 180px;
+    height: 180px;
+  }}
   .domain-row {{
     grid-template-columns: 1fr;
   }}
@@ -655,6 +752,14 @@ SEVERITY_PILL = {
     "중등도": ("#FFE4E6", "#9F1239"),
     "중증": ("#FED7AA", "#9A3412"),
     "심각": ("#FECACA", "#7F1D1D"),
+}
+
+SEVERITY_ARC_COLOR = {
+    "정상": "#16a34a",
+    "경미": "#f59e0b",
+    "중등도": "#f97316",
+    "중증": "#f43f5e",
+    "심각": "#b91c1c",
 }
 
 SEVERITY_GUIDANCE = {
@@ -833,7 +938,6 @@ def render_question_item(question: Dict[str, str | int]) -> None:
             <div class="question-meta">
               <div class="question-label">문항 {question['no']}</div>
               <div class="question-text">{question['ko']}</div>
-              <div class="question-domain">{question['domain']}</div>
             </div>
             """
         ),
@@ -1054,8 +1158,10 @@ if st.session_state.page == "result":
     if st.button("← 응답 수정하기", use_container_width=True):
         st.session_state.page = "survey"; st.rerun()
 
-    pill_bg, pill_fg = SEVERITY_PILL.get(sev, ("#E2E8F0", INK))
     narrative = compose_narrative(total, sev, functional, item9_score)
+    arc_color = SEVERITY_ARC_COLOR.get(sev, BRAND)
+    gauge_percent = (max(0, min(total, 27)) / 27) * 100
+    functional_value = functional if functional else "미응답"
     st.markdown(
         dedent(
             f"""
@@ -1067,18 +1173,24 @@ if st.session_state.page == "result":
                     <div class="small-muted">검사 일시: {ts}</div>
                   </div>
                 </div>
-                <div class="report-grid">
-                  <div class="report-card report-score-card">
+                <div class="summary-layout">
+                  <div class="gauge-card">
                     <div class="metric-label">총점</div>
-                    <div class="metric-value">
-                      <span class="metric-number">{total}</span>
-                      <span class="metric-denom">/ 27</span>
+                    <div class="gauge-circle" style="background: conic-gradient({arc_color} {gauge_percent:.2f}%, rgba(148,163,184,0.25) {gauge_percent:.2f}%, rgba(148,163,184,0.25) 100%);">
+                      <div class="gauge-inner">
+                        <div class="gauge-number">{total}</div>
+                        <div class="gauge-denom">/ 27</div>
+                      </div>
                     </div>
-                    <div class="severity-tag" style="background:{pill_bg}; color:{pill_fg}; border-color:{pill_fg};">{sev}</div>
+                    <div class="gauge-severity" style="color:{arc_color};">{sev}</div>
                   </div>
-                  <div class="report-card">
-                    <div class="report-card-title">주요 소견</div>
+                  <div class="narrative-card">
+                    <div class="narrative-title">주요 소견</div>
                     <p>{narrative}</p>
+                    <div class="functional-highlight">
+                      <div class="functional-title">일상 기능 손상 (10번 문항)</div>
+                      <div class="functional-value"><strong>{functional_value}</strong></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1091,30 +1203,13 @@ if st.session_state.page == "result":
     if unanswered > 0:
         st.markdown(f'<div class="warn">⚠️ 미응답 {unanswered}개 문항은 0점으로 계산되었습니다.</div>', unsafe_allow_html=True)
 
-    st.markdown(
-        dedent(
-            """
-            <div class="page-frame">
-              <div class="report-shell compact" style="margin-bottom:12px;">
-                <div class="section-heading">II. 상세 점수 분석</div>
-                <div class="small-muted">총점 분포와 증상 영역별 프로파일을 확인하세요.</div>
-              </div>
-            </div>
-            """
-        ),
-        unsafe_allow_html=True,
-    )
-
-    st.plotly_chart(build_total_severity_bar(total), use_container_width=True, config={"displayModeBar": False})
-    render_severity_legend()
-
     domain_html = build_domain_profile_html(scores)
     st.markdown(
         dedent(
             f"""
             <div class="page-frame">
               <div class="report-shell">
-                <div class="section-heading" style="margin-bottom:12px;">증상 영역별 프로파일</div>
+                <div class="section-heading" style="margin-bottom:12px;">II. 증상 영역별 프로파일</div>
                 {domain_html.strip()}
               </div>
             </div>
