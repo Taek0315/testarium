@@ -56,21 +56,6 @@ BORDER  = "#e5e7eb"   # 경계선
 BRAND   = "#2563eb"   # 브랜드/포커스
 ACCENT  = "#e11d48"   # 경고/강조
 
-# ── 전문 톤 팔레트(저채도 그레이·블루)
-GAUGE_STEPS = {
-    "min":  "#F5F7FA",  # 0–4
-    "low":  "#EEF2F6",  # 5–9
-    "mid":  "#E6ECF2",  # 10–14
-    "high": "#DEE5EE",  # 15–19
-    "vhi":  "#D6DEE9",  # 20–27
-}
-
-# 불릿 트랙(모든 카테고리 길이 동일) + 측정치 색
-BULLET_TRACK = "#EEF2F6"
-BULLET_MEASURE = "#1F3A8A"   # 진한 인디고(전문 톤)
-
-
-
 # ──────────────────────────────────────────────────────────────────────────────
 # 전역 스타일
 st.markdown(f"""
@@ -94,244 +79,275 @@ body, p, div, span, li, button, label {{
 }}
 
 [data-testid="block-container"] {{
-  max-width: 840px;
-  padding: 0 1.5rem 3rem;
+  max-width: 900px;
+  padding: 0 1.25rem 3rem;
   margin: 0 auto;
 }}
 
-.block-card {{
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 18px 20px;
-    box-shadow: 0 12px 24px rgba(15,23,42,0.04);
-    max-width: 820px;
-    margin: 12px auto 18px;
-  }}
-
-.badge {{
-  display:inline-block;
-  background: rgba(37,99,235,0.12);
-  color: var(--brand);
-  border: 1px solid rgba(37,99,235,0.25);
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing:.2px;
+.page-frame {{
+  max-width: 860px;
+  margin: 10px auto 18px;
 }}
 
-.chip {{
-  display:inline-flex;
-  align-items:center;
-  gap:4px;
-  background: #eef2ff;
-  color:#3730a3;
-  border:1px solid #c7d2fe;
-  padding: 2px 10px;
+.section-card {{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px 28px;
+  box-shadow: 0 18px 36px rgba(15,23,42,0.08);
+}}
+
+.header-card {{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}}
+.header-badge {{
+  display: inline-flex;
+  padding: 4px 14px;
   border-radius: 999px;
-  font-size: 11px;
-  font-weight:700;
+  background: rgba(37,99,235,0.12);
+  color: var(--brand);
+  font-weight: 700;
+  font-size: 12px;
+  border: 1px solid rgba(37,99,235,0.25);
+  width: fit-content;
+}}
+.header-title {{
+  font-size: 1.32rem;
+  font-weight: 900;
+  letter-spacing: -0.4px;
+}}
+
+.section-heading {{
+  font-size: 1.08rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  margin-bottom: 4px;
+}}
+
+.instruction-list {{
+  margin: 14px 0 0;
+  padding-left: 20px;
+  line-height: 1.6;
+  color: var(--ink);
+}}
+.instruction-list li {{
+  margin-bottom: 8px;
+}}
+
+.question-section {{
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-bottom: 0;
+}}
+
+.question-meta {{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}}
+.question-label {{
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--subtle);
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}}
+.question-text {{
+  font-weight: 700;
+  font-size: 1.02rem;
+  line-height: 1.5;
+}}
+.question-domain {{
+  font-size: 0.9rem;
+  color: #4c1d95;
+  background: #f3f0ff;
+  border: 1px solid #e0d7ff;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-weight: 600;
+}}
+
+div[data-testid="stVerticalBlock"]:has(.question-meta) {{
+  max-width: 860px;
+  margin: 0 auto 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px 24px 12px;
+  box-shadow: 0 16px 32px rgba(15,23,42,0.06);
+}}
+
+div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
+  max-width: 860px;
+  margin: 0 auto 4px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px 24px 12px;
+  box-shadow: 0 16px 32px rgba(15,23,42,0.06);
+}}
+
+.functional-divider {{
+  height: 1px;
+  width: 100%;
+  max-width: 860px;
+  background: #e5e8f1;
+  margin: 10px auto 18px;
+}}
+.functional-label {{
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--subtle);
+  letter-spacing: 0.1px;
+  text-transform: uppercase;
+}}
+.functional-text {{
+  font-weight: 650;
+  font-size: 0.98rem;
+  line-height: 1.5;
 }}
 
 .small-muted {{
   color: var(--subtle);
-  font-size: 12.5px;
-  letter-spacing:-0.1px;
+  font-size: 0.92rem;
+  letter-spacing: -0.1px;
 }}
 
-.section-title {{
-  font-size: 1.08rem;
-  font-weight: 900;
-  letter-spacing: -0.3px;
-  display:flex;
-  align-items:center;
-  gap:8px;
+.result-card {{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 22px 26px;
+  box-shadow: 0 18px 36px rgba(15,23,42,0.08);
 }}
 
-.k-list {{
-  margin: 12px 0 0;
-  padding-left: 22px;
-  color: var(--ink);
-  font-size: 0.95rem;
-}}
-.k-list li {{
-  margin: 10px 0;
-  line-height: 1.55;
-}}
-
-.metric-box {{
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap:12px;
-    margin-top: 16px;
-  }}
-.metric {{
-  border:1px solid var(--border);
-  border-radius: 16px;
-  padding: 16px 18px;
-  background:#f8fafc;
-  min-height:110px;
-}}
-.metric .label {{
-  color: var(--subtle);
-  font-weight:700;
-  font-size: 12.5px;
-  text-transform: uppercase;
-  letter-spacing: .5px;
-}}
-.metric .value {{
-  color: var(--ink);
+.score-card .total {{
+  font-size: 2.5rem;
   font-weight: 800;
-  font-size: 26px;
-  margin-top: 10px;
-  line-height:1.1;
+  line-height: 1.1;
 }}
-.metric .value span {{
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--subtle);
+.score-card .severity-pill {{
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  margin-top: 8px;
 }}
 
-.item-card {{
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:18px 20px 12px;
-    margin: 0 auto 12px;
-    box-shadow: 0 10px 18px rgba(15,23,42,0.05);
-    max-width: 820px;
-  }}
-.item-head {{
-  display:flex;
-  gap:14px;
-  align-items:flex-start;
+.narrative-card p {{
+  line-height: 1.6;
+  margin: 0 0 8px;
 }}
-.item-no {{
+
+.severity-bar-note {{
+  font-size: 0.88rem;
+  color: var(--subtle);
+  margin-top: 6px;
+}}
+.severity-bar-note span {{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 14px;
+}}
+
+.domain-profile {{
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}}
+.domain-row {{
+  display: grid;
+  grid-template-columns: 1.2fr 2fr 0.6fr;
+  gap: 16px;
+  align-items: center;
+}}
+.domain-title {{
+  font-weight: 700;
+}}
+.domain-desc {{
+  font-size: 0.85rem;
+  color: var(--subtle);
+  margin-top: 2px;
+}}
+.domain-bar {{
+  position: relative;
+  height: 14px;
   background: #eef2ff;
-  color:#3730a3;
-  border:1px solid #c7d2fe;
-  width:30px;
-  height:30px;
-  border-radius: 10px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-  font-size:13px;
+  border-radius: 999px;
+  overflow: hidden;
 }}
-.item-domain {{
-  margin-top:10px;
-  display:inline-flex;
-  align-items:center;
-  gap:4px;
-  font-size:11px;
-  color:#4c1d95;
-  background:#f3f0ff;
-  border:1px solid #e0d7ff;
-  padding:2px 10px;
-  border-radius:999px;
-  font-weight:700;
-  letter-spacing:.2px;
+.domain-fill {{
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  border-radius: 999px;
+  background: #1f3a8a;
+}}
+.domain-score {{
+  justify-self: end;
+  font-weight: 700;
 }}
 
 .warn {{
-    background:#fff7ed;
-    border:1px solid #fed7aa;
-    color:#9a3412;
-    border-radius:14px;
-    padding:14px 16px;
-    margin: 14px auto 0;
-    max-width: 820px;
-  }}
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  color:#9a3412;
+  border-radius:16px;
+  padding:14px 16px;
+  max-width: 860px;
+  margin: 18px auto 0;
+}}
 
 .safety {{
-    background:#fff1f4;
-    border:1px solid #fecdd3;
-    border-radius:16px;
-    padding:18px 24px;
-    margin: 24px auto 0;
-    max-width: 820px;
-  }}
-
-.functional-card {{
-    margin-top: 20px;
-    border-radius: 18px;
-    background: #fefefe;
-  }}
+  background:#fff1f4;
+  border:1px solid #fecdd3;
+  border-radius:18px;
+  padding:20px 24px;
+  max-width:860px;
+  margin: 24px auto 0;
+}}
+.safety .section-heading {{
+  color:#9f1239;
+}}
 
 .footer-note {{
-    margin-top: 16px;
-    font-size: 12px;
-    line-height: 1.45;
-    max-width: 820px;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: left;
-  }}
-
-.legend-inline {{
-    display:flex;
-    gap:16px;
-    flex-wrap:wrap;
-    margin: -4px auto 6px;
-    font-size:12px;
-    color: var(--subtle);
-    align-items:center;
-    max-width: 820px;
-  }}
-.legend-inline span {{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
+  color: var(--subtle);
+  font-size: 12px;
+  max-width: 860px;
+  margin: 18px auto 0;
+  line-height: 1.45;
 }}
-.legend-inline i {{
-  width:16px;
-  height:10px;
-  border:1px solid #d4dbe8;
-  border-radius:4px;
-  display:inline-block;
-}}
-
-.chart-title {{
-    max-width: 820px;
-    margin: 6px auto -6px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--subtle);
-    letter-spacing: -0.1px;
-  }}
-
-.functional-pill {{
-    margin-top: 12px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    border: 1px dashed var(--border);
-    background: #f8fafc;
-    font-size: 13px;
-    color: var(--subtle);
-  }}
-.functional-pill strong {{
-    color: var(--ink);
-  }}
 
 div[data-testid="stPlotlyChart"] {{
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 12px 12px 4px;
-    box-shadow: 0 12px 20px rgba(15,23,42,0.04);
-    max-width: 820px;
-    margin: 10px auto 20px;
-  }}
+  max-width: 860px;
+  margin: 10px auto 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 12px 12px 4px;
+  box-shadow: 0 18px 34px rgba(15,23,42,0.07);
+}}
 div[data-testid="stPlotlyChart"] > div > div {{
-    width: 100% !important;
-  }}
+  width: 100% !important;
+}}
 
 div[data-testid="stHorizontalBlock"] {{
-    max-width: 820px;
-    margin: 20px auto 0 !important;
-  }}
+  max-width: 860px;
+  margin: 12px auto 0 !important;
+}}
+
+.button-anchor {{
+  display:none;
+}}
+div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
+  margin-top: 24px !important;
+}}
 
 [data-testid="stToolbar"], #MainMenu, header, footer {{
   display: none !important;
@@ -339,14 +355,12 @@ div[data-testid="stHorizontalBlock"] {{
 
 /* ───── 라디오(가로 칩 스타일) ───── */
 .stRadio {{
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:10px 20px 16px;
-    margin:-12px auto 18px;
-    box-shadow: 0 8px 16px rgba(15,23,42,0.04);
-    max-width: 820px;
-  }}
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 6px 0 10px;
+}}
 .stRadio > div[role="radiogroup"] {{
   display: flex !important;
   gap: 8px !important;
@@ -356,39 +370,40 @@ div[data-testid="stHorizontalBlock"] {{
 .stRadio [role="radio"] {{
   display: inline-flex !important;
   align-items: center !important;
-  gap: 8px !important;
-  padding: 8px 14px !important;
+  padding: 8px 18px !important;
   border-radius: 999px !important;
-  background: #f1f5f9 !important;
+  background: #f8fafc !important;
   border: 1px solid #e2e8f0 !important;
   cursor: pointer !important;
-  transition: transform .08s ease-out, background .2s ease, box-shadow .2s ease;
+  transition: all .15s ease;
   font-weight:600 !important;
-}}
-.stRadio [role="radio"]:hover {{
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(37,99,235,0.12);
 }}
 .stRadio [role="radio"] > div:first-child {{
   display:none !important;
 }}
+.stRadio [role="radio"]:hover {{
+  border-color: var(--brand) !important;
+  box-shadow: 0 3px 10px rgba(37,99,235,0.18);
+}}
 .stRadio [role="radio"][aria-checked="true"] {{
   background: var(--brand) !important;
   border-color: var(--brand) !important;
-  box-shadow: 0 6px 14px rgba(37,99,235,0.3);
+  color: #fff !important;
+  box-shadow: 0 6px 16px rgba(37,99,235,0.35);
 }}
 .stRadio [role="radio"][aria-checked="true"] * {{
   color:#ffffff !important;
   -webkit-text-fill-color:#ffffff !important;
 }}
-.stRadio, .stRadio * {{
-  color: var(--ink) !important;
-  -webkit-text-fill-color: var(--ink) !important;
-  opacity: 1 !important;
-  text-shadow: none !important;
-}}
 
 /* 버튼 */
+.stButton {{
+  max-width: 860px;
+  margin: 0 auto 12px;
+}}
+.stButton > button {{
+  width: 100%;
+}}
 .stButton > button[data-testid="baseButton-primary"],
 .stButton > button[kind="primary"] {{
   background: var(--brand) !important;
@@ -398,11 +413,7 @@ div[data-testid="stHorizontalBlock"] {{
   font-weight: 800 !important;
   letter-spacing: -0.2px;
   min-height: 48px;
-  box-shadow: 0 8px 16px rgba(37,99,235,0.25) !important;
-}}
-.stButton > button[data-testid="baseButton-primary"]:hover,
-.stButton > button[kind="primary"]:hover {{
-  filter: brightness(1.03) !important;
+  box-shadow: 0 12px 24px rgba(37,99,235,0.28) !important;
 }}
 .stButton > button:not([data-testid="baseButton-primary"]) {{
   background: #fff !important;
@@ -411,40 +422,21 @@ div[data-testid="stHorizontalBlock"] {{
   border-radius: 12px !important;
   font-weight: 800 !important;
   min-height: 48px;
-  box-shadow: 0 4px 10px rgba(15,23,42,0.08) !important;
-}}
-.stButton > button:not([data-testid="baseButton-primary"]):hover {{
-  background: rgba(37,99,235,0.08) !important;
-}}
-.stButton > button * {{
-  font-family: "Inter","Noto Sans KR",sans-serif !important;
-}}
-
-.button-row {{
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-  gap: 16px;
-  margin-top: 20px;
-}}
-
-.safety .section-title {{
-  font-size: 1.05rem;
-  color:#9f1239;
-}}
-
-.footer-note {{
-  color: var(--subtle);
+  box-shadow: 0 6px 16px rgba(15,23,42,0.08) !important;
 }}
 
 @media (max-width: 640px) {{
   [data-testid="block-container"] {{
     padding: 0 1rem 2rem;
   }}
-  .item-card {{
-    padding: 16px 16px 10px;
+  .result-card {{
+    padding: 20px;
   }}
-  div[data-testid="stVerticalBlock"]:has(.item-card) + div[data-testid="stVerticalBlock"] .stRadio {{
-    padding-left: 36px;
+  .domain-row {{
+    grid-template-columns: 1fr;
+  }}
+  .domain-score {{
+    justify-self: start;
   }}
 }}
 </style>
@@ -480,11 +472,11 @@ LABEL2SCORE = {LABELS[0]:0, LABELS[1]:1, LABELS[2]:2, LABELS[3]:3}
 # ──────────────────────────────────────────────────────────────────────────────
 # 유틸: 중증도 라벨
 def phq_severity(total: int) -> str:
-    return ("최소" if total<=4 else
-            "경도" if total<=9 else
+    return ("정상" if total<=4 else
+            "경미" if total<=9 else
             "중등도" if total<=14 else
-            "중등도-중증" if total<=19 else
-            "중증")
+            "중증" if total<=19 else
+            "심각")
 
 # ──────────────────────────────────────────────────────────────────────────────
 # PHQ-9 도메인 인덱스(1-based)
@@ -492,125 +484,152 @@ COG_AFF = [1, 2, 6, 7, 9]   # 인지·정서(5문항)
 SOMATIC = [3, 4, 5, 8]      # 신체/생리(4문항)
 
 # ──────────────────────────────────────────────────────────────────────────────
-def build_severity_gauge(total: int) -> go.Figure:
-    fig = go.Figure(go.Indicator(
-        mode="gauge+number",
-        value=total,
-        number={'suffix': " / 27", 'font': {'size': 22}},
-        gauge={
-            'axis': {'range': [0, 27], 'tickwidth': 0, 'tickcolor': '#e5e7eb'},
-            'bar': {'color': BULLET_MEASURE, 'thickness': 0.18},
-            'steps': [
-                {'range': [0, 5],  'color': GAUGE_STEPS["min"]},
-                {'range': [5, 10], 'color': GAUGE_STEPS["low"]},
-                {'range': [10, 15],'color': GAUGE_STEPS["mid"]},
-                {'range': [15, 20],'color': GAUGE_STEPS["high"]},
-                {'range': [20, 27],'color': GAUGE_STEPS["vhi"]},
-            ],
-            'threshold': {
-                'line': {'color': ACCENT, 'width': 3},
-                'thickness': 0.9, 'value': total
-            }
-        },
-    ))
-    # ← 반응형 폭
+SEVERITY_SEGMENTS = [
+    {"label": "정상", "display": "0–4",  "start": 0,  "end": 5,  "color": "#E4EAF6"},
+    {"label": "경미", "display": "5–9",  "start": 5,  "end": 10, "color": "#D8E2F7"},
+    {"label": "중등도", "display": "10–14","start": 10, "end": 15, "color": "#C6D6F4"},
+    {"label": "중증", "display": "15–19","start": 15, "end": 20, "color": "#B0C4EC"},
+    {"label": "심각", "display": "20–27","start": 20, "end": 27, "color": "#8EA7E0"},
+]
+
+SEVERITY_PILL = {
+    "정상": ("#DBEAFE", "#1E3A8A"),
+    "경미": ("#FEF3C7", "#92400E"),
+    "중등도": ("#FFE4E6", "#9F1239"),
+    "중증": ("#FED7AA", "#9A3412"),
+    "심각": ("#FECACA", "#7F1D1D"),
+}
+
+SEVERITY_GUIDANCE = {
+    "정상": "현재 보고된 주관적 우울 증상은 정상 범위에 해당하며, 기본적인 자기 관리와 모니터링을 이어가시면 됩니다.",
+    "경미": "경미 수준의 우울감이 보고되었습니다. 생활리듬 조정과 상담 자원 안내 등 예방적 개입을 고려할 수 있습니다.",
+    "중등도": "임상적으로 의미 있는 중등도 수준으로, 정신건강 전문인의 평가와 치료적 개입을 권장합니다.",
+    "중증": "중증 수준의 우울 증상이 보고되어, 신속한 전문 평가와 적극적인 치료 계획 수립이 필요합니다.",
+    "심각": "심각 수준의 우울 증상이 보고되었습니다. 안전 평가를 포함한 즉각적인 전문 개입이 권고됩니다.",
+}
+
+DOMAIN_META = [
+    {
+        "name": "신체/생리 증상",
+        "desc": "(수면, 피곤함, 식욕, 정신운동 문제)",
+        "items": SOMATIC,
+        "max": 12,
+    },
+    {
+        "name": "인지/정서 증상",
+        "desc": "(흥미저하, 우울감, 죄책감, 집중력, 자살사고)",
+        "items": COG_AFF,
+        "max": 15,
+    },
+]
+
+
+def build_total_severity_bar(total: int) -> go.Figure:
+    total = max(0, min(total, 27))
+    fig = go.Figure()
+    for seg in SEVERITY_SEGMENTS:
+        width = seg["end"] - seg["start"]
+        fig.add_trace(
+            go.Bar(
+                x=[width],
+                y=["총점"],
+                base=seg["start"],
+                orientation="h",
+                marker=dict(color=seg["color"], line=dict(width=0)),
+                hovertemplate=f"{seg['label']} · {seg['display']}점<extra></extra>",
+                showlegend=False,
+            )
+        )
+
+    fig.add_trace(
+        go.Scatter(
+            x=[total],
+            y=["총점"],
+            mode="markers+text",
+            marker=dict(
+                color=BRAND,
+                size=16,
+                line=dict(color="#ffffff", width=2),
+                symbol="circle",
+            ),
+            text=[f"{total}점"],
+            textposition="top center",
+            textfont=dict(size=12, color=BRAND),
+            hoverinfo="skip",
+            showlegend=False,
+        )
+    )
+
     fig.update_layout(
-        height=240,
-        margin=dict(l=20, r=20, t=30, b=0),
-        paper_bgcolor="#ffffff", plot_bgcolor="#ffffff",
+        barmode="stack",
+        xaxis=dict(
+            range=[0, 27],
+            showgrid=False,
+            zeroline=False,
+            tickmode="array",
+            tickvals=[seg["start"] for seg in SEVERITY_SEGMENTS] + [27],
+            ticks="outside",
+            tickfont=dict(size=11),
+        ),
+        yaxis=dict(showticklabels=False),
+        margin=dict(l=20, r=20, t=30, b=20),
+        height=220,
+        paper_bgcolor="#ffffff",
+        plot_bgcolor="#ffffff",
         font=dict(color=INK, family="Inter, 'Noto Sans KR', Arial, sans-serif"),
-        showlegend=False
     )
     return fig
 
-def render_gauge_legend():
+
+def render_severity_legend():
+    spans = "".join(
+        f"<span><strong>{seg['label']}</strong> {seg['display']}점</span>"
+        for seg in SEVERITY_SEGMENTS
+    )
     st.markdown(
-        f"""
-        <div class="legend-inline">
-          <span><i style="background:{GAUGE_STEPS['min']};"></i>0–4(최소)</span>
-          <span><i style="background:{GAUGE_STEPS['low']};"></i>5–9(경도)</span>
-          <span><i style="background:{GAUGE_STEPS['mid']};"></i>10–14(중등도)</span>
-          <span><i style="background:{GAUGE_STEPS['high']};"></i>15–19(중등-중증)</span>
-          <span><i style="background:{GAUGE_STEPS['vhi']};"></i>20–27(중증)</span>
-        </div>
-        """,
+        f"""<div class="page-frame">
+              <div class="severity-bar-note">{spans}</div>
+            </div>""",
         unsafe_allow_html=True,
     )
 
 
-
-# ──────────────────────────────────────────────────────────────────────────────
-# 새 시각화 ②: 가로형 불릿 2개(인지·정서 vs 신체/생리)
-BULLET_BANDS = {
-    "low":   "#eef2ff",
-    "mid":   "#e2e8f0",
-    "high":  "#fde68a"
-}
-
-def build_bullet_pair_uniform(scores: List[int]) -> go.Figure:
-    # 안전 보정
+def build_domain_profile_html(scores: List[int]) -> str:
     if len(scores) < 9:
-        scores = (scores + [0]*9)[:9]
+        scores = (scores + [0] * 9)[:9]
 
-    # 원점수와 최대치
-    cog = sum(scores[i-1] for i in COG_AFF); max_cog = 15  # 5문항
-    som = sum(scores[i-1] for i in SOMATIC); max_som = 12  # 4문항
-
-    cats = ["인지·정서", "신체/생리"]
-    ratios = [cog/max_cog if max_cog else 0, som/max_som if max_som else 0]
-    labels_right = [f"{cog} / {max_cog}", f"{som} / {max_som}"]
-
-    fig = go.Figure()
-
-    # 트랙(길이 1로 동일)
-    for cat in cats:
-        fig.add_trace(go.Bar(
-            x=[1.0], y=[cat], orientation='h',
-            marker=dict(color=BULLET_TRACK),
-            hoverinfo='skip', showlegend=False
-        ))
-
-    # 측정치(비율)
-    fig.add_trace(go.Bar(
-        x=ratios, y=cats, orientation='h',
-        marker=dict(color=BULLET_MEASURE),
-        width=0.35, name="점수(비율)",
-        hovertemplate="%{y}: %{x:.0%}",
-        text=[f"{r*100:.0f}%" for r in ratios],
-        textposition="inside", insidetextanchor="middle",
-        textfont=dict(size=11, color="#ffffff")
-    ))
-
-    # 오른쪽 끝에 절대점수 주석(예: 12 / 15)
-    for i, (r, lab) in enumerate(zip(ratios, labels_right)):
-        fig.add_annotation(
-            x=1.02, y=i, xref="x", yref="y",
-            text=lab, showarrow=False,
-            font=dict(size=12, color=INK), xanchor="left", yanchor="middle"
+    rows = []
+    for meta in DOMAIN_META:
+        score = sum(scores[i - 1] for i in meta["items"])
+        ratio = (score / meta["max"]) if meta["max"] else 0
+        rows.append(
+            f"""
+            <div class="domain-row">
+              <div>
+                <div class="domain-title">{meta['name']}</div>
+                <div class="domain-desc">{meta['desc']}</div>
+              </div>
+              <div class="domain-bar">
+                <div class="domain-fill" style="width:{ratio*100:.1f}%"></div>
+              </div>
+              <div class="domain-score">{score} / {meta['max']}</div>
+            </div>
+            """
         )
+    return f"<div class='domain-profile'>{''.join(rows)}</div>"
 
-    fig.update_layout(
-        barmode='overlay',
-        xaxis=dict(range=[0, 1.08], showgrid=False, zeroline=False, showticklabels=False),
-        yaxis=dict(showgrid=False, tickfont=dict(color=INK)),
-        # ⬇⬇⬇ 레전드를 아래로 내리고 보더/배경 추가
-        legend=dict(
-            orientation='h',
-            yanchor='top', y=-0.25,  # 그래프 아래로 이동
-            xanchor='left', x=0,
-            bgcolor='rgba(255,255,255,0.8)',
-            bordercolor='#e5e7eb', borderwidth=1,
-            font=dict(size=12, color=INK)
-        ),
-        # ⬇⬇⬇ 레전드가 들어갈 하단 여백
-        margin=dict(l=10, r=30, t=18, b=70),
-        height=180,
-        paper_bgcolor="#ffffff", plot_bgcolor="#ffffff",
-        font=dict(color=INK, family="Inter, 'Noto Sans KR', Arial, sans-serif")
+
+def compose_narrative(total: int, severity: str, functional: str | None, item9: int) -> str:
+    base = f"총점 {total}점(27점 만점)으로, [{severity}] 수준의 우울 증상이 보고되었습니다. {SEVERITY_GUIDANCE[severity]}"
+    functional_text = (
+        f" 응답자 보고에 따르면, 이러한 증상으로 인한 일·집안일·대인관계의 어려움은 ‘{functional}’ 수준입니다."
+        if functional else ""
     )
-
-    fig.update_traces(marker_line_width=0)
-    return fig
+    safety_text = (
+        " 특히, 자해/자살 관련 사고(9번 문항)가 보고되어 이에 대한 즉각적인 관심과 평가가 매우 중요합니다."
+        if item9 > 0 else ""
+    )
+    return base + functional_text + safety_text
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -618,16 +637,10 @@ def build_bullet_pair_uniform(scores: List[int]) -> go.Figure:
 def render_question_item(question: Dict[str, str | int]) -> None:
     st.markdown(
         f"""
-        <div class="item-card">
-          <div class="item-head">
-            <div class="item-no">{question['no']}</div>
-            <div style="flex:1;">
-              <div style="font-weight:650; line-height:1.55; color:var(--ink); font-size:0.98rem;">
-                {question['ko']}
-              </div>
-              <div class="item-domain">{question['domain']}</div>
-            </div>
-          </div>
+        <div class="question-meta">
+          <div class="question-label">문항 {question['no']}</div>
+          <div class="question-text">{question['ko']}</div>
+          <div class="question-domain">{question['domain']}</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -643,61 +656,24 @@ def render_question_item(question: Dict[str, str | int]) -> None:
 
 
 def render_functional_block() -> None:
+    st.markdown('<div class="functional-divider"></div>', unsafe_allow_html=True)
     st.markdown(
         """
-        <div class="block-card functional-card">
-          <div class="section-title">STEP 2 · 기능 손상</div>
-          <div class="small-muted" style="margin-top:6px;">
-            앞선 문항들 때문에 일·집안일·대인관계에 얼마나 어려움이 있었는지 선택하세요.
-          </div>
+        <div class="functional-meta">
+          <div class="functional-label">기능 손상</div>
+          <div class="functional-text">이 문제들 때문에 일·집안일·대인관계에 얼마나 어려움이 있었습니까?</div>
+          <div class="small-muted" style="margin-top:4px;">가장 가까운 수준을 선택해 주세요.</div>
         </div>
         """,
         unsafe_allow_html=True,
     )
     st.session_state.functional = st.radio(
-        "추가 질문(기능 손상) — “이 문제들 때문에 일·집안일·대인관계가 얼마나 어려웠습니까?”",
+        "기능 손상",
         options=["전혀 어렵지 않음", "어렵지 않음", "어려움", "매우 어려움"],
         index=None,
         horizontal=True,
+        label_visibility="collapsed",
         key="functional-impact",
-    )
-
-
-def render_summary_card(total: int, sev: str, ts: str, functional: str | None) -> None:
-    metrics = [
-        ("총점", f"{total} <span>/ 27</span>"),
-        ("중증도", sev),
-    ]
-    if functional:
-        metrics.append(("기능 손상", functional))
-
-    metric_html = "".join(
-        f"""
-        <div class="metric">
-          <div class="label">{label}</div>
-          <div class="value">{value}</div>
-        </div>
-        """
-        for label, value in metrics
-    )
-
-    functional_block = (
-        f'<div class="functional-pill">기능 손상: <strong>{functional}</strong></div>'
-        if functional else ""
-    )
-
-    st.markdown(
-        f"""
-        <div class="block-card">
-          <div class="section-title" style="font-size:1.28rem;">PHQ-9 결과 요약</div>
-          <div class="small-muted">검사 일시: {ts}</div>
-          <div class="metric-box">
-            {metric_html}
-          </div>
-          {functional_block}
-        </div>
-        """,
-        unsafe_allow_html=True,
     )
 
 
@@ -803,12 +779,12 @@ def render_summary_card(total: int, sev: str, ts: str, functional: str | None) -
 # ──────────────────────────────────────────────────────────────────────────────
 # 상단 헤더
 st.markdown("""
-<div class="block-card" style="position:sticky; top:0; z-index:5; backdrop-filter:blur(6px);">
-  <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-    <span class="badge">PHQ-9</span>
-    <span style="font-weight:900; font-size:1.2rem;">우울 증상 자기보고 검사</span>
+<div class="page-frame">
+  <div class="section-card header-card">
+    <div class="header-badge">PHQ-9</div>
+    <div class="header-title">우울 증상 자기보고 검사</div>
+    <p class="small-muted">지난 2주 동안 경험한 증상 빈도를 0~3점 척도로 기록하는 표준화된 자기보고 도구입니다.</p>
   </div>
-  <div class="small-muted" style="margin-top:6px;">지난 2주 동안의 증상 빈도를 0~3점으로 선택합니다.</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -816,20 +792,23 @@ st.markdown("""
 # 설문 페이지
 if st.session_state.page == "survey":
     st.markdown("""
-    <div class="block-card">
-      <div class="section-title">지시문</div>
-      <ul class="k-list">
-        <li>각 문항에 대해 <b>전혀 아님(0)</b> · <b>며칠 동안(1)</b> · <b>절반 이상(2)</b> · <b>거의 매일(3)</b> 중 해당되는 빈도를 선택합니다.</li>
-        <li>응답을 완료한 뒤 “결과 보기”를 누르면 총점과 중증도, 도메인별 차트를 바로 확인할 수 있습니다.</li>
-        <li>마지막 STEP 2 문항은 이 문제들로 인해 <b>일·집안일·대인관계</b>가 얼마나 어려웠는지 기록합니다.</li>
-      </ul>
+    <div class="page-frame">
+      <div class="section-card instruction-card">
+        <div class="section-heading">지시문</div>
+        <ul class="instruction-list">
+          <li>각 문항에 대해 지난 2주 동안의 빈도를 <b>전혀 아님(0)</b> · <b>며칠 동안(1)</b> · <b>절반 이상(2)</b> · <b>거의 매일(3)</b> 가운데 가장 가까운 값으로 선택합니다.</li>
+          <li>모든 문항과 기능 손상 질문을 완료한 뒤 ‘결과 보기’를 누르면 총점, 중증도, 영역별 분석을 바로 확인할 수 있습니다.</li>
+        </ul>
+      </div>
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown("""
-    <div class="block-card tight-head" style="margin-bottom:12px;">
-      <div class="section-title">STEP 1 · 질문지 (지난 2주)</div>
-      <div class="small-muted" style="margin-top:4px;">표준 PHQ-9 · 각 문항은 동일한 0–3점 척도를 사용합니다.</div>
+    <div class="page-frame">
+      <div class="section-card question-section">
+        <div class="section-heading">질문지 (지난 2주)</div>
+        <div class="small-muted">표준 PHQ-9 · 모든 문항은 동일한 0–3점 척도를 사용합니다.</div>
+      </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -859,48 +838,103 @@ if st.session_state.page == "result":
         st.warning("먼저 설문을 완료해 주세요."); st.stop()
 
     total, sev, functional, scores, ts, unanswered = st.session_state.summary
+    item9_score = scores[8] if len(scores) >= 9 else 0
 
     if st.button("← 응답 수정하기", use_container_width=True):
         st.session_state.page = "survey"; st.rerun()
 
-    render_summary_card(total, sev, ts, functional)
+    st.markdown(
+        f"""
+        <div class="page-frame">
+          <div class="section-card" style="margin-bottom:12px;">
+            <div class="section-heading">I. 종합 소견</div>
+            <div class="small-muted">검사 일시: {ts}</div>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    col_left, col_right = st.columns(2, gap="large")
+    pill_bg, pill_fg = SEVERITY_PILL.get(sev, ("#E2E8F0", INK))
+    with col_left:
+        st.markdown(
+            f"""
+            <div class="result-card score-card">
+              <div class="small-muted" style="text-transform:uppercase; font-weight:700;">총점</div>
+              <div class="total">{total} <span style="color:#94a3b8; font-size:1.2rem;">/ 27</span></div>
+              <div class="severity-pill" style="background:{pill_bg}; color:{pill_fg}; border:1px solid rgba(15,23,42,0.18);">{sev}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    with col_right:
+        narrative = compose_narrative(total, sev, functional, item9_score)
+        st.markdown(
+            f"""
+            <div class="result-card narrative-card">
+              <div class="small-muted" style="text-transform:uppercase; font-weight:700;">주요 소견</div>
+              <p>{narrative}</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
     if unanswered > 0:
         st.markdown(f'<div class="warn">⚠️ 미응답 {unanswered}개 문항은 0점으로 계산되었습니다.</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="chart-title">총점 및 중증도 대역</div>', unsafe_allow_html=True)
-    st.plotly_chart(build_severity_gauge(total), use_container_width=True, config={"displayModeBar": False})
-    render_gauge_legend()
+    st.markdown(
+        """
+        <div class="page-frame">
+          <div class="section-card" style="margin-bottom:12px;">
+            <div class="section-heading">II. 상세 점수 분석</div>
+            <div class="small-muted">총점 분포와 증상 영역별 프로파일을 확인하세요.</div>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-    st.markdown('<div class="chart-title">인지·정서 vs 신체/생리 비교</div>', unsafe_allow_html=True)
-    st.plotly_chart(build_bullet_pair_uniform(scores), use_container_width=True, config={"displayModeBar": False})
+    st.plotly_chart(build_total_severity_bar(total), use_container_width=True, config={"displayModeBar": False})
+    render_severity_legend()
 
-    # —— 결과 화면 나가기/닫기 버튼 (두 가지 동작 제공)
-    left, right = st.columns([1, 1], gap="medium")
-    with left:
-        if st.button("📝 새 검사 시작", use_container_width=True):
-            _reset_to_survey()
-            st.rerun()
-    with right:
-        # 팝업/새 탭으로 열렸다면 실제 창 닫기 시도, 안 되면 안내
-        if st.button("✖️ 닫기", use_container_width=True):
-            components.html("<script>window.close();</script>", height=0)
-            # 일부 환경에서는 브라우저 보안 정책으로 창이 닫히지 않을 수 있음
-            st.info("창이 닫히지 않으면 브라우저 탭을 직접 닫거나 ‘새 검사 시작’을 눌러 주세요.", icon="ℹ️")
+    domain_html = build_domain_profile_html(scores)
+    st.markdown(
+        f"""
+        <div class="page-frame">
+          <div class="section-card">
+            <div class="section-heading" style="margin-bottom:12px;">증상 영역별 프로파일</div>
+            {domain_html}
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-
-    # 안전 안내
-    if scores[8] > 0:
+    if item9_score > 0:
         st.markdown("""
         <div class="safety">
-          <div class="section-title" style="color:#9f1239; margin-bottom:6px;">안전 안내 (문항 9 관련)</div>
+          <div class="section-heading">안전 안내 (문항 9 관련)</div>
           <div class="small-muted">자살·자해 생각이 있을 때 즉시 도움 받기</div>
           <div>한국: <b>1393 자살예방상담(24시간)</b>, <b>정신건강상담 1577-0199</b> · 긴급 시 <b>112/119</b>.</div>
         </div>
         """, unsafe_allow_html=True)
 
+    button_zone = st.container()
+    with button_zone:
+        st.markdown('<div class="button-anchor"></div>', unsafe_allow_html=True)
+        left, right = st.columns([1, 1], gap="large")
+        with left:
+            if st.button("새 검사 시작", type="primary"):
+                _reset_to_survey()
+                st.rerun()
+        with right:
+            if st.button("닫기"):
+                components.html("<script>window.close();</script>", height=0)
+                st.info("창이 닫히지 않으면 브라우저 탭을 직접 닫거나 ‘새 검사 시작’을 눌러 주세요.", icon="ℹ️")
+
     st.markdown("""
-    <div class="small-muted footer-note">
+    <div class="footer-note">
       PHQ-9는 공공 도메인(Pfizer 별도 허가 불필요).<br>
       Kroenke, Spitzer, & Williams (2001) JGIM · Spitzer, Kroenke, & Williams (1999) JAMA.
     </div>
