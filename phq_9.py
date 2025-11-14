@@ -478,6 +478,15 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
   gap: 22px;
 }}
 
+.domain-note {{
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(148,163,184,0.3);
+  font-size: 0.82rem;
+  color: var(--subtle);
+  line-height: 1.45;
+}}
+
 .domain-row {{
   display: grid;
   grid-template-columns: 1.4fr 2.5fr 0.5fr;
@@ -911,6 +920,7 @@ def build_domain_profile_html(scores: List[int]) -> str:
           <div class="domain-profile">
             {''.join(rows)}
           </div>
+          <div class="domain-note small-muted">※ 각 영역의 점수는 높을수록 해당 영역의 우울 관련 증상이 더 많이 보고되었음을 의미합니다.</div>
         </div>
         """
     )
