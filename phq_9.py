@@ -48,14 +48,14 @@ def _init_orca():
 
 _ORCA_PATH = _init_orca()
 
-# 색상 토큰 (라이트 테마)
-INK     = "#0f172a"   # 본문 텍스트
-SUBTLE  = "#475569"   # 보조 텍스트
-CARD_BG = "#ffffff"   # 카드 배경
-APP_BG  = "#f6f7fb"   # 전체 배경
-BORDER  = "#e5e7eb"   # 경계선
-BRAND   = "#2563eb"   # 브랜드/포커스
-ACCENT  = "#e11d48"   # 경고/강조
+# 색상 토큰 (라이트 테마 기본값 – CSS 변수로 재정의)
+INK     = "#111827"   # 본문 텍스트
+SUBTLE  = "#6B7280"   # 보조 텍스트
+CARD_BG = "#FFFFFF"   # 카드 배경
+APP_BG  = "#F3F4F6"   # 전체 배경
+BORDER  = "#E5E7EB"   # 경계선
+BRAND   = "#2563EB"   # 브랜드/포커스
+ACCENT  = "#DC2626"   # 경고/강조
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 전역 스타일
@@ -64,45 +64,102 @@ st.markdown(f"""
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
 
 :root {{
-  --ink:{INK}; --subtle:{SUBTLE}; --bg:{APP_BG}; --card:{CARD_BG};
-  --border:{BORDER}; --brand:{BRAND}; --accent:{ACCENT};
+  --bg:{APP_BG};
+  --card:{CARD_BG};
+  --ink:{INK};
+  --subtle:{SUBTLE};
+  --border:{BORDER};
+  --brand:{BRAND};
+  --accent:{ACCENT};
+  --soft:#F8FAFC;
+  --shell-bg:rgba(255,255,255,0.96);
+  --inner-card:#FFFFFF;
+  --chip-bg:#FFFFFF;
+  --chip-border:#D4D4D8;
+  --chip-text:#111827;
 }}
 
-html, body, [data-testid="stAppViewContainer"] {{
-  background: linear-gradient(180deg, #f7f9fd 0%, #eff3f8 45%, var(--bg) 100%);
+@media (prefers-color-scheme: dark) {{
+  :root {{
+    --bg:#020617;
+    --card:#0B1220;
+    --ink:#E5E7EB;
+    --subtle:#9CA3AF;
+    --border:#1F2937;
+    --brand:#3B82F6;
+    --accent:#F97373;
+    --soft:#111827;
+    --shell-bg:#0D1526;
+    --inner-card:#101B2D;
+    --chip-bg:#1F2937;
+    --chip-border:#334155;
+    --chip-text:#F9FAFB;
+  }}
+}}
+
+[data-testid="stAppViewContainer"] {{
+  color-scheme: light dark;
+  background: var(--bg);
+}}
+
+html, body {{
+  background: var(--bg);
   color: var(--ink);
   font-family: "Inter","Noto Sans KR",system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Helvetica,Arial,sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }}
+
 body, p, div, span, li, button, label {{
   font-family: "Inter","Noto Sans KR",system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Helvetica,Arial,sans-serif !important;
 }}
 
-  [data-testid="block-container"] {{
-    max-width: 1100px;
-    padding: 0 1.75rem 3rem;
-    margin: 0 auto;
-  }}
+[data-testid="block-container"] {{
+  max-width: 1100px;
+  padding: 0 1.75rem 3rem;
+  margin: 0 auto;
+}}
 
-  .page-frame {{
-    max-width: 960px;
-    margin: 12px auto 20px;
-  }}
+.page-frame {{
+  max-width: 960px;
+  margin: 16px auto;
+}}
 
-  .section-card {{
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 28px 32px;
-    box-shadow: 0 24px 48px rgba(15,23,42,0.08);
-  }}
+.section-card {{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 28px 32px;
+  box-shadow: 0 24px 48px rgba(15,23,42,0.1);
+}}
+
+.report-shell {{
+  background: var(--shell-bg);
+  border: 1px solid var(--border);
+  border-radius: 32px;
+  padding: 32px;
+  box-shadow: 0 28px 58px rgba(15,23,42,0.15);
+}}
+
+.report-shell.compact {{
+  padding: 24px 28px;
+}}
+
+.report-header {{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}}
 
 .header-card {{
   display: flex;
   flex-direction: column;
   gap: 10px;
 }}
+
 .header-badge {{
   display: inline-flex;
   padding: 4px 14px;
@@ -114,6 +171,7 @@ body, p, div, span, li, button, label {{
   border: 1px solid rgba(37,99,235,0.25);
   width: fit-content;
 }}
+
 .header-title {{
   font-size: 1.32rem;
   font-weight: 900;
@@ -133,8 +191,87 @@ body, p, div, span, li, button, label {{
   line-height: 1.6;
   color: var(--ink);
 }}
+
 .instruction-list li {{
   margin-bottom: 8px;
+}}
+
+.small-muted {{
+  color: var(--subtle);
+  font-size: 0.92rem;
+  letter-spacing: -0.1px;
+}}
+
+.report-grid {{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}}
+
+.report-card {{
+  background: var(--inner-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 18px 42px rgba(15,23,42,0.12);
+}}
+
+.report-score-card {{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}}
+
+.metric-label {{
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--subtle);
+  text-transform: uppercase;
+}}
+
+.metric-value {{
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}}
+
+.metric-number {{
+  font-size: 3.6rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--ink);
+}}
+
+.metric-denom {{
+  font-size: 1.2rem;
+  color: var(--subtle);
+  font-weight: 600;
+}}
+
+.severity-tag {{
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 18px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  width: fit-content;
+  border: 1.5px solid transparent;
+}}
+
+.report-card-title {{
+  font-size: 0.84rem;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  color: var(--subtle);
+  margin-bottom: 10px;
+  font-weight: 700;
+}}
+
+.report-shell p {{
+  line-height: 1.65;
+  margin: 0 0 12px;
 }}
 
 .question-section {{
@@ -148,6 +285,7 @@ body, p, div, span, li, button, label {{
   flex-direction: column;
   gap: 6px;
 }}
+
 .question-label {{
   font-size: 12px;
   font-weight: 700;
@@ -155,49 +293,43 @@ body, p, div, span, li, button, label {{
   letter-spacing: 0.2px;
   text-transform: uppercase;
 }}
+
 .question-text {{
   font-weight: 700;
   font-size: 1.02rem;
   line-height: 1.5;
 }}
+
 .question-domain {{
   font-size: 0.9rem;
   color: #4c1d95;
-  background: #f3f0ff;
-  border: 1px solid #e0d7ff;
+  background: rgba(124,58,237,0.12);
+  border: 1px solid rgba(124,58,237,0.28);
   width: fit-content;
   border-radius: 999px;
   padding: 4px 12px;
   font-weight: 600;
 }}
 
-  div[data-testid="stVerticalBlock"]:has(.question-meta) {{
-    max-width: 960px;
+div[data-testid="stVerticalBlock"]:has(.question-meta),
+div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
+  max-width: 960px;
   margin: 0 auto 12px;
-  background: var(--card);
+  background: var(--inner-card);
   border: 1px solid var(--border);
   border-radius: 18px;
   padding: 22px 24px 12px;
-  box-shadow: 0 16px 32px rgba(15,23,42,0.06);
+  box-shadow: 0 16px 32px rgba(15,23,42,0.08);
 }}
 
-  div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
-    max-width: 960px;
-  margin: 0 auto 4px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 22px 24px 12px;
-  box-shadow: 0 16px 32px rgba(15,23,42,0.06);
+.functional-divider {{
+  height: 1px;
+  width: 100%;
+  max-width: 960px;
+  background: var(--border);
+  margin: 10px auto 18px;
 }}
 
-  .functional-divider {{
-    height: 1px;
-    width: 100%;
-    max-width: 960px;
-    background: #e5e8f1;
-    margin: 10px auto 18px;
-  }}
 .functional-label {{
   font-size: 12px;
   font-weight: 700;
@@ -205,209 +337,153 @@ body, p, div, span, li, button, label {{
   letter-spacing: 0.1px;
   text-transform: uppercase;
 }}
+
 .functional-text {{
   font-weight: 650;
   font-size: 0.98rem;
   line-height: 1.5;
 }}
 
-.small-muted {{
+.severity-legend {{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}}
+
+.legend-chip {{
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--inner-card);
+  min-width: 140px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+}}
+
+.legend-chip strong {{
+  font-size: 0.95rem;
+}}
+
+.legend-chip small {{
   color: var(--subtle);
-  font-size: 0.92rem;
-  letter-spacing: -0.1px;
+  font-size: 0.8rem;
 }}
 
-  .result-card {{
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 28px;
-    padding: 30px 34px;
-    box-shadow: 0 28px 56px rgba(15,23,42,0.12);
-  }}
+.domain-panel {{
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 24px 28px;
+  background: var(--inner-card);
+  box-shadow: 0 18px 42px rgba(15,23,42,0.12);
+}}
 
-  .score-card {{
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }}
-  .score-card .score-label {{
-    font-size: 0.82rem;
-    font-weight: 700;
-    letter-spacing: 1.2px;
-    color: var(--subtle);
-    text-transform: uppercase;
-  }}
-  .score-card .total-stack {{
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-  }}
-  .score-card .total-number {{
-    font-size: 3.3rem;
-    font-weight: 900;
-    line-height: 1;
-    color: var(--ink);
-  }}
-  .score-card .total-denom {{
-    font-size: 1.2rem;
-    color: #94a3b8;
-    font-weight: 600;
-  }}
-  .score-card .severity-pill {{
-    display: inline-flex;
-    align-items: center;
-    padding: 6px 18px;
-    border-radius: 999px;
-    font-weight: 700;
-    font-size: 0.95rem;
-    width: fit-content;
-    border: 1px solid rgba(15,23,42,0.14);
-  }}
-  .score-card .score-aux {{
-    margin-top: 4px;
-    font-size: 0.95rem;
-    color: var(--subtle);
-  }}
-  .score-card .score-aux span {{
-    color: var(--ink);
-    font-weight: 600;
-  }}
+.domain-profile {{
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}}
 
-  .narrative-card {{
-    line-height: 1.65;
-    font-size: 0.98rem;
-  }}
-  .narrative-card .report-block-title {{
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 1.2px;
-    font-weight: 700;
-    color: var(--subtle);
-    margin-bottom: 12px;
-  }}
-  .narrative-card p {{
-    margin: 0 0 12px;
-  }}
+.domain-row {{
+  display: grid;
+  grid-template-columns: 1.4fr 2.5fr 0.5fr;
+  gap: 18px;
+  align-items: center;
+}}
 
-  .severity-bar-note {{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px;
-    font-size: 0.9rem;
-    color: var(--ink);
-    margin-top: 14px;
-  }}
-  .severity-bar-note span {{
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    background: #f8fafc;
-    font-weight: 600;
-  }}
-  .severity-bar-note span small {{
-    font-weight: 500;
-    color: var(--subtle);
-  }}
+.domain-title {{
+  font-weight: 700;
+  font-size: 1rem;
+}}
 
-  .domain-profile {{
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-  }}
-  .domain-row {{
-    display: grid;
-    grid-template-columns: 1.3fr 2.4fr 0.5fr;
-    gap: 18px;
-    align-items: center;
-  }}
-  .domain-title {{
-    font-weight: 700;
-    font-size: 1rem;
-  }}
-  .domain-desc {{
-    font-size: 0.85rem;
-    color: var(--subtle);
-    margin-top: 4px;
-  }}
-  .domain-bar {{
-    position: relative;
-    height: 16px;
-    background: #eef2ff;
-    border-radius: 999px;
-    overflow: hidden;
-    border: 1px solid #dbe4ff;
-  }}
-  .domain-fill {{
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    border-radius: 999px;
-    background: #1f3a8a;
-    box-shadow: inset 0 -2px 0 rgba(255,255,255,0.25);
-  }}
-  .domain-score {{
-    justify-self: end;
-    font-weight: 700;
-  }}
+.domain-desc {{
+  font-size: 0.85rem;
+  color: var(--subtle);
+  margin-top: 4px;
+}}
 
-  .warn {{
-    background:#fff7ed;
-    border:1px solid #fed7aa;
-    color:#9a3412;
-    border-radius:18px;
-    padding:16px 20px;
-    max-width: 960px;
-    margin: 18px auto 0;
-    font-weight: 600;
-  }}
+.domain-bar {{
+  position: relative;
+  height: 16px;
+  background: rgba(148,163,184,0.25);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid rgba(148,163,184,0.4);
+}}
 
-  .safety {{
-    background:#fff1f4;
-    border:1px solid #fecdd3;
-    border-radius:22px;
-    padding:24px 28px;
-    max-width:960px;
-    margin: 24px auto 0;
-    box-shadow: 0 20px 40px rgba(190,24,93,0.15);
-  }}
+.domain-fill {{
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  border-radius: 999px;
+  background: var(--brand);
+  box-shadow: inset 0 -2px 0 rgba(255,255,255,0.35);
+}}
+
+.domain-score {{
+  justify-self: end;
+  font-weight: 700;
+}}
+
+.warn {{
+  background: rgba(254,215,170,0.35);
+  border:1px solid rgba(251,191,36,0.6);
+  color:#92400E;
+  border-radius:18px;
+  padding:16px 20px;
+  max-width: 960px;
+  margin: 18px auto 0;
+  font-weight: 600;
+}}
+
+.safety {{
+  background: rgba(248,113,113,0.12);
+  border:1px solid rgba(252,165,165,0.6);
+  border-radius:22px;
+  padding:24px 28px;
+  max-width:960px;
+  margin: 24px auto 0;
+  box-shadow: 0 20px 40px rgba(190,24,93,0.15);
+}}
+
 .safety .section-heading {{
-  color:#9f1239;
+  color: var(--accent);
 }}
 
-  .footer-note {{
-    color: var(--subtle);
-    font-size: 12px;
-    max-width: 960px;
-    margin: 24px auto 0;
-    line-height: 1.5;
-    text-align: center;
-  }}
+.footer-note {{
+  color: var(--subtle);
+  font-size: 12px;
+  max-width: 960px;
+  margin: 24px auto 0;
+  line-height: 1.5;
+  text-align: center;
+}}
 
-  div[data-testid="stPlotlyChart"] {{
-    max-width: 960px;
-    margin: 12px auto 18px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 26px;
-    padding: 18px 18px 6px;
-    box-shadow: 0 24px 48px rgba(15,23,42,0.1);
-  }}
+div[data-testid="stPlotlyChart"] {{
+  max-width: 960px;
+  margin: 12px auto 18px;
+  background: var(--inner-card);
+  border: 1px solid var(--border);
+  border-radius: 26px;
+  padding: 18px 18px 6px;
+  box-shadow: 0 24px 48px rgba(15,23,42,0.12);
+}}
+
 div[data-testid="stPlotlyChart"] > div > div {{
   width: 100% !important;
 }}
 
-  div[data-testid="stHorizontalBlock"] {{
-    max-width: 960px;
-    margin: 16px auto 0 !important;
-  }}
+div[data-testid="stHorizontalBlock"] {{
+  max-width: 960px;
+  margin: 16px auto 0 !important;
+}}
 
 .button-anchor {{
   display:none;
 }}
+
 div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
   margin-top: 24px !important;
 }}
@@ -416,7 +492,7 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
   display: none !important;
 }}
 
-/* ───── 라디오(가로 칩 스타일) ───── */
+/* ───── 라디오 칩 ───── */
 .stRadio {{
   background: transparent;
   border: none;
@@ -424,56 +500,66 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
   padding: 0;
   margin: 6px 0 10px;
 }}
+
 .stRadio > div[role="radiogroup"] {{
   display: flex !important;
   gap: 8px !important;
   flex-wrap: wrap !important;
   align-items: center !important;
 }}
-  .stRadio [role="radio"] {{
-    display: inline-flex !important;
-    align-items: center !important;
-    padding: 9px 20px !important;
-    border-radius: 999px !important;
-    background: #ffffff !important;
-    border: 1px solid #d4d4d8 !important;
-    cursor: pointer !important;
-    transition: all .15s ease;
-    font-weight:600 !important;
-    opacity: 1 !important;
-  }}
-  .stRadio [role="radio"] * {{
-    color: var(--ink) !important;
-    -webkit-text-fill-color: var(--ink) !important;
-    opacity: 1 !important;
-  }}
+
+.stRadio [role="radio"] {{
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 10px 22px !important;
+  border-radius: 999px !important;
+  background: var(--chip-bg) !important;
+  border: 1px solid var(--chip-border) !important;
+  cursor: pointer !important;
+  transition: all .15s ease;
+  font-weight:600 !important;
+  opacity: 1 !important;
+  color: var(--chip-text) !important;
+}}
+
+.stRadio [role="radio"] * {{
+  color: var(--chip-text) !important;
+  -webkit-text-fill-color: var(--chip-text) !important;
+  opacity: 1 !important;
+}}
+
 .stRadio [role="radio"] > div:first-child {{
   display:none !important;
 }}
+
 .stRadio [role="radio"]:hover {{
   border-color: var(--brand) !important;
   box-shadow: 0 3px 10px rgba(37,99,235,0.18);
 }}
+
 .stRadio [role="radio"][aria-checked="true"] {{
   background: var(--brand) !important;
   border-color: var(--brand) !important;
-  color: #fff !important;
-    box-shadow: 0 8px 18px rgba(37,99,235,0.35);
+  color: #ffffff !important;
+  box-shadow: 0 8px 18px rgba(37,99,235,0.35);
 }}
+
 .stRadio [role="radio"][aria-checked="true"] * {{
   color:#ffffff !important;
   -webkit-text-fill-color:#ffffff !important;
-    opacity: 1 !important;
+  opacity: 1 !important;
 }}
 
 /* 버튼 */
-  .stButton {{
-    max-width: 960px;
-    margin: 0 auto 14px;
-  }}
+.stButton {{
+  max-width: 960px;
+  margin: 0 auto 14px;
+}}
+
 .stButton > button {{
   width: 100%;
 }}
+
 .stButton > button[data-testid="baseButton-primary"],
 .stButton > button[kind="primary"] {{
   background: var(--brand) !important;
@@ -485,22 +571,23 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
   min-height: 48px;
   box-shadow: 0 12px 24px rgba(37,99,235,0.28) !important;
 }}
+
 .stButton > button:not([data-testid="baseButton-primary"]) {{
-  background: #fff !important;
+  background: var(--inner-card) !important;
   color: var(--brand) !important;
   border: 1.5px solid var(--brand) !important;
   border-radius: 12px !important;
   font-weight: 800 !important;
   min-height: 48px;
-  box-shadow: 0 6px 16px rgba(15,23,42,0.08) !important;
+  box-shadow: 0 6px 16px rgba(15,23,42,0.1) !important;
 }}
 
 @media (max-width: 640px) {{
   [data-testid="block-container"] {{
     padding: 0 1rem 2rem;
   }}
-  .result-card {{
-    padding: 20px;
+  .report-shell {{
+    padding: 24px;
   }}
   .domain-row {{
     grid-template-columns: 1fr;
@@ -555,11 +642,11 @@ SOMATIC = [3, 4, 5, 8]      # 신체/생리(4문항)
 
 # ──────────────────────────────────────────────────────────────────────────────
 SEVERITY_SEGMENTS = [
-    {"label": "정상", "display": "0–4",  "start": 0,  "end": 5,  "color": "#E4EAF6"},
-    {"label": "경미", "display": "5–9",  "start": 5,  "end": 10, "color": "#D8E2F7"},
-    {"label": "중등도", "display": "10–14","start": 10, "end": 15, "color": "#C6D6F4"},
-    {"label": "중증", "display": "15–19","start": 15, "end": 20, "color": "#B0C4EC"},
-    {"label": "심각", "display": "20–27","start": 20, "end": 27, "color": "#8EA7E0"},
+    {"label": "정상", "display": "0–4",  "start": 0,  "end": 5,  "color": "#CDEED6"},
+    {"label": "경미", "display": "5–9",  "start": 5,  "end": 10, "color": "#F8F1C7"},
+    {"label": "중등도", "display": "10–14","start": 10, "end": 15, "color": "#FFE0B2"},
+    {"label": "중증", "display": "15–19","start": 15, "end": 20, "color": "#FBC0A8"},
+    {"label": "심각", "display": "20–27","start": 20, "end": 27, "color": "#F6A6A6"},
 ]
 
 SEVERITY_PILL = {
@@ -675,13 +762,15 @@ def build_total_severity_bar(total: int) -> go.Figure:
 
 def render_severity_legend():
     spans = "".join(
-        f"<span><strong>{seg['label']}</strong><small>{seg['display']}점</small></span>"
+        f"<div class='legend-chip'><strong>{seg['label']}</strong><small>{seg['display']}점</small></div>"
         for seg in SEVERITY_SEGMENTS
     )
     st.markdown(
         f"""
 <div class="page-frame">
-  <div class="severity-bar-note">{spans}</div>
+  <div class="report-shell compact">
+    <div class="severity-legend">{spans}</div>
+  </div>
 </div>""",
         unsafe_allow_html=True,
     )
@@ -711,11 +800,15 @@ def build_domain_profile_html(scores: List[int]) -> str:
                 """
             )
         )
-    return dedent(f"""
-    <div class="domain-profile">
-    {''.join(rows)}
-    </div>
-    """)
+    return dedent(
+        f"""
+        <div class="domain-panel">
+          <div class="domain-profile">
+            {''.join(rows)}
+          </div>
+        </div>
+        """
+    )
 
 
 def compose_narrative(total: int, severity: str, functional: str | None, item9: int) -> str:
@@ -961,50 +1054,39 @@ if st.session_state.page == "result":
     if st.button("← 응답 수정하기", use_container_width=True):
         st.session_state.page = "survey"; st.rerun()
 
+    pill_bg, pill_fg = SEVERITY_PILL.get(sev, ("#E2E8F0", INK))
+    narrative = compose_narrative(total, sev, functional, item9_score)
     st.markdown(
         dedent(
             f"""
             <div class="page-frame">
-              <div class="section-card" style="margin-bottom:12px;">
-                <div class="section-heading">I. 종합 소견</div>
-                <div class="small-muted">검사 일시: {ts}</div>
+              <div class="report-shell">
+                <div class="report-header">
+                  <div>
+                    <div class="section-heading">I. 종합 소견</div>
+                    <div class="small-muted">검사 일시: {ts}</div>
+                  </div>
+                </div>
+                <div class="report-grid">
+                  <div class="report-card report-score-card">
+                    <div class="metric-label">총점</div>
+                    <div class="metric-value">
+                      <span class="metric-number">{total}</span>
+                      <span class="metric-denom">/ 27</span>
+                    </div>
+                    <div class="severity-tag" style="background:{pill_bg}; color:{pill_fg}; border-color:{pill_fg};">{sev}</div>
+                  </div>
+                  <div class="report-card">
+                    <div class="report-card-title">주요 소견</div>
+                    <p>{narrative}</p>
+                  </div>
+                </div>
               </div>
             </div>
             """
         ),
         unsafe_allow_html=True,
     )
-
-    with st.container():
-        st.markdown('<div class="page-frame">', unsafe_allow_html=True)
-        col_left, col_right = st.columns(2, gap="large")
-        pill_bg, pill_fg = SEVERITY_PILL.get(sev, ("#E2E8F0", INK))
-        with col_left:
-            st.markdown(
-                f"""
-<div class="result-card score-card">
-  <div class="score-label">총점</div>
-  <div class="total-stack">
-    <div class="total-number">{total}</div>
-    <div class="total-denom">/ 27</div>
-  </div>
-  <div class="severity-pill" style="background:{pill_bg}; color:{pill_fg};">{sev}</div>
-</div>
-""",
-                unsafe_allow_html=True,
-            )
-        with col_right:
-            narrative = compose_narrative(total, sev, functional, item9_score)
-            st.markdown(
-                f"""
-<div class="result-card narrative-card">
-  <div class="report-block-title">주요 소견</div>
-  <p>{narrative}</p>
-</div>
-""",
-                unsafe_allow_html=True,
-            )
-        st.markdown("</div>", unsafe_allow_html=True)
 
     if unanswered > 0:
         st.markdown(f'<div class="warn">⚠️ 미응답 {unanswered}개 문항은 0점으로 계산되었습니다.</div>', unsafe_allow_html=True)
@@ -1013,7 +1095,7 @@ if st.session_state.page == "result":
         dedent(
             """
             <div class="page-frame">
-              <div class="section-card" style="margin-bottom:12px;">
+              <div class="report-shell compact" style="margin-bottom:12px;">
                 <div class="section-heading">II. 상세 점수 분석</div>
                 <div class="small-muted">총점 분포와 증상 영역별 프로파일을 확인하세요.</div>
               </div>
@@ -1031,7 +1113,7 @@ if st.session_state.page == "result":
         dedent(
             f"""
             <div class="page-frame">
-              <div class="section-card">
+              <div class="report-shell">
                 <div class="section-heading" style="margin-bottom:12px;">증상 영역별 프로파일</div>
                 {domain_html.strip()}
               </div>
