@@ -923,7 +923,7 @@ def build_domain_profile_html(scores: List[int]) -> str:
           <div class="domain-note small-muted">※ 각 영역의 점수는 높을수록 해당 영역의 우울 관련 증상이 더 많이 보고되었음을 의미합니다.</div>
         </div>
         """
-    )
+    ).strip()
 
 
 def compose_narrative(total: int, severity: str, functional: str | None, item9: int) -> str:
@@ -1214,19 +1214,17 @@ if st.session_state.page == "result":
         st.markdown(f'<div class="warn">⚠️ 미응답 {unanswered}개 문항은 0점으로 계산되었습니다.</div>', unsafe_allow_html=True)
 
     domain_html = build_domain_profile_html(scores)
-    st.markdown(
-        dedent(
-            f"""
-            <div class="page-frame">
-              <div class="report-shell">
-                <div class="section-heading" style="margin-bottom:12px;">II. 증상 영역별 프로파일</div>
-                {domain_html.strip()}
-              </div>
-            </div>
-            """
-        ),
-        unsafe_allow_html=True,
-    )
+    domain_section_html = dedent(
+        """
+        <div class="page-frame">
+          <div class="report-shell">
+            <div class="section-heading" style="margin-bottom:12px;">II. 증상 영역별 프로파일</div>
+            {domain_panel}
+          </div>
+        </div>
+        """
+    ).strip().format(domain_panel=domain_html)
+    st.markdown(domain_section_html, unsafe_allow_html=True)
 
     if item9_score > 0:
         st.markdown(
