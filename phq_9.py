@@ -583,11 +583,16 @@ div[data-testid="stHorizontalBlock"] {{
 }}
 
 .button-anchor {{
-  display:none;
+    display:none;
 }}
 
 div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
-  margin-top: 24px !important;
+    margin: 40px auto 0 !important;
+    background: var(--shell-bg);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 28px 32px 32px;
+    box-shadow: 0 24px 48px rgba(15,23,42,0.12);
 }}
 
 [data-testid="stToolbar"], #MainMenu, header, footer {{
@@ -701,6 +706,10 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
   .domain-score {{
     justify-self: start;
   }}
+    div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
+      padding: 20px;
+      margin: 28px auto 0 !important;
+    }}
 }}
 </style>
 """, unsafe_allow_html=True)
@@ -894,7 +903,7 @@ def build_domain_profile_html(scores: List[int]) -> str:
     if len(scores) < 9:
         scores = (scores + [0] * 9)[:9]
 
-    rows = []
+    rows: List[str] = []
     for meta in DOMAIN_META:
         score = sum(scores[i - 1] for i in meta["items"])
         ratio = (score / meta["max"]) if meta["max"] else 0
@@ -912,18 +921,20 @@ def build_domain_profile_html(scores: List[int]) -> str:
                   <div class="domain-score">{score} / {meta['max']}</div>
                 </div>
                 """
-            )
+            ).strip()
         )
-    return dedent(
-        f"""
-        <div class="domain-panel">
-          <div class="domain-profile">
-            {''.join(rows)}
-          </div>
-          <div class="domain-note small-muted">※ 각 영역의 점수는 높을수록 해당 영역의 우울 관련 증상이 더 많이 보고되었음을 의미합니다.</div>
-        </div>
-        """
-    ).strip()
+    rows_html = "\n".join(rows)
+    note_html = (
+        '<div class="domain-note small-muted">※ 각 영역의 점수는 높을수록 해당 영역의 우울 관련 증상이 더 많이 보고되었음을 의미합니다.</div>'
+    )
+    return (
+        '<div class="domain-panel">\n'
+        '  <div class="domain-profile">\n'
+        f'{rows_html}\n'
+        '  </div>\n'
+        f'{note_html}\n'
+        '</div>'
+    )
 
 
 def compose_narrative(total: int, severity: str, functional: str | None, item9: int) -> str:
@@ -1165,9 +1176,6 @@ if st.session_state.page == "result":
     total, sev, functional, scores, ts, unanswered = st.session_state.summary
     item9_score = scores[8] if len(scores) >= 9 else 0
 
-    if st.button("← 응답 수정하기", use_container_width=True):
-        st.session_state.page = "survey"; st.rerun()
-
     narrative = compose_narrative(total, sev, functional, item9_score)
     arc_color = SEVERITY_ARC_COLOR.get(sev, BRAND)
     gauge_percent = (max(0, min(total, 27)) / 27) * 100
@@ -1242,18 +1250,16 @@ if st.session_state.page == "result":
 
     button_zone = st.container()
     with button_zone:
-        st.markdown('<div class="page-frame">', unsafe_allow_html=True)
         st.markdown('<div class="button-anchor"></div>', unsafe_allow_html=True)
-        left, right = st.columns([1, 1], gap="large")
-        with left:
-            if st.button("새 검사 시작", type="primary"):
+        start_col, close_col = st.columns([1, 1], gap="medium")
+        with start_col:
+            if st.button("새 검사 시작", type="primary", use_container_width=True):
                 _reset_to_survey()
                 st.rerun()
-        with right:
-            if st.button("닫기"):
+        with close_col:
+            if st.button("닫기", use_container_width=True):
                 components.html("<script>window.close();</script>", height=0)
                 st.info("창이 닫히지 않으면 브라우저 탭을 직접 닫거나 ‘새 검사 시작’을 눌러 주세요.", icon="ℹ️")
-        st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown(
         dedent(
