@@ -2,6 +2,7 @@
 import os
 from datetime import datetime
 from typing import Dict, List
+from textwrap import dedent
 
 import io
 import streamlit as st
@@ -78,24 +79,24 @@ body, p, div, span, li, button, label {{
   font-family: "Inter","Noto Sans KR",system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Helvetica,Arial,sans-serif !important;
 }}
 
-[data-testid="block-container"] {{
-  max-width: 900px;
-  padding: 0 1.25rem 3rem;
-  margin: 0 auto;
-}}
+  [data-testid="block-container"] {{
+    max-width: 1100px;
+    padding: 0 1.75rem 3rem;
+    margin: 0 auto;
+  }}
 
-.page-frame {{
-  max-width: 860px;
-  margin: 10px auto 18px;
-}}
+  .page-frame {{
+    max-width: 960px;
+    margin: 12px auto 20px;
+  }}
 
-.section-card {{
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 24px 28px;
-  box-shadow: 0 18px 36px rgba(15,23,42,0.08);
-}}
+  .section-card {{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 28px 32px;
+    box-shadow: 0 24px 48px rgba(15,23,42,0.08);
+  }}
 
 .header-card {{
   display: flex;
@@ -170,8 +171,8 @@ body, p, div, span, li, button, label {{
   font-weight: 600;
 }}
 
-div[data-testid="stVerticalBlock"]:has(.question-meta) {{
-  max-width: 860px;
+  div[data-testid="stVerticalBlock"]:has(.question-meta) {{
+    max-width: 960px;
   margin: 0 auto 12px;
   background: var(--card);
   border: 1px solid var(--border);
@@ -180,8 +181,8 @@ div[data-testid="stVerticalBlock"]:has(.question-meta) {{
   box-shadow: 0 16px 32px rgba(15,23,42,0.06);
 }}
 
-div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
-  max-width: 860px;
+  div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
+    max-width: 960px;
   margin: 0 auto 4px;
   background: var(--card);
   border: 1px solid var(--border);
@@ -190,13 +191,13 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
   box-shadow: 0 16px 32px rgba(15,23,42,0.06);
 }}
 
-.functional-divider {{
-  height: 1px;
-  width: 100%;
-  max-width: 860px;
-  background: #e5e8f1;
-  margin: 10px auto 18px;
-}}
+  .functional-divider {{
+    height: 1px;
+    width: 100%;
+    max-width: 960px;
+    background: #e5e8f1;
+    margin: 10px auto 18px;
+  }}
 .functional-label {{
   font-size: 12px;
   font-weight: 700;
@@ -216,131 +217,193 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
   letter-spacing: -0.1px;
 }}
 
-.result-card {{
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 22px 26px;
-  box-shadow: 0 18px 36px rgba(15,23,42,0.08);
-}}
+  .result-card {{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 30px 34px;
+    box-shadow: 0 28px 56px rgba(15,23,42,0.12);
+  }}
 
-.score-card .total {{
-  font-size: 2.5rem;
-  font-weight: 800;
-  line-height: 1.1;
-}}
-.score-card .severity-pill {{
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 14px;
-  border-radius: 999px;
-  font-weight: 700;
-  margin-top: 8px;
-}}
+  .score-card {{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }}
+  .score-card .score-label {{
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: var(--subtle);
+    text-transform: uppercase;
+  }}
+  .score-card .total-stack {{
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }}
+  .score-card .total-number {{
+    font-size: 3.3rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--ink);
+  }}
+  .score-card .total-denom {{
+    font-size: 1.2rem;
+    color: #94a3b8;
+    font-weight: 600;
+  }}
+  .score-card .severity-pill {{
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 18px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    width: fit-content;
+    border: 1px solid rgba(15,23,42,0.14);
+  }}
+  .score-card .score-aux {{
+    margin-top: 4px;
+    font-size: 0.95rem;
+    color: var(--subtle);
+  }}
+  .score-card .score-aux span {{
+    color: var(--ink);
+    font-weight: 600;
+  }}
 
-.narrative-card p {{
-  line-height: 1.6;
-  margin: 0 0 8px;
-}}
+  .narrative-card {{
+    line-height: 1.65;
+    font-size: 0.98rem;
+  }}
+  .narrative-card .report-block-title {{
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1.2px;
+    font-weight: 700;
+    color: var(--subtle);
+    margin-bottom: 12px;
+  }}
+  .narrative-card p {{
+    margin: 0 0 12px;
+  }}
 
-.severity-bar-note {{
-  font-size: 0.88rem;
-  color: var(--subtle);
-  margin-top: 6px;
-}}
-.severity-bar-note span {{
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-right: 14px;
-}}
+  .severity-bar-note {{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--ink);
+    margin-top: 14px;
+  }}
+  .severity-bar-note span {{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #f8fafc;
+    font-weight: 600;
+  }}
+  .severity-bar-note span small {{
+    font-weight: 500;
+    color: var(--subtle);
+  }}
 
-.domain-profile {{
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}}
-.domain-row {{
-  display: grid;
-  grid-template-columns: 1.2fr 2fr 0.6fr;
-  gap: 16px;
-  align-items: center;
-}}
-.domain-title {{
-  font-weight: 700;
-}}
-.domain-desc {{
-  font-size: 0.85rem;
-  color: var(--subtle);
-  margin-top: 2px;
-}}
-.domain-bar {{
-  position: relative;
-  height: 14px;
-  background: #eef2ff;
-  border-radius: 999px;
-  overflow: hidden;
-}}
-.domain-fill {{
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  border-radius: 999px;
-  background: #1f3a8a;
-}}
-.domain-score {{
-  justify-self: end;
-  font-weight: 700;
-}}
+  .domain-profile {{
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }}
+  .domain-row {{
+    display: grid;
+    grid-template-columns: 1.3fr 2.4fr 0.5fr;
+    gap: 18px;
+    align-items: center;
+  }}
+  .domain-title {{
+    font-weight: 700;
+    font-size: 1rem;
+  }}
+  .domain-desc {{
+    font-size: 0.85rem;
+    color: var(--subtle);
+    margin-top: 4px;
+  }}
+  .domain-bar {{
+    position: relative;
+    height: 16px;
+    background: #eef2ff;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid #dbe4ff;
+  }}
+  .domain-fill {{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    border-radius: 999px;
+    background: #1f3a8a;
+    box-shadow: inset 0 -2px 0 rgba(255,255,255,0.25);
+  }}
+  .domain-score {{
+    justify-self: end;
+    font-weight: 700;
+  }}
 
-.warn {{
-  background:#fff7ed;
-  border:1px solid #fed7aa;
-  color:#9a3412;
-  border-radius:16px;
-  padding:14px 16px;
-  max-width: 860px;
-  margin: 18px auto 0;
-}}
+  .warn {{
+    background:#fff7ed;
+    border:1px solid #fed7aa;
+    color:#9a3412;
+    border-radius:18px;
+    padding:16px 20px;
+    max-width: 960px;
+    margin: 18px auto 0;
+    font-weight: 600;
+  }}
 
-.safety {{
-  background:#fff1f4;
-  border:1px solid #fecdd3;
-  border-radius:18px;
-  padding:20px 24px;
-  max-width:860px;
-  margin: 24px auto 0;
-}}
+  .safety {{
+    background:#fff1f4;
+    border:1px solid #fecdd3;
+    border-radius:22px;
+    padding:24px 28px;
+    max-width:960px;
+    margin: 24px auto 0;
+    box-shadow: 0 20px 40px rgba(190,24,93,0.15);
+  }}
 .safety .section-heading {{
   color:#9f1239;
 }}
 
-.footer-note {{
-  color: var(--subtle);
-  font-size: 12px;
-  max-width: 860px;
-  margin: 18px auto 0;
-  line-height: 1.45;
-}}
+  .footer-note {{
+    color: var(--subtle);
+    font-size: 12px;
+    max-width: 960px;
+    margin: 24px auto 0;
+    line-height: 1.5;
+    text-align: center;
+  }}
 
-div[data-testid="stPlotlyChart"] {{
-  max-width: 860px;
-  margin: 10px auto 18px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 12px 12px 4px;
-  box-shadow: 0 18px 34px rgba(15,23,42,0.07);
-}}
+  div[data-testid="stPlotlyChart"] {{
+    max-width: 960px;
+    margin: 12px auto 18px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 26px;
+    padding: 18px 18px 6px;
+    box-shadow: 0 24px 48px rgba(15,23,42,0.1);
+  }}
 div[data-testid="stPlotlyChart"] > div > div {{
   width: 100% !important;
 }}
 
-div[data-testid="stHorizontalBlock"] {{
-  max-width: 860px;
-  margin: 12px auto 0 !important;
-}}
+  div[data-testid="stHorizontalBlock"] {{
+    max-width: 960px;
+    margin: 16px auto 0 !important;
+  }}
 
 .button-anchor {{
   display:none;
@@ -367,17 +430,23 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
   flex-wrap: wrap !important;
   align-items: center !important;
 }}
-.stRadio [role="radio"] {{
-  display: inline-flex !important;
-  align-items: center !important;
-  padding: 8px 18px !important;
-  border-radius: 999px !important;
-  background: #f8fafc !important;
-  border: 1px solid #e2e8f0 !important;
-  cursor: pointer !important;
-  transition: all .15s ease;
-  font-weight:600 !important;
-}}
+  .stRadio [role="radio"] {{
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 9px 20px !important;
+    border-radius: 999px !important;
+    background: #ffffff !important;
+    border: 1px solid #d4d4d8 !important;
+    cursor: pointer !important;
+    transition: all .15s ease;
+    font-weight:600 !important;
+    opacity: 1 !important;
+  }}
+  .stRadio [role="radio"] * {{
+    color: var(--ink) !important;
+    -webkit-text-fill-color: var(--ink) !important;
+    opacity: 1 !important;
+  }}
 .stRadio [role="radio"] > div:first-child {{
   display:none !important;
 }}
@@ -389,18 +458,19 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
   background: var(--brand) !important;
   border-color: var(--brand) !important;
   color: #fff !important;
-  box-shadow: 0 6px 16px rgba(37,99,235,0.35);
+    box-shadow: 0 8px 18px rgba(37,99,235,0.35);
 }}
 .stRadio [role="radio"][aria-checked="true"] * {{
   color:#ffffff !important;
   -webkit-text-fill-color:#ffffff !important;
+    opacity: 1 !important;
 }}
 
 /* 버튼 */
-.stButton {{
-  max-width: 860px;
-  margin: 0 auto 12px;
-}}
+  .stButton {{
+    max-width: 960px;
+    margin: 0 auto 14px;
+  }}
 .stButton > button {{
   width: 100%;
 }}
@@ -527,6 +597,8 @@ DOMAIN_META = [
 def build_total_severity_bar(total: int) -> go.Figure:
     total = max(0, min(total, 27))
     fig = go.Figure()
+    annotations = []
+
     for seg in SEVERITY_SEGMENTS:
         width = seg["end"] - seg["start"]
         fig.add_trace(
@@ -540,23 +612,43 @@ def build_total_severity_bar(total: int) -> go.Figure:
                 showlegend=False,
             )
         )
+        midpoint = seg["start"] + width / 2
+        annotations.append(
+            dict(
+                x=midpoint,
+                y=-0.12,
+                xref="x",
+                yref="paper",
+                text=f"<b>{seg['label']}</b><br><span style='font-size:11px;'>{seg['display']}점</span>",
+                showarrow=False,
+                align="center",
+                font=dict(size=12, color=INK),
+            )
+        )
 
-    fig.add_trace(
-        go.Scatter(
-            x=[total],
-            y=["총점"],
-            mode="markers+text",
-            marker=dict(
-                color=BRAND,
-                size=16,
-                line=dict(color="#ffffff", width=2),
-                symbol="circle",
-            ),
-            text=[f"{total}점"],
-            textposition="top center",
-            textfont=dict(size=12, color=BRAND),
-            hoverinfo="skip",
-            showlegend=False,
+    fig.add_shape(
+        type="line",
+        x0=total,
+        x1=total,
+        y0=-0.05,
+        y1=1.05,
+        xref="x",
+        yref="paper",
+        line=dict(color=BRAND, width=3),
+    )
+    annotations.append(
+        dict(
+            x=total,
+            y=1.08,
+            xref="x",
+            yref="paper",
+            text=f"{total}점",
+            showarrow=False,
+            font=dict(size=14, color=BRAND, family="Inter, 'Noto Sans KR', sans-serif"),
+            bgcolor="#e0ecff",
+            bordercolor=BRAND,
+            borderwidth=1,
+            borderpad=6,
         )
     )
 
@@ -566,30 +658,31 @@ def build_total_severity_bar(total: int) -> go.Figure:
             range=[0, 27],
             showgrid=False,
             zeroline=False,
-            tickmode="array",
-            tickvals=[seg["start"] for seg in SEVERITY_SEGMENTS] + [27],
+            tickvals=[0, 5, 10, 15, 20, 27],
             ticks="outside",
             tickfont=dict(size=11),
         ),
         yaxis=dict(showticklabels=False),
-        margin=dict(l=20, r=20, t=30, b=20),
-        height=220,
+        margin=dict(l=30, r=30, t=50, b=60),
+        height=260,
         paper_bgcolor="#ffffff",
         plot_bgcolor="#ffffff",
         font=dict(color=INK, family="Inter, 'Noto Sans KR', Arial, sans-serif"),
+        annotations=annotations,
     )
     return fig
 
 
 def render_severity_legend():
     spans = "".join(
-        f"<span><strong>{seg['label']}</strong> {seg['display']}점</span>"
+        f"<span><strong>{seg['label']}</strong><small>{seg['display']}점</small></span>"
         for seg in SEVERITY_SEGMENTS
     )
     st.markdown(
-        f"""<div class="page-frame">
-              <div class="severity-bar-note">{spans}</div>
-            </div>""",
+        f"""
+<div class="page-frame">
+  <div class="severity-bar-note">{spans}</div>
+</div>""",
         unsafe_allow_html=True,
     )
 
@@ -603,20 +696,26 @@ def build_domain_profile_html(scores: List[int]) -> str:
         score = sum(scores[i - 1] for i in meta["items"])
         ratio = (score / meta["max"]) if meta["max"] else 0
         rows.append(
-            f"""
-            <div class="domain-row">
-              <div>
-                <div class="domain-title">{meta['name']}</div>
-                <div class="domain-desc">{meta['desc']}</div>
-              </div>
-              <div class="domain-bar">
-                <div class="domain-fill" style="width:{ratio*100:.1f}%"></div>
-              </div>
-              <div class="domain-score">{score} / {meta['max']}</div>
-            </div>
-            """
+            dedent(
+                f"""
+                <div class="domain-row">
+                  <div>
+                    <div class="domain-title">{meta['name']}</div>
+                    <div class="domain-desc">{meta['desc']}</div>
+                  </div>
+                  <div class="domain-bar">
+                    <div class="domain-fill" style="width:{ratio*100:.1f}%"></div>
+                  </div>
+                  <div class="domain-score">{score} / {meta['max']}</div>
+                </div>
+                """
+            )
         )
-    return f"<div class='domain-profile'>{''.join(rows)}</div>"
+    return dedent(f"""
+    <div class="domain-profile">
+    {''.join(rows)}
+    </div>
+    """)
 
 
 def compose_narrative(total: int, severity: str, functional: str | None, item9: int) -> str:
@@ -636,13 +735,15 @@ def compose_narrative(total: int, severity: str, functional: str | None, item9: 
 # UI 헬퍼
 def render_question_item(question: Dict[str, str | int]) -> None:
     st.markdown(
-        f"""
-        <div class="question-meta">
-          <div class="question-label">문항 {question['no']}</div>
-          <div class="question-text">{question['ko']}</div>
-          <div class="question-domain">{question['domain']}</div>
-        </div>
-        """,
+        dedent(
+            f"""
+            <div class="question-meta">
+              <div class="question-label">문항 {question['no']}</div>
+              <div class="question-text">{question['ko']}</div>
+              <div class="question-domain">{question['domain']}</div>
+            </div>
+            """
+        ),
         unsafe_allow_html=True,
     )
     st.session_state.answers[question["no"]] = st.radio(
@@ -658,13 +759,15 @@ def render_question_item(question: Dict[str, str | int]) -> None:
 def render_functional_block() -> None:
     st.markdown('<div class="functional-divider"></div>', unsafe_allow_html=True)
     st.markdown(
-        """
-        <div class="functional-meta">
-          <div class="functional-label">기능 손상</div>
-          <div class="functional-text">이 문제들 때문에 일·집안일·대인관계에 얼마나 어려움이 있었습니까?</div>
-          <div class="small-muted" style="margin-top:4px;">가장 가까운 수준을 선택해 주세요.</div>
-        </div>
-        """,
+        dedent(
+            """
+            <div class="functional-meta">
+              <div class="functional-label">기능 손상</div>
+              <div class="functional-text">이 문제들 때문에 일·집안일·대인관계에 얼마나 어려움이 있었습니까?</div>
+              <div class="small-muted" style="margin-top:4px;">가장 가까운 수준을 선택해 주세요.</div>
+            </div>
+            """
+        ),
         unsafe_allow_html=True,
     )
     st.session_state.functional = st.radio(
@@ -778,39 +881,54 @@ def render_functional_block() -> None:
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 상단 헤더
-st.markdown("""
-<div class="page-frame">
-  <div class="section-card header-card">
-    <div class="header-badge">PHQ-9</div>
-    <div class="header-title">우울 증상 자기보고 검사</div>
-    <p class="small-muted">지난 2주 동안 경험한 증상 빈도를 0~3점 척도로 기록하는 표준화된 자기보고 도구입니다.</p>
-  </div>
-</div>
-""", unsafe_allow_html=True)
+st.markdown(
+    dedent(
+        """
+        <div class="page-frame">
+          <div class="section-card header-card">
+            <div class="header-badge">PHQ-9</div>
+            <div class="header-title">우울 증상 자기보고 검사</div>
+            <p class="small-muted">지난 2주 동안 경험한 증상 빈도를 0~3점 척도로 기록하는 표준화된 자기보고 도구입니다.</p>
+          </div>
+        </div>
+        """
+    ),
+    unsafe_allow_html=True,
+)
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 설문 페이지
 if st.session_state.page == "survey":
-    st.markdown("""
-    <div class="page-frame">
-      <div class="section-card instruction-card">
-        <div class="section-heading">지시문</div>
-        <ul class="instruction-list">
-          <li>각 문항에 대해 지난 2주 동안의 빈도를 <b>전혀 아님(0)</b> · <b>며칠 동안(1)</b> · <b>절반 이상(2)</b> · <b>거의 매일(3)</b> 가운데 가장 가까운 값으로 선택합니다.</li>
-          <li>모든 문항과 기능 손상 질문을 완료한 뒤 ‘결과 보기’를 누르면 총점, 중증도, 영역별 분석을 바로 확인할 수 있습니다.</li>
-        </ul>
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        dedent(
+            """
+            <div class="page-frame">
+              <div class="section-card instruction-card">
+                <div class="section-heading">지시문</div>
+                <ul class="instruction-list">
+                  <li>각 문항에 대해 지난 2주 동안의 빈도를 <b>전혀 아님(0)</b> · <b>며칠 동안(1)</b> · <b>절반 이상(2)</b> · <b>거의 매일(3)</b> 가운데 가장 가까운 값으로 선택합니다.</li>
+                  <li>모든 문항과 기능 손상 질문을 완료한 뒤 ‘결과 보기’를 누르면 총점, 중증도, 영역별 분석을 바로 확인할 수 있습니다.</li>
+                </ul>
+              </div>
+            </div>
+            """
+        ),
+        unsafe_allow_html=True,
+    )
 
-    st.markdown("""
-    <div class="page-frame">
-      <div class="section-card question-section">
-        <div class="section-heading">질문지 (지난 2주)</div>
-        <div class="small-muted">표준 PHQ-9 · 모든 문항은 동일한 0–3점 척도를 사용합니다.</div>
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        dedent(
+            """
+            <div class="page-frame">
+              <div class="section-card question-section">
+                <div class="section-heading">질문지 (지난 2주)</div>
+                <div class="small-muted">표준 PHQ-9 · 모든 문항은 동일한 0–3점 척도를 사용합니다.</div>
+              </div>
+            </div>
+            """
+        ),
+        unsafe_allow_html=True,
+    )
 
     for q in QUESTIONS:
         render_question_item(q)
@@ -844,54 +962,64 @@ if st.session_state.page == "result":
         st.session_state.page = "survey"; st.rerun()
 
     st.markdown(
-        f"""
-        <div class="page-frame">
-          <div class="section-card" style="margin-bottom:12px;">
-            <div class="section-heading">I. 종합 소견</div>
-            <div class="small-muted">검사 일시: {ts}</div>
-          </div>
-        </div>
-        """,
+        dedent(
+            f"""
+            <div class="page-frame">
+              <div class="section-card" style="margin-bottom:12px;">
+                <div class="section-heading">I. 종합 소견</div>
+                <div class="small-muted">검사 일시: {ts}</div>
+              </div>
+            </div>
+            """
+        ),
         unsafe_allow_html=True,
     )
 
-    col_left, col_right = st.columns(2, gap="large")
-    pill_bg, pill_fg = SEVERITY_PILL.get(sev, ("#E2E8F0", INK))
-    with col_left:
-        st.markdown(
-            f"""
-            <div class="result-card score-card">
-              <div class="small-muted" style="text-transform:uppercase; font-weight:700;">총점</div>
-              <div class="total">{total} <span style="color:#94a3b8; font-size:1.2rem;">/ 27</span></div>
-              <div class="severity-pill" style="background:{pill_bg}; color:{pill_fg}; border:1px solid rgba(15,23,42,0.18);">{sev}</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-    with col_right:
-        narrative = compose_narrative(total, sev, functional, item9_score)
-        st.markdown(
-            f"""
-            <div class="result-card narrative-card">
-              <div class="small-muted" style="text-transform:uppercase; font-weight:700;">주요 소견</div>
-              <p>{narrative}</p>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+    with st.container():
+        st.markdown('<div class="page-frame">', unsafe_allow_html=True)
+        col_left, col_right = st.columns(2, gap="large")
+        pill_bg, pill_fg = SEVERITY_PILL.get(sev, ("#E2E8F0", INK))
+        with col_left:
+            st.markdown(
+                f"""
+<div class="result-card score-card">
+  <div class="score-label">총점</div>
+  <div class="total-stack">
+    <div class="total-number">{total}</div>
+    <div class="total-denom">/ 27</div>
+  </div>
+  <div class="severity-pill" style="background:{pill_bg}; color:{pill_fg};">{sev}</div>
+</div>
+""",
+                unsafe_allow_html=True,
+            )
+        with col_right:
+            narrative = compose_narrative(total, sev, functional, item9_score)
+            st.markdown(
+                f"""
+<div class="result-card narrative-card">
+  <div class="report-block-title">주요 소견</div>
+  <p>{narrative}</p>
+</div>
+""",
+                unsafe_allow_html=True,
+            )
+        st.markdown("</div>", unsafe_allow_html=True)
 
     if unanswered > 0:
         st.markdown(f'<div class="warn">⚠️ 미응답 {unanswered}개 문항은 0점으로 계산되었습니다.</div>', unsafe_allow_html=True)
 
     st.markdown(
-        """
-        <div class="page-frame">
-          <div class="section-card" style="margin-bottom:12px;">
-            <div class="section-heading">II. 상세 점수 분석</div>
-            <div class="small-muted">총점 분포와 증상 영역별 프로파일을 확인하세요.</div>
-          </div>
-        </div>
-        """,
+        dedent(
+            """
+            <div class="page-frame">
+              <div class="section-card" style="margin-bottom:12px;">
+                <div class="section-heading">II. 상세 점수 분석</div>
+                <div class="small-muted">총점 분포와 증상 영역별 프로파일을 확인하세요.</div>
+              </div>
+            </div>
+            """
+        ),
         unsafe_allow_html=True,
     )
 
@@ -900,28 +1028,36 @@ if st.session_state.page == "result":
 
     domain_html = build_domain_profile_html(scores)
     st.markdown(
-        f"""
-        <div class="page-frame">
-          <div class="section-card">
-            <div class="section-heading" style="margin-bottom:12px;">증상 영역별 프로파일</div>
-            {domain_html}
-          </div>
-        </div>
-        """,
+        dedent(
+            f"""
+            <div class="page-frame">
+              <div class="section-card">
+                <div class="section-heading" style="margin-bottom:12px;">증상 영역별 프로파일</div>
+                {domain_html.strip()}
+              </div>
+            </div>
+            """
+        ),
         unsafe_allow_html=True,
     )
 
     if item9_score > 0:
-        st.markdown("""
-        <div class="safety">
-          <div class="section-heading">안전 안내 (문항 9 관련)</div>
-          <div class="small-muted">자살·자해 생각이 있을 때 즉시 도움 받기</div>
-          <div>한국: <b>1393 자살예방상담(24시간)</b>, <b>정신건강상담 1577-0199</b> · 긴급 시 <b>112/119</b>.</div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(
+            dedent(
+                """
+                <div class="safety">
+                  <div class="section-heading">안전 안내 (문항 9 관련)</div>
+                  <div class="small-muted">자살·자해 생각이 있을 때 즉시 도움 받기</div>
+                  <div>한국: <b>1393 자살예방상담(24시간)</b>, <b>정신건강상담 1577-0199</b> · 긴급 시 <b>112/119</b>.</div>
+                </div>
+                """
+            ),
+            unsafe_allow_html=True,
+        )
 
     button_zone = st.container()
     with button_zone:
+        st.markdown('<div class="page-frame">', unsafe_allow_html=True)
         st.markdown('<div class="button-anchor"></div>', unsafe_allow_html=True)
         left, right = st.columns([1, 1], gap="large")
         with left:
@@ -932,13 +1068,19 @@ if st.session_state.page == "result":
             if st.button("닫기"):
                 components.html("<script>window.close();</script>", height=0)
                 st.info("창이 닫히지 않으면 브라우저 탭을 직접 닫거나 ‘새 검사 시작’을 눌러 주세요.", icon="ℹ️")
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("""
-    <div class="footer-note">
-      PHQ-9는 공공 도메인(Pfizer 별도 허가 불필요).<br>
-      Kroenke, Spitzer, & Williams (2001) JGIM · Spitzer, Kroenke, & Williams (1999) JAMA.
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        dedent(
+            """
+            <div class="footer-note">
+              PHQ-9는 공공 도메인(Pfizer 별도 허가 불필요).<br>
+              Kroenke, Spitzer, & Williams (2001) JGIM · Spitzer, Kroenke, & Williams (1999) JAMA.
+            </div>
+            """
+        ),
+        unsafe_allow_html=True,
+    )
 
     # ───────── 결과 PNG 다운로드(비활성화 예시) ─────────
     if False:
