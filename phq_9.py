@@ -17,6 +17,9 @@ def _reset_to_survey():
     st.session_state.answers = {}
     st.session_state.functional = None
     st.session_state.summary = None
+    for i in range(1, 10):
+        st.session_state.pop(f"q{i}", None)
+    st.session_state.pop("functional-impact", None)
     st.session_state.page = "survey"
 
 
@@ -72,74 +75,228 @@ BULLET_MEASURE = "#1F3A8A"   # 진한 인디고(전문 톤)
 # 전역 스타일
 st.markdown(f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
 
-/* 토큰 */
 :root {{
   --ink:{INK}; --subtle:{SUBTLE}; --bg:{APP_BG}; --card:{CARD_BG};
   --border:{BORDER}; --brand:{BRAND}; --accent:{ACCENT};
 }}
 
 html, body, [data-testid="stAppViewContainer"] {{
-  background: var(--bg);
+  background: linear-gradient(180deg, #f7f9fd 0%, #eff3f8 45%, var(--bg) 100%);
   color: var(--ink);
   font-family: "Inter","Noto Sans KR",system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Helvetica,Arial,sans-serif;
-  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}}
+body, p, div, span, li, button, label {{
+  font-family: "Inter","Noto Sans KR",system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Helvetica,Arial,sans-serif !important;
+}}
+
+[data-testid="block-container"] {{
+  max-width: 840px;
+  padding: 0 1.5rem 3rem;
+  margin: 0 auto;
 }}
 
 .block-card {{
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 18px 18px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-  margin: 10px 0 14px;
+  border-radius: 18px;
+  padding: 22px 24px;
+  box-shadow: 0 12px 24px rgba(15,23,42,0.04);
+  margin: 16px 0 24px;
 }}
 
 .badge {{
-  display:inline-block; background: rgba(37,99,235,0.10); color: var(--brand);
-  border: 1px solid rgba(37,99,235,0.25); padding: 3px 10px; border-radius: 999px;
-  font-size: 12px; font-weight: 700; letter-spacing:.2px;
+  display:inline-block;
+  background: rgba(37,99,235,0.12);
+  color: var(--brand);
+  border: 1px solid rgba(37,99,235,0.25);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing:.2px;
 }}
 
 .chip {{
-  display:inline-block; background: #f1f5f9; color:#0f172a; border:1px solid #e2e8f0;
-  padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight:600;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  background: #eef2ff;
+  color:#3730a3;
+  border:1px solid #c7d2fe;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight:700;
 }}
 
-.small-muted {{ color: var(--subtle); font-size: 12.5px; }}
-.section-title {{ font-size: 1.05rem; font-weight: 800; letter-spacing: -0.2px; }}
+.small-muted {{
+  color: var(--subtle);
+  font-size: 12.5px;
+  letter-spacing:-0.1px;
+}}
 
-.k-list {{ margin: 6px 0 0 0; padding-left: 18px; color: var(--ink); }}
-.k-list li {{ margin: 6px 0; }}
+.section-title {{
+  font-size: 1.08rem;
+  font-weight: 900;
+  letter-spacing: -0.3px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}}
 
-.metric-box {{ display:grid; grid-template-columns: repeat(3,1fr); gap:10px; }}
+.k-list {{
+  margin: 12px 0 0;
+  padding-left: 22px;
+  color: var(--ink);
+  font-size: 0.95rem;
+}}
+.k-list li {{
+  margin: 10px 0;
+  line-height: 1.55;
+}}
+
+.metric-box {{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap:12px;
+  margin-top: 16px;
+}}
 .metric {{
-  border:1px solid var(--border); border-radius: 12px; padding: 14px 14px; background:#f8fafc;
+  border:1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 18px;
+  background:#f8fafc;
+  min-height:110px;
 }}
-.metric .label {{ color: var(--subtle); font-weight:700; font-size: 12px; }}
-.metric .value {{ color: var(--ink); font-weight: 800; font-size: 20px; margin-top: 6px; }}
+.metric .label {{
+  color: var(--subtle);
+  font-weight:700;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}}
+.metric .value {{
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 26px;
+  margin-top: 10px;
+  line-height:1.1;
+}}
+.metric .value span {{
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--subtle);
+}}
 
 .item-card {{
-  background:#fff; border:1px solid var(--border); border-radius:12px; padding:14px; margin:10px 0 4px;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px 20px 12px;
+  margin: 0 0 16px;
+  box-shadow: 0 10px 18px rgba(15,23,42,0.05);
+}}
+.item-head {{
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
 }}
 .item-no {{
-  background: #eef2ff; color:#3730a3; border:1px solid #c7d2fe;
-  width:28px; height:28px; border-radius: 9px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;
+  background: #eef2ff;
+  color:#3730a3;
+  border:1px solid #c7d2fe;
+  width:30px;
+  height:30px;
+  border-radius: 10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  font-size:13px;
 }}
-.item-domain {{ color: var(--subtle); font-size: 12px; margin-top: 2px; }}
+.item-domain {{
+  margin-top:10px;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  font-size:11px;
+  color:#4c1d95;
+  background:#f3f0ff;
+  border:1px solid #e0d7ff;
+  padding:2px 10px;
+  border-radius:999px;
+  font-weight:700;
+  letter-spacing:.2px;
+}}
 
 .warn {{
-  background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; border-radius:12px; padding:12px 14px; margin-top:6px;
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  color:#9a3412;
+  border-radius:14px;
+  padding:14px 16px;
+  margin-top:10px;
 }}
 
 .safety {{
-  background:#fff1f4; border:1px solid #fecdd3; border-radius:12px; padding:14px;
+  background:#fff1f4;
+  border:1px solid #fecdd3;
+  border-radius:16px;
+  padding:18px 24px;
+  margin-top:26px;
 }}
 
-[data-testid="stToolbar"], #MainMenu, header, footer {{ display: none !important; }}
+.functional-card {{
+  margin-top: 24px;
+  border-radius: 18px;
+  background: #fefefe;
+}}
+
+.footer-note {{
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.45;
+}}
+
+.legend-inline {{
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+  margin: -8px 8px 6px;
+  font-size:12px;
+  color: var(--subtle);
+  align-items:center;
+}}
+.legend-inline span {{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}}
+.legend-inline i {{
+  width:16px;
+  height:10px;
+  border:1px solid #d4dbe8;
+  border-radius:4px;
+  display:inline-block;
+}}
+
+[data-testid="stToolbar"], #MainMenu, header, footer {{
+  display: none !important;
+}}
 
 /* ───── 라디오(가로 칩 스타일) ───── */
+.stRadio {{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:10px 20px 16px;
+  margin:-12px 0 18px;
+  box-shadow: 0 8px 16px rgba(15,23,42,0.04);
+}}
 .stRadio > div[role="radiogroup"] {{
   display: flex !important;
   gap: 8px !important;
@@ -150,76 +307,96 @@ html, body, [data-testid="stAppViewContainer"] {{
   display: inline-flex !important;
   align-items: center !important;
   gap: 8px !important;
-  padding: 8px 12px !important;
+  padding: 8px 14px !important;
   border-radius: 999px !important;
   background: #f1f5f9 !important;
   border: 1px solid #e2e8f0 !important;
   cursor: pointer !important;
-  transition: transform .02s ease-out, background .2s ease;
+  transition: transform .08s ease-out, background .2s ease, box-shadow .2s ease;
+  font-weight:600 !important;
 }}
-.stRadio [role="radio"]:hover {{ transform: translateY(-1px); }}
-.stRadio [role="radio"] > div:first-child {{ display:none !important; }} /* 기본 점 아이콘 숨김 */
-
-/* 텍스트 항상 선명하게 */
-.stRadio [role="radio"] [data-testid="stMarkdownContainer"] *,
-.stRadio [role="radio"] span, .stRadio [role="radio"] p {{
-  color: var(--ink) !important; -webkit-text-fill-color: var(--ink) !important; opacity:1 !important;
+.stRadio [role="radio"]:hover {{
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(37,99,235,0.12);
 }}
-/* 선택 상태: 브랜드 배경 + 흰 글자 */
+.stRadio [role="radio"] > div:first-child {{
+  display:none !important;
+}}
 .stRadio [role="radio"][aria-checked="true"] {{
-  background: var(--brand) !important; border-color: var(--brand) !important;
+  background: var(--brand) !important;
+  border-color: var(--brand) !important;
+  box-shadow: 0 6px 14px rgba(37,99,235,0.3);
 }}
 .stRadio [role="radio"][aria-checked="true"] * {{
-  color:#ffffff !important; -webkit-text-fill-color:#ffffff !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+}}
+.stRadio, .stRadio * {{
+  color: var(--ink) !important;
+  -webkit-text-fill-color: var(--ink) !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
 }}
 
-/* ───── 버튼 스타일 (Primary/Secondary) ───── */
+/* 버튼 */
 .stButton > button[data-testid="baseButton-primary"],
-.stButton > button[kind="primary"]{{
+.stButton > button[kind="primary"] {{
   background: var(--brand) !important;
   color: #fff !important;
   border: 1.5px solid var(--brand) !important;
   border-radius: 12px !important;
   font-weight: 800 !important;
-  box-shadow: 0 1px 2px rgba(0,0,0,.04) !important;
+  letter-spacing: -0.2px;
+  min-height: 48px;
+  box-shadow: 0 8px 16px rgba(37,99,235,0.25) !important;
 }}
 .stButton > button[data-testid="baseButton-primary"]:hover,
-.stButton > button[kind="primary"]:hover{{ filter: brightness(1.03) !important; }}
-
+.stButton > button[kind="primary"]:hover {{
+  filter: brightness(1.03) !important;
+}}
 .stButton > button:not([data-testid="baseButton-primary"]) {{
   background: #fff !important;
   color: var(--brand) !important;
   border: 1.5px solid var(--brand) !important;
   border-radius: 12px !important;
   font-weight: 800 !important;
-  box-shadow: 0 1px 2px rgba(0,0,0,.04) !important;
+  min-height: 48px;
+  box-shadow: 0 4px 10px rgba(15,23,42,0.08) !important;
 }}
 .stButton > button:not([data-testid="baseButton-primary"]):hover {{
   background: rgba(37,99,235,0.08) !important;
 }}
-.stButton > button * {{ color: inherit !important; }}
+.stButton > button * {{
+  font-family: "Inter","Noto Sans KR",sans-serif !important;
+}}
 
-/* ───── 가독성 핫픽스: 카드 밖(라디오/캡션) ───── */
-.stRadio, .stRadio * {{
-  color: var(--ink) !important;
-  -webkit-text-fill-color: var(--ink) !important;
-  opacity: 1 !important;
-  mix-blend-mode: normal !important;
-  text-shadow: none !important;
+.button-row {{
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  gap: 16px;
+  margin-top: 20px;
 }}
-.block-card ~ div .stRadio, .block-card ~ div .stRadio * {{
-  color: var(--ink) !important;
-  -webkit-text-fill-color: var(--ink) !important;
-}}
-[data-testid="stAppViewContainer"], [data-testid="stAppViewContainer"] * {{ color-scheme: light; }}
 
-/* 타이트 헤더 전용 여백 */
-.block-card.tight-head {{ 
-  margin: 8px 0 6px !important; 
-  padding: 14px 18px 10px !important; 
+.safety .section-title {{
+  font-size: 1.05rem;
+  color:#9f1239;
 }}
-/* 첫 질문 카드 위쪽 간격 더 줄이기 */
-.item-card {{ margin: 2px 0 4px !important; }}
+
+.footer-note {{
+  color: var(--subtle);
+}}
+
+@media (max-width: 640px) {{
+  [data-testid="block-container"] {{
+    padding: 0 1rem 2rem;
+  }}
+  .item-card {{
+    padding: 16px 16px 10px;
+  }}
+  div[data-testid="stVerticalBlock"]:has(.item-card) + div[data-testid="stVerticalBlock"] .stRadio {{
+    padding-left: 36px;
+  }}
+}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -292,10 +469,10 @@ def build_severity_gauge(total: int) -> go.Figure:
         },
         title={'text': "총점 및 중증도 대역", 'font': {'size': 15}}
     ))
-    # ← 폭 고정
+    # ← 반응형 폭
     fig.update_layout(
-        width=720, height=230,
-        margin=dict(l=20, r=20, t=80, b=10),
+        height=250,
+        margin=dict(l=20, r=20, t=70, b=0),
         paper_bgcolor="#ffffff", plot_bgcolor="#ffffff",
         font=dict(color=INK, family="Inter, 'Noto Sans KR', Arial, sans-serif"),
         showlegend=False
@@ -303,25 +480,18 @@ def build_severity_gauge(total: int) -> go.Figure:
     return fig
 
 def render_gauge_legend():
-    st.markdown(f"""
-    <div style="display:flex; gap:14px; align-items:center; margin:6px 6px 12px 6px; font-size:12px; color:{SUBTLE}; flex-wrap:wrap;">
-      <span style="display:inline-flex; align-items:center; gap:6px;">
-        <i style="width:14px; height:10px; background:{GAUGE_STEPS['min']}; border:1px solid #e5e7eb; display:inline-block;"></i> 0–4(최소)
-      </span>
-      <span style="display:inline-flex; align-items:center; gap:6px;">
-        <i style="width:14px; height:10px; background:{GAUGE_STEPS['low']}; border:1px solid #e5e7eb; display:inline-block;"></i> 5–9(경도)
-      </span>
-      <span style="display:inline-flex; align-items:center; gap:6px;">
-        <i style="width:14px; height:10px; background:{GAUGE_STEPS['mid']}; border:1px solid #e5e7eb; display:inline-block;"></i> 10–14(중등도)
-      </span>
-      <span style="display:inline-flex; align-items:center; gap:6px;">
-        <i style="width:14px; height:10px; background:{GAUGE_STEPS['high']}; border:1px solid #e5e7eb; display:inline-block;"></i> 15–19(중등–중증)
-      </span>
-      <span style="display:inline-flex; align-items:center; gap:6px;">
-        <i style="width:14px; height:10px; background:{GAUGE_STEPS['vhi']}; border:1px solid #e5e7eb; display:inline-block;"></i> 20–27(중증)
-      </span>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div class="legend-inline">
+          <span><i style="background:{GAUGE_STEPS['min']};"></i>0–4(최소)</span>
+          <span><i style="background:{GAUGE_STEPS['low']};"></i>5–9(경도)</span>
+          <span><i style="background:{GAUGE_STEPS['mid']};"></i>10–14(중등도)</span>
+          <span><i style="background:{GAUGE_STEPS['high']};"></i>15–19(중등-중증)</span>
+          <span><i style="background:{GAUGE_STEPS['vhi']};"></i>20–27(중증)</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 
@@ -382,21 +552,106 @@ def build_bullet_pair_uniform(scores: List[int]) -> go.Figure:
         # ⬇⬇⬇ 레전드를 아래로 내리고 보더/배경 추가
         legend=dict(
             orientation='h',
-            yanchor='top', y=-0.22,  # 그래프 아래로 이동
+            yanchor='top', y=-0.25,  # 그래프 아래로 이동
             xanchor='left', x=0,
             bgcolor='rgba(255,255,255,0.8)',
             bordercolor='#e5e7eb', borderwidth=1,
             font=dict(size=12, color=INK)
         ),
         # ⬇⬇⬇ 레전드가 들어갈 하단 여백
-        margin=dict(l=10, r=30, t=8, b=46),
-        height=150,
+        margin=dict(l=10, r=30, t=18, b=70),
+        height=180,
         paper_bgcolor="#ffffff", plot_bgcolor="#ffffff",
         font=dict(color=INK, family="Inter, 'Noto Sans KR', Arial, sans-serif")
     )
 
     fig.update_traces(marker_line_width=0)
     return fig
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# UI 헬퍼
+def render_question_item(question: Dict[str, str | int]) -> None:
+    st.markdown(
+        f"""
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-no">{question['no']}</div>
+            <div style="flex:1;">
+              <div style="font-weight:650; line-height:1.55; color:var(--ink); font-size:0.98rem;">
+                {question['ko']}
+              </div>
+              <div class="item-domain">{question['domain']}</div>
+            </div>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.session_state.answers[question["no"]] = st.radio(
+        label=f"문항 {question['no']}",
+        options=LABELS,
+        index=None,
+        horizontal=True,
+        label_visibility="collapsed",
+        key=f"q{question['no']}",
+    )
+
+
+def render_functional_block() -> None:
+    st.markdown(
+        """
+        <div class="block-card functional-card">
+          <div class="section-title">STEP 2 · 기능 손상</div>
+          <div class="small-muted" style="margin-top:6px;">
+            앞선 문항들 때문에 일·집안일·대인관계에 얼마나 어려움이 있었는지 선택하세요.
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.session_state.functional = st.radio(
+        "추가 질문(기능 손상) — “이 문제들 때문에 일·집안일·대인관계가 얼마나 어려웠습니까?”",
+        options=["전혀 어렵지 않음", "어렵지 않음", "어려움", "매우 어려움"],
+        index=None,
+        horizontal=True,
+        key="functional-impact",
+    )
+
+
+def render_summary_card(total: int, sev: str, tr: str, ts: str, functional: str | None) -> None:
+    metric_html = f"""
+    <div class="metric-box">
+      <div class="metric">
+        <div class="label">총점</div>
+        <div class="value">{total} <span>/ 27</span></div>
+      </div>
+      <div class="metric">
+        <div class="label">중증도</div>
+        <div class="value">{sev}</div>
+      </div>
+      <div class="metric">
+        <div class="label">치료 반응</div>
+        <div class="value" style="font-size:22px;">{tr}</div>
+      </div>
+    </div>
+    """
+    functional_html = (
+        f'<div class="small-muted" style="margin-top:14px;">기능 손상: {functional}</div>'
+        if functional
+        else ""
+    )
+    st.markdown(
+        f"""
+        <div class="block-card">
+          <div class="section-title" style="font-size:1.28rem;">PHQ-9 결과 요약</div>
+          <div class="small-muted">검사 일시: {ts}</div>
+          {metric_html}
+          {functional_html}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -498,10 +753,12 @@ def build_bullet_pair_uniform(scores: List[int]) -> go.Figure:
 # ──────────────────────────────────────────────────────────────────────────────
 # 상단 헤더
 st.markdown("""
-<div class="block-card" style="position:sticky; top:0; z-index:5;">
-  <span class="badge">PHQ-9</span>
-  <span style="font-weight:900; font-size:1.15rem; margin-left:8px;">우울 증상 자기보고 검사</span>
-  <div class="small-muted" style="margin-top:4px;">지난 2주 동안의 증상 빈도(0~3점)를 선택합니다.</div>
+<div class="block-card" style="position:sticky; top:0; z-index:5; backdrop-filter:blur(6px);">
+  <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+    <span class="badge">PHQ-9</span>
+    <span style="font-weight:900; font-size:1.2rem;">우울 증상 자기보고 검사</span>
+  </div>
+  <div class="small-muted" style="margin-top:6px;">지난 2주 동안의 증상 빈도를 0~3점으로 선택합니다.</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -512,40 +769,24 @@ if st.session_state.page == "survey":
     <div class="block-card">
       <div class="section-title">지시문</div>
       <ul class="k-list">
-        <li>각 문항에 대해 <b>전혀 아님(0)</b> / <b>며칠 동안(1)</b> / <b>절반 이상(2)</b> / <b>거의 매일(3)</b> 중에서 선택하세요.</li>
-        <li>마지막 항목은 이 문제들로 인해 <b>일·집안일·대인관계</b>에 얼마나 어려움이 있었는지 표시합니다.</li>
+        <li>각 문항에 대해 <b>전혀 아님(0)</b> · <b>며칠 동안(1)</b> · <b>절반 이상(2)</b> · <b>거의 매일(3)</b> 중 해당되는 빈도를 선택합니다.</li>
+        <li>응답을 완료한 뒤 “결과 보기”를 누르면 총점과 중증도, 도메인별 차트를 바로 확인할 수 있습니다.</li>
+        <li>마지막 STEP 2 문항은 이 문제들로 인해 <b>일·집안일·대인관계</b>가 얼마나 어려웠는지 기록합니다.</li>
       </ul>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="block-card tight-head"><div class="section-title">질문지 (지난 2주)</div>', unsafe_allow_html=True)
-    st.caption("표준 PHQ-9 · 빈도 0–3점 척도")
+    st.markdown("""
+    <div class="block-card tight-head" style="margin-bottom:12px;">
+      <div class="section-title">STEP 1 · 질문지 (지난 2주)</div>
+      <div class="small-muted" style="margin-top:4px;">표준 PHQ-9 · 각 문항은 동일한 0–3점 척도를 사용합니다.</div>
+    </div>
+    """, unsafe_allow_html=True)
 
     for q in QUESTIONS:
-        st.markdown(
-            f"""
-            <div class="item-card">
-              <div style="display:flex; gap:10px; align-items:flex-start;">
-                <div class="item-no">{q['no']}</div>
-                <div style="flex:1;">
-                  <div style="font-weight:600; line-height:1.55; color:#0f172a;">{q['ko']}</div>
-                  <div class="item-domain">{q['domain']}</div>
-                </div>
-              </div>
-            </div>
-            """, unsafe_allow_html=True
-        )
-        st.session_state.answers[q["no"]] = st.radio(
-            label=" ", options=LABELS, index=None, horizontal=True,
-            label_visibility="collapsed", key=f"q{q['no']}"
-        )
-    st.markdown('</div>', unsafe_allow_html=True)
+        render_question_item(q)
 
-    st.session_state.functional = st.radio(
-        "추가 질문(기능 손상) — “이 문제들 때문에 일·집안일·대인관계가 얼마나 어려웠습니까?”",
-        options=["전혀 어렵지 않음", "어렵지 않음", "어려움", "매우 어려움"],
-        index=None, horizontal=True
-    )
+    render_functional_block()
 
     if st.button("결과 보기", type="primary", use_container_width=True):
         scores, unanswered = [], 0
@@ -573,38 +814,21 @@ if st.session_state.page == "result":
     if st.button("← 응답 수정하기", use_container_width=True):
         st.session_state.page = "survey"; st.rerun()
 
-    st.markdown(
-        f"""
-        <div class="block-card">
-          <div class="section-title" style="font-size:1.25rem;">PHQ-9 결과 요약</div>
-          <div class="small-muted">검사 일시: {ts}</div>
-          <div style="height:8px;"></div>
-          <div class="metric-box">
-            <div class="metric"><div class="label">총점</div>
-              <div class="value">{total} <span class="small-muted">/ 27</span></div></div>
-            <div class="metric"><div class="label">중증도</div>
-              <div class="value">{sev}</div></div>
-          </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-    if functional:
-         st.caption(f"기능 손상: {functional}")
+    render_summary_card(total, sev, tr, ts, functional)
+
     if unanswered > 0:
         st.markdown(f'<div class="warn">⚠️ 미응답 {unanswered}개 문항은 0점으로 계산되었습니다.</div>', unsafe_allow_html=True)
 
     # 상단 메트릭과 균형 잡힌 컴팩트 게이지
-    # 게이지(폭 고정) – container_width=False
-    # 게이지: 폭 고정 + 레전드
-    st.plotly_chart(build_severity_gauge(total), use_container_width=False, config={"displayModeBar": False})
+    # 게이지: 반응형 폭 + 레전드
+    st.plotly_chart(build_severity_gauge(total), use_container_width=True, config={"displayModeBar": False})
     render_gauge_legend()
 
     # 불릿: 동일 길이 트랙(정규화 버전)
     st.plotly_chart(build_bullet_pair_uniform(scores), use_container_width=True, config={"displayModeBar": False})
 
-        # —— 결과 화면 나가기/닫기 버튼 (두 가지 동작 제공)
-    left, right = st.columns([1,1])
+    # —— 결과 화면 나가기/닫기 버튼 (두 가지 동작 제공)
+    left, right = st.columns([1, 1], gap="medium")
     with left:
         if st.button("📝 새 검사 시작", use_container_width=True):
             _reset_to_survey()
@@ -630,7 +854,7 @@ if st.session_state.page == "result":
         """, unsafe_allow_html=True)
 
     st.markdown("""
-    <div class="small-muted" style="margin-top:8px;">
+    <div class="small-muted footer-note">
       PHQ-9는 공공 도메인(Pfizer 별도 허가 불필요).<br>
       Kroenke, Spitzer, & Williams (2001) JGIM · Spitzer, Kroenke, & Williams (1999) JAMA.
     </div>
