@@ -100,13 +100,14 @@ body, p, div, span, li, button, label {{
 }}
 
 .block-card {{
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 22px 24px;
-  box-shadow: 0 12px 24px rgba(15,23,42,0.04);
-  margin: 16px 0 24px;
-}}
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px 20px;
+    box-shadow: 0 12px 24px rgba(15,23,42,0.04);
+    max-width: 820px;
+    margin: 12px auto 18px;
+  }}
 
 .badge {{
   display:inline-block;
@@ -160,11 +161,11 @@ body, p, div, span, li, button, label {{
 }}
 
 .metric-box {{
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap:12px;
-  margin-top: 16px;
-}}
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap:12px;
+    margin-top: 16px;
+  }}
 .metric {{
   border:1px solid var(--border);
   border-radius: 16px;
@@ -193,13 +194,14 @@ body, p, div, span, li, button, label {{
 }}
 
 .item-card {{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:18px 20px 12px;
-  margin: 0 0 16px;
-  box-shadow: 0 10px 18px rgba(15,23,42,0.05);
-}}
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:18px 20px 12px;
+    margin: 0 auto 12px;
+    box-shadow: 0 10px 18px rgba(15,23,42,0.05);
+    max-width: 820px;
+  }}
 .item-head {{
   display:flex;
   gap:14px;
@@ -234,43 +236,50 @@ body, p, div, span, li, button, label {{
 }}
 
 .warn {{
-  background:#fff7ed;
-  border:1px solid #fed7aa;
-  color:#9a3412;
-  border-radius:14px;
-  padding:14px 16px;
-  margin-top:10px;
-}}
+    background:#fff7ed;
+    border:1px solid #fed7aa;
+    color:#9a3412;
+    border-radius:14px;
+    padding:14px 16px;
+    margin: 14px auto 0;
+    max-width: 820px;
+  }}
 
 .safety {{
-  background:#fff1f4;
-  border:1px solid #fecdd3;
-  border-radius:16px;
-  padding:18px 24px;
-  margin-top:26px;
-}}
+    background:#fff1f4;
+    border:1px solid #fecdd3;
+    border-radius:16px;
+    padding:18px 24px;
+    margin: 24px auto 0;
+    max-width: 820px;
+  }}
 
 .functional-card {{
-  margin-top: 24px;
-  border-radius: 18px;
-  background: #fefefe;
-}}
+    margin-top: 20px;
+    border-radius: 18px;
+    background: #fefefe;
+  }}
 
 .footer-note {{
-  margin-top: 12px;
-  font-size: 12px;
-  line-height: 1.45;
-}}
+    margin-top: 16px;
+    font-size: 12px;
+    line-height: 1.45;
+    max-width: 820px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+  }}
 
 .legend-inline {{
-  display:flex;
-  gap:16px;
-  flex-wrap:wrap;
-  margin: -8px 8px 6px;
-  font-size:12px;
-  color: var(--subtle);
-  align-items:center;
-}}
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+    margin: -4px auto 6px;
+    font-size:12px;
+    color: var(--subtle);
+    align-items:center;
+    max-width: 820px;
+  }}
 .legend-inline span {{
   display:inline-flex;
   align-items:center;
@@ -284,19 +293,60 @@ body, p, div, span, li, button, label {{
   display:inline-block;
 }}
 
+.chart-title {{
+    max-width: 820px;
+    margin: 6px auto -6px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--subtle);
+    letter-spacing: -0.1px;
+  }}
+
+.functional-pill {{
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px dashed var(--border);
+    background: #f8fafc;
+    font-size: 13px;
+    color: var(--subtle);
+  }}
+.functional-pill strong {{
+    color: var(--ink);
+  }}
+
+div[data-testid="stPlotlyChart"] {{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 12px 12px 4px;
+    box-shadow: 0 12px 20px rgba(15,23,42,0.04);
+    max-width: 820px;
+    margin: 10px auto 20px;
+  }}
+div[data-testid="stPlotlyChart"] > div > div {{
+    width: 100% !important;
+  }}
+
+div[data-testid="stHorizontalBlock"] {{
+    max-width: 820px;
+    margin: 20px auto 0 !important;
+  }}
+
 [data-testid="stToolbar"], #MainMenu, header, footer {{
   display: none !important;
 }}
 
 /* ───── 라디오(가로 칩 스타일) ───── */
 .stRadio {{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:10px 20px 16px;
-  margin:-12px 0 18px;
-  box-shadow: 0 8px 16px rgba(15,23,42,0.04);
-}}
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:10px 20px 16px;
+    margin:-12px auto 18px;
+    box-shadow: 0 8px 16px rgba(15,23,42,0.04);
+    max-width: 820px;
+  }}
 .stRadio > div[role="radiogroup"] {{
   display: flex !important;
   gap: 8px !important;
@@ -409,7 +459,7 @@ if "answers" not in st.session_state:
 if "functional" not in st.session_state:
     st.session_state.functional: str | None = None
 if "summary" not in st.session_state:
-    st.session_state.summary = None  # (total, sev, tr, functional, scores, ts, unanswered)
+    st.session_state.summary = None  # (total, sev, functional, scores, ts, unanswered)
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 문항/선택지
@@ -428,18 +478,13 @@ LABELS = ["전혀 아님 (0)", "며칠 동안 (1)", "절반 이상 (2)", "거의
 LABEL2SCORE = {LABELS[0]:0, LABELS[1]:1, LABELS[2]:2, LABELS[3]:3}
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 유틸: 중증도/반응 라벨
+# 유틸: 중증도 라벨
 def phq_severity(total: int) -> str:
     return ("최소" if total<=4 else
             "경도" if total<=9 else
             "중등도" if total<=14 else
             "중등도-중증" if total<=19 else
             "중증")
-
-def treatment_response_label(total: int) -> str:
-    if total < 5: return "관해(remission)"
-    if total < 10: return "부분 반응(partial response)"
-    return "해당 없음"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # PHQ-9 도메인 인덱스(1-based)
@@ -467,12 +512,11 @@ def build_severity_gauge(total: int) -> go.Figure:
                 'thickness': 0.9, 'value': total
             }
         },
-        title={'text': "총점 및 중증도 대역", 'font': {'size': 15}}
     ))
     # ← 반응형 폭
     fig.update_layout(
-        height=250,
-        margin=dict(l=20, r=20, t=70, b=0),
+        height=240,
+        margin=dict(l=20, r=20, t=30, b=0),
         paper_bgcolor="#ffffff", plot_bgcolor="#ffffff",
         font=dict(color=INK, family="Inter, 'Noto Sans KR', Arial, sans-serif"),
         showlegend=False
@@ -619,35 +663,38 @@ def render_functional_block() -> None:
     )
 
 
-def render_summary_card(total: int, sev: str, tr: str, ts: str, functional: str | None) -> None:
-    metric_html = f"""
-    <div class="metric-box">
-      <div class="metric">
-        <div class="label">총점</div>
-        <div class="value">{total} <span>/ 27</span></div>
-      </div>
-      <div class="metric">
-        <div class="label">중증도</div>
-        <div class="value">{sev}</div>
-      </div>
-      <div class="metric">
-        <div class="label">치료 반응</div>
-        <div class="value" style="font-size:22px;">{tr}</div>
-      </div>
-    </div>
-    """
-    functional_html = (
-        f'<div class="small-muted" style="margin-top:14px;">기능 손상: {functional}</div>'
-        if functional
-        else ""
+def render_summary_card(total: int, sev: str, ts: str, functional: str | None) -> None:
+    metrics = [
+        ("총점", f"{total} <span>/ 27</span>"),
+        ("중증도", sev),
+    ]
+    if functional:
+        metrics.append(("기능 손상", functional))
+
+    metric_html = "".join(
+        f"""
+        <div class="metric">
+          <div class="label">{label}</div>
+          <div class="value">{value}</div>
+        </div>
+        """
+        for label, value in metrics
     )
+
+    functional_block = (
+        f'<div class="functional-pill">기능 손상: <strong>{functional}</strong></div>'
+        if functional else ""
+    )
+
     st.markdown(
         f"""
         <div class="block-card">
           <div class="section-title" style="font-size:1.28rem;">PHQ-9 결과 요약</div>
           <div class="small-muted">검사 일시: {ts}</div>
-          {metric_html}
-          {functional_html}
+          <div class="metric-box">
+            {metric_html}
+          </div>
+          {functional_block}
         </div>
         """,
         unsafe_allow_html=True,
@@ -678,8 +725,8 @@ def render_summary_card(total: int, sev: str, tr: str, ts: str, functional: str 
 #     return ImageFont.load_default()
 
 # def make_result_png(summary) -> bytes:
-#     """summary = (total, sev, tr, functional, scores, ts, unanswered)"""
-#     total, sev, tr, functional, scores, ts, unanswered = summary
+#     """summary = (total, sev, functional, scores, ts, unanswered)"""
+#     total, sev, functional, scores, ts, unanswered = summary
 
 #     # ── 차트 PNG (ORCA)
 #     # 게이지: 컴팩트(230px)
@@ -688,7 +735,7 @@ def render_summary_card(total: int, sev: str, tr: str, ts: str, functional: str 
 #     gauge_img = Image.open(io.BytesIO(gauge_png))
 
 #     # 불릿 2개: 가로형(180px)
-#     bullet_fig = build_bullet_pair(scores)  # ← Figure 단일 반환
+#     bullet_fig = build_bullet_pair_uniform(scores)  # ← Figure 단일 반환
 #     bullet_png = pio.to_image(bullet_fig, format="png", width=820, height=180, engine="orca")
 #     bullet_img = Image.open(io.BytesIO(bullet_png))
 
@@ -708,10 +755,13 @@ def render_summary_card(total: int, sev: str, tr: str, ts: str, functional: str 
 
 #     # 메트릭(3열)
 #     cur_y += 8
-#     box_h = 96; box_w = (W - P*2 - 20) // 3
-#     for i, (lab, val) in enumerate([("총점", f"{total} / 27"),
-#                                     ("중증도", sev),
-#                                     ("치료 반응", tr)]):
+#     metrics = [("총점", f"{total} / 27"), ("중증도", sev)]
+#     if functional:
+#         metrics.append(("기능 손상", functional))
+#
+#     box_h = 96
+#     box_w = (W - P*2 - 20) // max(len(metrics), 1)
+#     for i, (lab, val) in enumerate(metrics):
 #         x0 = P + i*(box_w+10); y0 = cur_y
 #         d.rectangle([x0, y0, x0+box_w, y0+box_h], outline=BORDER, fill="#f8fafc", width=2)
 #         d.text((x0+14, y0+12), lab, fill=SUBTLE, font=font24)
@@ -798,9 +848,8 @@ if st.session_state.page == "survey":
                 scores.append(LABEL2SCORE[lab])
         total = sum(scores)
         sev   = phq_severity(total)
-        tr    = treatment_response_label(total)
         ts    = datetime.now().strftime("%Y-%m-%d %H:%M")
-        st.session_state.summary = (total, sev, tr, st.session_state.functional, scores, ts, unanswered)
+        st.session_state.summary = (total, sev, st.session_state.functional, scores, ts, unanswered)
         st.session_state.page = "result"; st.rerun()
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -809,22 +858,21 @@ if st.session_state.page == "result":
     if not st.session_state.summary:
         st.warning("먼저 설문을 완료해 주세요."); st.stop()
 
-    total, sev, tr, functional, scores, ts, unanswered = st.session_state.summary
+    total, sev, functional, scores, ts, unanswered = st.session_state.summary
 
     if st.button("← 응답 수정하기", use_container_width=True):
         st.session_state.page = "survey"; st.rerun()
 
-    render_summary_card(total, sev, tr, ts, functional)
+    render_summary_card(total, sev, ts, functional)
 
     if unanswered > 0:
         st.markdown(f'<div class="warn">⚠️ 미응답 {unanswered}개 문항은 0점으로 계산되었습니다.</div>', unsafe_allow_html=True)
 
-    # 상단 메트릭과 균형 잡힌 컴팩트 게이지
-    # 게이지: 반응형 폭 + 레전드
+    st.markdown('<div class="chart-title">총점 및 중증도 대역</div>', unsafe_allow_html=True)
     st.plotly_chart(build_severity_gauge(total), use_container_width=True, config={"displayModeBar": False})
     render_gauge_legend()
 
-    # 불릿: 동일 길이 트랙(정규화 버전)
+    st.markdown('<div class="chart-title">인지·정서 vs 신체/생리 비교</div>', unsafe_allow_html=True)
     st.plotly_chart(build_bullet_pair_uniform(scores), use_container_width=True, config={"displayModeBar": False})
 
     # —— 결과 화면 나가기/닫기 버튼 (두 가지 동작 제공)
@@ -839,8 +887,6 @@ if st.session_state.page == "result":
             components.html("<script>window.close();</script>", height=0)
             # 일부 환경에서는 브라우저 보안 정책으로 창이 닫히지 않을 수 있음
             st.info("창이 닫히지 않으면 브라우저 탭을 직접 닫거나 ‘새 검사 시작’을 눌러 주세요.", icon="ℹ️")
-
-
 
 
     # 안전 안내
