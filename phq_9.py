@@ -708,6 +708,56 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
       margin: 28px auto 0 !important;
     }}
 }}
+
+/* --- FIX: Question text becomes invisible on light background --- */
+div[data-testid="stVerticalBlock"]:has(.question-meta),
+div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
+  color: var(--ink) !important;
+}}
+
+div[data-testid="stVerticalBlock"]:has(.question-meta) .question-label,
+div[data-testid="stVerticalBlock"]:has(.question-meta) .question-text,
+div[data-testid="stVerticalBlock"]:has(.question-meta) p,
+div[data-testid="stVerticalBlock"]:has(.question-meta) span,
+div[data-testid="stVerticalBlock"]:has(.question-meta) div,
+div[data-testid="stVerticalBlock"]:has(.functional-meta) .functional-label,
+div[data-testid="stVerticalBlock"]:has(.functional-meta) .functional-text,
+div[data-testid="stVerticalBlock"]:has(.functional-meta) p,
+div[data-testid="stVerticalBlock"]:has(.functional-meta) span,
+div[data-testid="stVerticalBlock"]:has(.functional-meta) div {{
+  color: var(--ink) !important;
+  -webkit-text-fill-color: var(--ink) !important;
+  opacity: 1 !important;
+}}
+
+/* Also ensure the small-muted text stays readable */
+div[data-testid="stVerticalBlock"]:has(.question-meta) .small-muted,
+div[data-testid="stVerticalBlock"]:has(.functional-meta) .small-muted {{
+  color: var(--subtle) !important;
+  -webkit-text-fill-color: var(--subtle) !important;
+  opacity: 1 !important;
+}}
+
+/* Preserve radio chip text colors */
+div[data-testid="stVerticalBlock"]:has(.question-meta) .stRadio [role="radio"] *,
+div[data-testid="stVerticalBlock"]:has(.functional-meta) .stRadio [role="radio"] * {{
+  color: var(--chip-text) !important;
+  -webkit-text-fill-color: var(--chip-text) !important;
+  opacity: 1 !important;
+}}
+
+/* Preserve checked chip white text */
+div[data-testid="stVerticalBlock"]:has(.question-meta) .stRadio [role="radio"][aria-checked="true"] *,
+div[data-testid="stVerticalBlock"]:has(.functional-meta) .stRadio [role="radio"][aria-checked="true"] * {{
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}}
+
+/* (Optional but recommended) Make the question “card” background explicitly white */
+div[data-testid="stVerticalBlock"]:has(.question-meta),
+div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
+  background: #FFFFFF !important;
+}}
 </style>
 """, unsafe_allow_html=True)
 
