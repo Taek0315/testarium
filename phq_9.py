@@ -859,6 +859,107 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
   -webkit-text-fill-color: #ffffff !important;
   opacity: 1 !important;
 }}
+
+/* =========================================================
+   BaseWeb Radio (Streamlit) Indicator Override
+   Unchecked: hollow circle
+   Checked: inner dot (white on brand-blue chip)
+   ========================================================= */
+
+/* Base selector for Streamlit/BaseWeb radio labels */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] {{
+  display: inline-flex !important;
+  align-items: center !important;
+}}
+
+/* --- Variant 1: BaseWeb indicator is the first child div inside the label --- */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child {{
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+  border-radius: 999px !important;
+  border: 2px solid var(--chip-border) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  margin-right: 10px !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}}
+
+/* Ensure any inner "dot" div is not forcing a fill in the unchecked state */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child * {{
+  background: transparent !important;
+  box-shadow: none !important;
+}}
+
+/* Checked state detection:
+   BaseWeb often has the input inside the label.
+   Use :has(input:checked) when available, and also keep aria-checked fallback. */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) > div:first-child,
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:first-child {{
+  border-color: #ffffff !important; /* selected chip is brand blue */
+}}
+
+/* Draw the inner dot for checked state */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) > div:first-child::after,
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:first-child::after {{
+  content: "" !important;
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  display: block !important;
+}}
+
+/* --- Variant 2: BaseWeb indicator is an SVG icon (solid dot) --- */
+/* Force SVG to render as hollow circle by default */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] svg {{
+  width: 14px !important;
+  height: 14px !important;
+  margin-right: 10px !important;
+}}
+
+/* Make default SVG hollow: no fill, use stroke */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] svg * {{
+  fill: transparent !important;
+  stroke: var(--chip-border) !important;
+  stroke-width: 2 !important;
+  opacity: 1 !important;
+}}
+
+/* Checked SVG: white stroke + white inner fill (if there are multiple shapes) */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) svg *,
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] svg * {{
+  stroke: #ffffff !important;
+}}
+
+/* If the SVG has a "last" shape that represents the filled dot, fill it on checked */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) svg *:last-child,
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] svg *:last-child {{
+  fill: #ffffff !important;
+}}
+
+/* Preserve text colors in chips */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] * {{
+  color: var(--chip-text) !important;
+  -webkit-text-fill-color: var(--chip-text) !important;
+  opacity: 1 !important;
+}}
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) *,
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] * {{
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}}
+
+/* Do not allow default “black dot” backgrounds to bleed through */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] [data-testid],
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] [class*="Radio"],
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] [class*="radio"] {{
+  background-color: transparent !important;
+}}
 </style>
 """, unsafe_allow_html=True)
 
