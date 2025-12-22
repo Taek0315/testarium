@@ -49,13 +49,13 @@ def _init_orca():
 _ORCA_PATH = _init_orca()
 
 # 색상 토큰 (라이트 테마 기본값 – CSS 변수로 재정의)
-INK     = "#111827"   # 본문 텍스트
-SUBTLE  = "#6B7280"   # 보조 텍스트
-CARD_BG = "#FFFFFF"   # 카드 배경
-APP_BG  = "#F3F4F6"   # 전체 배경
-BORDER  = "#E5E7EB"   # 경계선
-BRAND   = "#2563EB"   # 브랜드/포커스
-ACCENT  = "#DC2626"   # 경고/강조
+INK     = "#0F172A"   # primary text (dark navy)
+SUBTLE  = "#475569"   # secondary text (slate)
+CARD_BG = "#FFFFFF"   # cards are clean white
+APP_BG  = "#F6F8FB"   # off-white app background
+BORDER  = "#E2E8F0"   # subtle border
+BRAND   = "#2563EB"   # keep as-is (brand blue)
+ACCENT  = "#DC2626"   # keep as-is (danger)
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 전역 스타일
@@ -64,42 +64,34 @@ st.markdown(f"""
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
 
 :root {{
-  --bg:{APP_BG};
-  --card:{CARD_BG};
-  --ink:{INK};
-  --subtle:{SUBTLE};
-  --border:{BORDER};
-  --brand:{BRAND};
-  --accent:{ACCENT};
-  --soft:#F8FAFC;
-  --shell-bg:rgba(255,255,255,0.96);
-  --inner-card:#FFFFFF;
-  --chip-bg:#FFFFFF;
-  --chip-border:#D4D4D8;
-  --chip-text:#111827;
-}}
+  --bg: #F6F8FB;
+  --card: #FFFFFF;
+  --ink: #0F172A;
+  --subtle: #475569;
+  --border: #E2E8F0;
+  --brand: #2563EB;
+  --accent: #DC2626;
 
-@media (prefers-color-scheme: dark) {{
-  :root {{
-    --bg:#020617;
-    --card:#0B1220;
-    --ink:#E5E7EB;
-    --subtle:#9CA3AF;
-    --border:#1F2937;
-    --brand:#3B82F6;
-    --accent:#F97373;
-    --soft:#111827;
-    --shell-bg:#0D1526;
-    --inner-card:#101B2D;
-    --chip-bg:#1F2937;
-    --chip-border:#334155;
-    --chip-text:#F9FAFB;
-  }}
+  --soft: #F8FAFC;
+  --shell-bg: rgba(255,255,255,0.98);
+  --inner-card: #FFFFFF;
+
+  --chip-bg: #FFFFFF;
+  --chip-border: #CBD5E1;
+  --chip-text: #0F172A;
 }}
 
 [data-testid="stAppViewContainer"] {{
-  color-scheme: light dark;
-  background: var(--bg);
+  color-scheme: light !important;
+  background: var(--bg) !important;
+}}
+
+html, body {{
+  color-scheme: light !important;
+}}
+
+[data-testid="stAppViewContainer"] * {{
+  color-scheme: light !important;
 }}
 
 html, body {{
@@ -130,7 +122,7 @@ body, p, div, span, li, button, label {{
   border: 1px solid var(--border);
   border-radius: 24px;
   padding: 28px 32px;
-  box-shadow: 0 24px 48px rgba(15,23,42,0.1);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }}
 
 .report-shell {{
@@ -138,7 +130,7 @@ body, p, div, span, li, button, label {{
   border: 1px solid var(--border);
   border-radius: 32px;
   padding: 32px;
-  box-shadow: 0 28px 58px rgba(15,23,42,0.15);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }}
 
 .report-shell.compact {{
@@ -197,9 +189,13 @@ body, p, div, span, li, button, label {{
 }}
 
 .small-muted {{
-  color: var(--subtle);
+  color: var(--subtle) !important;
   font-size: 0.92rem;
   letter-spacing: -0.1px;
+}}
+
+.section-card, .report-shell, .report-card, .gauge-card, .narrative-card {{
+  color: var(--ink);
 }}
 
   .report-grid {{
@@ -213,7 +209,7 @@ body, p, div, span, li, button, label {{
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 24px;
-    box-shadow: 0 18px 42px rgba(15,23,42,0.12);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
   }}
 
   .summary-layout {{
@@ -230,7 +226,7 @@ body, p, div, span, li, button, label {{
     border-radius: 24px;
     padding: 32px 24px 36px;
     text-align: center;
-    box-shadow: 0 18px 42px rgba(15,23,42,0.12);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -245,7 +241,7 @@ body, p, div, span, li, button, label {{
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: inset 0 1px 4px rgba(15,23,42,0.15);
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
   }}
 
   .gauge-circle::after {{
@@ -253,8 +249,8 @@ body, p, div, span, li, button, label {{
     position: absolute;
     inset: 24px;
     border-radius: 50%;
-    background: var(--shell-bg);
-    box-shadow: inset 0 1px 2px rgba(15,23,42,0.08);
+    background: var(--card);
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
   }}
 
   .gauge-inner {{
@@ -293,7 +289,7 @@ body, p, div, span, li, button, label {{
     border: 1px solid var(--border);
     border-radius: 24px;
     padding: 28px 30px;
-    box-shadow: 0 18px 42px rgba(15,23,42,0.12);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -412,7 +408,7 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
   border: 1px solid var(--border);
   border-radius: 18px;
   padding: 22px 24px 12px;
-  box-shadow: 0 16px 32px rgba(15,23,42,0.08);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }}
 
 .functional-divider {{
@@ -452,7 +448,7 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
   border: 1px solid var(--border);
   background: var(--inner-card);
   min-width: 140px;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
 }}
 
 .legend-chip strong {{
@@ -469,7 +465,7 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
   border-radius: 24px;
   padding: 24px 28px;
   background: var(--inner-card);
-  box-shadow: 0 18px 42px rgba(15,23,42,0.12);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }}
 
 .domain-profile {{
@@ -508,10 +504,10 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
 .domain-bar {{
   position: relative;
   height: 16px;
-  background: rgba(148,163,184,0.25);
+  background: rgba(226,232,240,0.8);
   border-radius: 999px;
   overflow: hidden;
-  border: 1px solid rgba(148,163,184,0.4);
+  border: 1px solid rgba(203,213,225,0.9);
 }}
 
 .domain-fill {{
@@ -530,9 +526,9 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
 }}
 
 .warn {{
-  background: rgba(254,215,170,0.35);
-  border:1px solid rgba(251,191,36,0.6);
-  color:#92400E;
+  background: #FFF7ED;
+  border: 1px solid #FDBA74;
+  color: #7C2D12;
   border-radius:18px;
   padding:16px 20px;
   max-width: 960px;
@@ -541,13 +537,14 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
 }}
 
 .safety {{
-  background: rgba(248,113,113,0.12);
-  border:1px solid rgba(252,165,165,0.6);
+  background: #FFF1F2;
+  border: 1px solid #FDA4AF;
+  color: var(--ink);
   border-radius:22px;
   padding:24px 28px;
   max-width:960px;
   margin: 24px auto 0;
-  box-shadow: 0 20px 40px rgba(190,24,93,0.15);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }}
 
 .safety .section-heading {{
@@ -566,11 +563,11 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
 div[data-testid="stPlotlyChart"] {{
   max-width: 960px;
   margin: 12px auto 18px;
-  background: var(--inner-card);
+  background: #FFFFFF;
   border: 1px solid var(--border);
   border-radius: 26px;
   padding: 18px 18px 6px;
-  box-shadow: 0 24px 48px rgba(15,23,42,0.12);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }}
 
 div[data-testid="stPlotlyChart"] > div > div {{
@@ -592,7 +589,7 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
     border: 1px solid var(--border);
     border-radius: 28px;
     padding: 28px 32px 32px;
-    box-shadow: 0 24px 48px rgba(15,23,42,0.12);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }}
 
 [data-testid="stToolbar"], #MainMenu, header, footer {{
@@ -641,14 +638,14 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
 
 .stRadio [role="radio"]:hover {{
   border-color: var(--brand) !important;
-  box-shadow: 0 3px 10px rgba(37,99,235,0.18);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.18);
 }}
 
 .stRadio [role="radio"][aria-checked="true"] {{
   background: var(--brand) !important;
   border-color: var(--brand) !important;
   color: #ffffff !important;
-  box-shadow: 0 8px 18px rgba(37,99,235,0.35);
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.30);
 }}
 
 .stRadio [role="radio"][aria-checked="true"] * {{
@@ -686,7 +683,7 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
   border-radius: 12px !important;
   font-weight: 800 !important;
   min-height: 48px;
-  box-shadow: 0 6px 16px rgba(15,23,42,0.1) !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08) !important;
 }}
 
 @media (max-width: 640px) {{
@@ -1194,7 +1191,7 @@ if st.session_state.page == "result":
                 <div class="summary-layout">
                   <div class="gauge-card">
                     <div class="metric-label">총점</div>
-                    <div class="gauge-circle" style="background: conic-gradient({arc_color} {gauge_percent:.2f}%, rgba(148,163,184,0.25) {gauge_percent:.2f}%, rgba(148,163,184,0.25) 100%);">
+                    <div class="gauge-circle" style="background: conic-gradient({arc_color} {gauge_percent:.2f}%, rgba(226,232,240,0.9) {gauge_percent:.2f}%, rgba(226,232,240,0.9) 100%);">
                       <div class="gauge-inner">
                         <div class="gauge-number">{total}</div>
                         <div class="gauge-denom">/ 27</div>
