@@ -632,9 +632,11 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
   opacity: 1 !important;
 }}
 
+/* NOTE: Do not hide the indicator; we restyle it below.
 .stRadio [role="radio"] > div:first-child {{
   display:none !important;
 }}
+*/
 
 .stRadio [role="radio"]:hover {{
   border-color: var(--brand) !important;
@@ -757,6 +759,105 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) .stRadio [role="radio"]
 div[data-testid="stVerticalBlock"]:has(.question-meta),
 div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
   background: #FFFFFF !important;
+}}
+
+/* =========================
+   RADIO INDICATOR (ROBUST)
+   Unchecked: hollow circle
+   Checked: clear selected mark
+   ========================= */
+
+/* Variant A: indicator is the first child div inside the radio label */
+.stRadio [role="radiogroup"] [role="radio"] > div:first-child {{
+  display: inline-flex !important;
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+  border-radius: 999px !important;
+  border: 2px solid var(--chip-border) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  margin-right: 10px !important;
+  box-sizing: border-box !important;
+}}
+
+/* Checked (Variant A): white ring + inner white dot (works with brand-blue selected chip) */
+.stRadio [role="radiogroup"] [role="radio"][aria-checked="true"] > div:first-child {{
+  border-color: #ffffff !important;
+  position: relative !important;
+}}
+.stRadio [role="radiogroup"] [role="radio"][aria-checked="true"] > div:first-child::after {{
+  content: "" !important;
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  display: block !important;
+  margin: auto !important;
+}}
+
+/* Variant B: indicator rendered via SVG (common in some Streamlit versions) */
+.stRadio [role="radiogroup"] [role="radio"] svg {{
+  width: 14px !important;
+  height: 14px !important;
+  margin-right: 10px !important;
+  overflow: visible !important;
+}}
+
+/* Default SVG: hollow circle */
+.stRadio [role="radiogroup"] [role="radio"] svg circle {{
+  fill: transparent !important;
+  stroke: var(--chip-border) !important;
+  stroke-width: 2 !important;
+  opacity: 1 !important;
+}}
+
+/* Checked SVG: show selected mark in white */
+.stRadio [role="radiogroup"] [role="radio"][aria-checked="true"] svg circle {{
+  stroke: #ffffff !important;
+}}
+.stRadio [role="radiogroup"] [role="radio"][aria-checked="true"] svg circle:last-child {{
+  fill: #ffffff !important;
+}}
+
+/* Variant C: indicator via pseudo-element on the radio label itself (fallback) */
+.stRadio [role="radiogroup"] [role="radio"]::before {{
+  content: "" !important;
+  display: inline-block !important;
+  width: 14px !important;
+  height: 14px !important;
+  border-radius: 999px !important;
+  border: 2px solid var(--chip-border) !important;
+  background: transparent !important;
+  margin-right: 10px !important;
+  box-sizing: border-box !important;
+}}
+.stRadio [role="radiogroup"] [role="radio"][aria-checked="true"]::before {{
+  border-color: #ffffff !important;
+}}
+.stRadio [role="radiogroup"] [role="radio"][aria-checked="true"]::after {{
+  content: "" !important;
+  display: inline-block !important;
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  position: relative !important;
+  left: -20px !important; /* approximate alignment inside the ring */
+  top: 0px !important;
+}}
+
+/* Preserve chip text colors */
+.stRadio [role="radio"] * {{
+  color: var(--chip-text) !important;
+  -webkit-text-fill-color: var(--chip-text) !important;
+  opacity: 1 !important;
+}}
+.stRadio [role="radio"][aria-checked="true"] * {{
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
 }}
 </style>
 """, unsafe_allow_html=True)
