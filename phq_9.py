@@ -752,8 +752,8 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) .stRadio [role="radio"]
 /* Preserve checked chip white text */
 div[data-testid="stVerticalBlock"]:has(.question-meta) .stRadio [role="radio"][aria-checked="true"] *,
 div[data-testid="stVerticalBlock"]:has(.functional-meta) .stRadio [role="radio"][aria-checked="true"] * {{
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
+  color: var(--ink) !important;
+  -webkit-text-fill-color: var(--ink) !important;
 }}
 
 /* (Optional but recommended) Make the question “card” background explicitly white */
@@ -947,8 +947,8 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
 }}
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) *,
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] * {{
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
+  color: var(--ink) !important;
+  -webkit-text-fill-color: var(--ink) !important;
 }}
 
 /* Do not allow default “black dot” backgrounds to bleed through */
@@ -959,11 +959,16 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
 }}
 
 /* =========================================================
-   RADIO INDICATOR: make selected state visible (BaseWeb)
+   BaseWeb Radio Indicator (Streamlit) — Hollow circle + visible selected dot
    ========================================================= */
 
-/* Base: indicator container (first child div) */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child {
+/* If any earlier rule hides the indicator, neutralize it */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child {{
+  display: inline-flex !important;
+}}
+
+/* Indicator container: hollow ring by default */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child {{
   width: 14px !important;
   height: 14px !important;
   min-width: 14px !important;
@@ -972,65 +977,60 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
   border: 2px solid var(--chip-border) !important;
   background: transparent !important;
   box-shadow: none !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
   margin-right: 10px !important;
   box-sizing: border-box !important;
+  align-items: center !important;
+  justify-content: center !important;
   position: relative !important;
-}
+}}
 
-/* IMPORTANT: remove any existing pseudo-elements first (avoid conflicts) */
+/* Clear any conflicting pseudo elements */
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child::before,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child::after {
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child::after {{
   content: none !important;
-}
+}}
 
-/* Selected ring color (white if selected option chip background is brand blue) */
+/* Selected ring + inner dot (brand blue) */
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) > div:first-child,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:first-child {
-  border-color: var(--brand) !important;   /* use brand ring so it is visible on white/light UI */
-}
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:first-child {{
+  border-color: var(--brand) !important;
+}}
 
-/* Selected inner dot (brand blue dot) */
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) > div:first-child::after,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:first-child::after {
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:first-child::after {{
   content: "" !important;
   width: 7px !important;
   height: 7px !important;
   border-radius: 999px !important;
   background: var(--brand) !important;
   display: block !important;
-}
+}}
 
-/* SVG variant: make sure checked state becomes filled */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] svg * {
+/* SVG indicator variant: force hollow ring, then fill on checked */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] svg * {{
   fill: transparent !important;
   stroke: var(--chip-border) !important;
   stroke-width: 2 !important;
   opacity: 1 !important;
-}
+}}
+
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) svg *,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] svg * {
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] svg * {{
   stroke: var(--brand) !important;
-}
+}}
+
+/* Fill the last shape to show selected dot if SVG uses layered shapes */
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) svg *:last-child,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] svg *:last-child {
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] svg *:last-child {{
   fill: var(--brand) !important;
-}
+}}
 
-/* Prevent other rules from overriding indicator fill */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child *,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] svg * {
-  background: transparent !important;
-}
-
-/* Keep option text readable */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] * {
+/* Keep text readable (do not make it white unless your chip background is blue) */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] * {{
   color: var(--ink) !important;
   -webkit-text-fill-color: var(--ink) !important;
   opacity: 1 !important;
-}
+}}
 </style>
 """, unsafe_allow_html=True)
 
