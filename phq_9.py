@@ -762,235 +762,47 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
   background: #FFFFFF !important;
 }}
 
-/* =========================
-   RADIO INDICATOR (ROBUST)
-   Unchecked: hollow circle
-   Checked: clear selected mark
-   ========================= */
-
-/* Variant A: indicator is the first child div inside the radio label */
-.stRadio [role="radiogroup"] [role="radio"] > div:first-child {{
-  display: inline-flex !important;
-  width: 14px !important;
-  height: 14px !important;
-  min-width: 14px !important;
-  min-height: 14px !important;
-  border-radius: 999px !important;
-  border: 2px solid var(--chip-border) !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  margin-right: 10px !important;
-  box-sizing: border-box !important;
-}}
-
-/* Checked (Variant A): white ring + inner white dot (works with brand-blue selected chip) */
-.stRadio [role="radiogroup"] [role="radio"][aria-checked="true"] > div:first-child {{
-  border-color: var(--brand) !important;
-  position: relative !important;
-}}
-.stRadio [role="radiogroup"] [role="radio"][aria-checked="true"] > div:first-child::after {{
-  content: "" !important;
-  width: 6px !important;
-  height: 6px !important;
-  border-radius: 999px !important;
-  background: var(--brand) !important;
-  display: block !important;
-  margin: auto !important;
-}}
-
-/* Variant B: indicator rendered via SVG (common in some Streamlit versions) */
-.stRadio [role="radiogroup"] [role="radio"] svg {{
-  width: 14px !important;
-  height: 14px !important;
-  margin-right: 10px !important;
-  overflow: visible !important;
-}}
-
-/* Default SVG: hollow circle */
-.stRadio [role="radiogroup"] [role="radio"] svg circle {{
-  fill: transparent !important;
-  stroke: var(--chip-border) !important;
-  stroke-width: 2 !important;
-  opacity: 1 !important;
-}}
-
-/* Checked SVG: show selected mark in white */
-.stRadio [role="radiogroup"] [role="radio"][aria-checked="true"] svg circle {{
-  stroke: var(--brand) !important;
-}}
-.stRadio [role="radiogroup"] [role="radio"][aria-checked="true"] svg circle:last-child {{
-  fill: var(--brand) !important;
-}}
-
-/* Variant C: indicator via pseudo-element on the radio label itself (fallback) */
-.stRadio [role="radiogroup"] [role="radio"]::before {{
-  content: "" !important;
-  display: inline-block !important;
-  width: 14px !important;
-  height: 14px !important;
-  border-radius: 999px !important;
-  border: 2px solid var(--chip-border) !important;
-  background: transparent !important;
-  margin-right: 10px !important;
-  box-sizing: border-box !important;
-}}
-.stRadio [role="radiogroup"] [role="radio"][aria-checked="true"]::before {{
-  border-color: var(--brand) !important;
-}}
-.stRadio [role="radiogroup"] [role="radio"][aria-checked="true"]::after {{
-  content: "" !important;
-  display: inline-block !important;
-  width: 6px !important;
-  height: 6px !important;
-  border-radius: 999px !important;
-  background: var(--brand) !important;
-  position: relative !important;
-  left: -20px !important; /* approximate alignment inside the ring */
-  top: 0px !important;
-}}
-
-/* Preserve chip text colors */
-.stRadio [role="radio"] * {{
-  color: var(--chip-text) !important;
-  -webkit-text-fill-color: var(--chip-text) !important;
-  opacity: 1 !important;
-}}
-/* (Checked chip text is handled above; keep consistent with BaseWeb override) */
-
 /* =========================================================
-   BaseWeb Radio (Streamlit) Indicator Override
-   Unchecked: hollow circle
-   Checked: inner dot (white on brand-blue chip)
+   FINAL RADIO INDICATOR (Streamlit/BaseWeb)
+   Unchecked: hollow ring
+   Checked: centered inner dot
+   No stray SVG marks
    ========================================================= */
 
-/* Base selector for Streamlit/BaseWeb radio labels */
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"] {{
-  display: inline-flex !important;
   align-items: center !important;
 }}
 
-/* --- Variant 1: BaseWeb indicator is the first child div inside the label --- */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child {{
-  width: 14px !important;
-  height: 14px !important;
-  min-width: 14px !important;
-  min-height: 14px !important;
-  border-radius: 999px !important;
-  border: 2px solid var(--chip-border) !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  margin-right: 10px !important;
-  box-sizing: border-box !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}}
-
-/* Ensure any inner "dot" div is not forcing a fill in the unchecked state */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child * {{
-  background: transparent !important;
-  box-shadow: none !important;
-}}
-
-/* Checked state detection:
-   BaseWeb often has the input inside the label.
-   Use :has(input:checked) when available, and also keep aria-checked fallback. */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) > div:first-child,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:first-child {{
-  border-color: #ffffff !important; /* selected chip is brand blue */
-}}
-
-/* Draw the inner dot for checked state */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) > div:first-child::after,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:first-child::after {{
-  content: "" !important;
-  width: 6px !important;
-  height: 6px !important;
-  border-radius: 999px !important;
-  background: #ffffff !important;
-  display: block !important;
-}}
-
-/* --- Variant 2: BaseWeb indicator is an SVG icon (solid dot) --- */
-/* Force SVG to render as hollow circle by default */
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"] svg {{
-  width: 14px !important;
-  height: 14px !important;
-  margin-right: 10px !important;
+  display: none !important;
 }}
 
-/* Make default SVG hollow: no fill, use stroke */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] svg * {{
-  fill: transparent !important;
-  stroke: var(--chip-border) !important;
-  stroke-width: 2 !important;
-  opacity: 1 !important;
-}}
-
-/* Checked SVG: white stroke + white inner fill (if there are multiple shapes) */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) svg *,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] svg * {{
-  stroke: #ffffff !important;
-}}
-
-/* If the SVG has a "last" shape that represents the filled dot, fill it on checked */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) svg *:last-child,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] svg *:last-child {{
-  fill: #ffffff !important;
-}}
-
-/* Preserve text colors in chips */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] * {{
-  color: var(--chip-text) !important;
-  -webkit-text-fill-color: var(--chip-text) !important;
-  opacity: 1 !important;
-}}
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) *,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] * {{
-  color: var(--ink) !important;
-  -webkit-text-fill-color: var(--ink) !important;
-}}
-
-/* Do not allow default “black dot” backgrounds to bleed through */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] [data-testid],
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] [class*="Radio"],
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] [class*="radio"] {{
-  background-color: transparent !important;
-}}
-
-/* =========================================================
-   BaseWeb Radio Indicator (Streamlit) — Hollow circle + visible selected dot
-   ========================================================= */
-
-/* If any earlier rule hides the indicator, neutralize it */
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child {{
   display: inline-flex !important;
-}}
+  align-items: center !important;
+  justify-content: center !important;
 
-/* Indicator container: hollow ring by default */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child {{
   width: 14px !important;
   height: 14px !important;
   min-width: 14px !important;
   min-height: 14px !important;
+
   border-radius: 999px !important;
   border: 2px solid var(--chip-border) !important;
   background: transparent !important;
   box-shadow: none !important;
+
   margin-right: 10px !important;
   box-sizing: border-box !important;
-  align-items: center !important;
-  justify-content: center !important;
+
   position: relative !important;
 }}
 
-/* Clear any conflicting pseudo elements */
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child::before,
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child::after {{
   content: none !important;
 }}
 
-/* Selected ring + inner dot (brand blue) */
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) > div:first-child,
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:first-child {{
   border-color: var(--brand) !important;
@@ -998,85 +810,6 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
 
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) > div:first-child::after,
 .stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:first-child::after {{
-  content: "" !important;
-  width: 7px !important;
-  height: 7px !important;
-  border-radius: 999px !important;
-  background: var(--brand) !important;
-  display: block !important;
-}}
-
-/* SVG indicator variant: force hollow ring, then fill on checked */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] svg * {{
-  fill: transparent !important;
-  stroke: var(--chip-border) !important;
-  stroke-width: 2 !important;
-  opacity: 1 !important;
-}}
-
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) svg *,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] svg * {{
-  stroke: var(--brand) !important;
-}}
-
-/* Fill the last shape to show selected dot if SVG uses layered shapes */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) svg *:last-child,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] svg *:last-child {{
-  fill: var(--brand) !important;
-}}
-
-/* Keep text readable (do not make it white unless your chip background is blue) */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] * {{
-  color: var(--ink) !important;
-  -webkit-text-fill-color: var(--ink) !important;
-  opacity: 1 !important;
-}}
-
-/* =========================================================
-   RADIO INDICATOR FINAL FIX: centered inner dot + remove stray mark
-   ========================================================= */
-
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] {
-  align-items: center !important;
-}
-
-/* Indicator container (the circle) */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child {
-  width: 14px !important;
-  height: 14px !important;
-  min-width: 14px !important;
-  min-height: 14px !important;
-  border-radius: 999px !important;
-  border: 2px solid var(--chip-border) !important;
-  background: transparent !important;
-  box-shadow: none !important;
-
-  /* CRITICAL: center children and allow absolute pseudo-element centering */
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  position: relative !important;
-
-  margin-right: 10px !important;
-  box-sizing: border-box !important;
-  overflow: visible !important;
-}
-
-/* Remove any previous pseudo-elements */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child::before,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child::after {
-  content: none !important;
-}
-
-/* Selected ring color */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) > div:first-child,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:first-child {
-  border-color: var(--brand) !important;
-}
-
-/* Selected inner dot — FORCE absolute center */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) > div:first-child::after,
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:first-child::after {
   content: "" !important;
   width: 7px !important;
   height: 7px !important;
@@ -1087,25 +820,13 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
   left: 50% !important;
   top: 50% !important;
   transform: translate(-50%, -50%) !important;
-}
+}}
 
-/* Hide/neutralize any default BaseWeb SVG mark that creates a stray icon */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] svg {
-  display: none !important;
-}
-
-/* Also ensure no unexpected inner backgrounds create dots */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child * {
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-/* Keep label text readable */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] * {
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] * {{
   color: var(--ink) !important;
   -webkit-text-fill-color: var(--ink) !important;
   opacity: 1 !important;
-}
+}}
 </style>
 """, unsafe_allow_html=True)
 
