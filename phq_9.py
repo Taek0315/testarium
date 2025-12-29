@@ -1031,6 +1031,81 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
   -webkit-text-fill-color: var(--ink) !important;
   opacity: 1 !important;
 }}
+
+/* =========================================================
+   RADIO INDICATOR FINAL FIX: centered inner dot + remove stray mark
+   ========================================================= */
+
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] {
+  align-items: center !important;
+}
+
+/* Indicator container (the circle) */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child {
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+  border-radius: 999px !important;
+  border: 2px solid var(--chip-border) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+
+  /* CRITICAL: center children and allow absolute pseudo-element centering */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+
+  margin-right: 10px !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+/* Remove any previous pseudo-elements */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child::before,
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child::after {
+  content: none !important;
+}
+
+/* Selected ring color */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) > div:first-child,
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:first-child {
+  border-color: var(--brand) !important;
+}
+
+/* Selected inner dot — FORCE absolute center */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) > div:first-child::after,
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:first-child::after {
+  content: "" !important;
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 999px !important;
+  background: var(--brand) !important;
+
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+/* Hide/neutralize any default BaseWeb SVG mark that creates a stray icon */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] svg {
+  display: none !important;
+}
+
+/* Also ensure no unexpected inner backgrounds create dots */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child * {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Keep label text readable */
+.stRadio div[role="radiogroup"] label[data-baseweb="radio"] * {
+  color: var(--ink) !important;
+  -webkit-text-fill-color: var(--ink) !important;
+  opacity: 1 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
