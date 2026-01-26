@@ -176,11 +176,6 @@ body, p, div, span, li, button, label {{
   margin: 0 auto;
 }}
 
-.survey-shell div[data-testid="stRadio"] {{
-  max-width: 960px;
-  margin: 0 auto;
-}}
-
 .survey-shell div[data-testid="stButton"] {{
   max-width: 960px;
   margin: 18px auto 0;
@@ -202,28 +197,27 @@ body, p, div, span, li, button, label {{
 }}
 
 .q-card {{
-  background: var(--card);
+  background: #fff;
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 18px 22px;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-  margin: 12px auto 8px;
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 10px 24px rgba(15,23,42,0.08);
+  margin: 0 auto 14px;
   width: 100%;
 }}
 
-.q-card-title {{
-  font-size: 0.82rem;
+.q-no {{
+  font-size: 12px;
   font-weight: 800;
   color: var(--brand);
-  letter-spacing: 0.6px;
-  margin-bottom: 6px;
 }}
 
-.q-card-text {{
-  font-size: 1rem;
-  font-weight: 600;
+.q-text {{
+  font-size: 1.02rem;
+  font-weight: 700;
   color: var(--ink);
-  line-height: 1.55;
+  margin-top: 6px;
+  line-height: 1.5;
 }}
 
 .feature-grid {{
@@ -656,78 +650,44 @@ div[data-testid="stPlotlyChart"] > div > div {{
   display: none !important;
 }}
 
-/* ───── 라디오 카드 + 칩 ───── */
-.survey-shell div[data-testid="stRadio"],
-.survey-shell .stRadio {{
-  background: var(--inner-card);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 18px 20px 12px;
-  margin: 0 auto;
-  max-width: 960px;
-  width: 100%;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+/* ───── 라디오 칩 ───── */
+.q-card div[data-testid="stRadio"] {{
+  margin-top: 12px;
 }}
 
-.survey-shell div[data-testid="stRadio"] [data-testid="stWidgetLabel"],
-.survey-shell .stRadio [data-testid="stWidgetLabel"] {{
-  font-size: 0.95rem;
+div[data-testid="stRadio"] > div[role="radiogroup"] {{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}}
+
+div[data-testid="stRadio"] input[type="radio"] {{
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}}
+
+div[data-testid="stRadio"] label {{
+  border: 1px solid #CBD5E1;
+  border-radius: 999px;
+  padding: 10px 18px;
+  background: #fff;
   font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 12px;
-  display: block;
-  white-space: pre-line;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.15s ease;
 }}
 
-.survey-shell div[data-testid="stRadio"] > div[role="radiogroup"],
-.survey-shell .stRadio > div[role="radiogroup"] {{
-  display: flex !important;
-  gap: 8px !important;
-  flex-wrap: wrap !important;
-  align-items: center !important;
-}}
-
-.survey-shell div[data-testid="stRadio"] [role="radio"],
-.survey-shell .stRadio [role="radio"] {{
-  display: inline-flex !important;
-  align-items: center !important;
-  padding: 10px 22px !important;
-  border-radius: 999px !important;
-  background: var(--chip-bg) !important;
-  border: 1px solid var(--chip-border) !important;
-  cursor: pointer !important;
-  transition: all .15s ease;
-  font-weight: 600 !important;
-  opacity: 1 !important;
-  color: var(--chip-text) !important;
-}}
-
-.survey-shell div[data-testid="stRadio"] [role="radio"] *,
-.survey-shell .stRadio [role="radio"] * {{
-  color: var(--chip-text) !important;
-  -webkit-text-fill-color: var(--chip-text) !important;
-  opacity: 1 !important;
-}}
-
-.survey-shell div[data-testid="stRadio"] [role="radio"]:hover,
-.survey-shell .stRadio [role="radio"]:hover {{
-  border-color: var(--brand) !important;
+div[data-testid="stRadio"] label:hover {{
+  border-color: var(--brand);
   box-shadow: 0 6px 14px rgba(37, 99, 235, 0.18);
 }}
 
-.survey-shell div[data-testid="stRadio"] [role="radio"][aria-checked="true"],
-.survey-shell .stRadio [role="radio"][aria-checked="true"] {{
-  background: rgba(37, 99, 235, 0.10) !important;
-  border-color: var(--brand) !important;
-  color: var(--ink) !important;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.10);
-}}
-
-.survey-shell div[data-testid="stRadio"] [role="radio"][aria-checked="true"] *,
-.survey-shell .stRadio [role="radio"][aria-checked="true"] * {{
-  color: var(--ink) !important;
-  -webkit-text-fill-color: var(--ink) !important;
-  opacity: 1 !important;
+div[data-testid="stRadio"] label.chip-checked {{
+  background: rgba(37,99,235,0.10);
+  border-color: var(--brand);
 }}
 
 /* 버튼 */
@@ -1051,56 +1011,62 @@ def scroll_to(anchor_id: str) -> None:
 
 
 def render_question_item(question: Dict[str, str | int]) -> None:
-    st.markdown(
-        dedent(
-            f"""
-            <div class="q-card">
-              <div class="q-card-title">문항 {question['no']}</div>
-              <div class="q-card-text">{question['ko']}</div>
-            </div>
-            """
-        ).strip(),
-        unsafe_allow_html=True,
-    )
-    label = f"문항 {question['no']}: {question['ko']}"
-    st.session_state.answers[question["no"]] = st.radio(
-        label=label,
-        options=LABELS,
-        index=None,
-        horizontal=True,
-        key=f"q{question['no']}",
-        label_visibility="collapsed",
-    )
+    with st.container():
+        st.markdown('<div class="q-card">', unsafe_allow_html=True)
+        st.markdown(
+            dedent(
+                f"""
+                <div class="q-head">
+                  <div class="q-no">문항 {question['no']}</div>
+                  <div class="q-text">{question['ko']}</div>
+                </div>
+                """
+            ).strip(),
+            unsafe_allow_html=True,
+        )
+        label = f"문항 {question['no']}: {question['ko']}"
+        st.session_state.answers[question["no"]] = st.radio(
+            label=label,
+            options=LABELS,
+            index=None,
+            horizontal=True,
+            key=f"q{question['no']}",
+            label_visibility="collapsed",
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
 
 
 def render_functional_block() -> None:
     st.markdown('<div class="functional-divider"></div>', unsafe_allow_html=True)
-    st.markdown(
-        dedent(
-            """
-            <div class="q-card">
-              <div class="q-card-title">기능 손상</div>
-              <div class="q-card-text">
-                이 문제들 때문에 일·집안일·대인관계에 얼마나 어려움이 있었습니까?
-                <span class="small-muted">(가장 가까운 수준을 선택해 주세요.)</span>
-              </div>
-            </div>
-            """
-        ).strip(),
-        unsafe_allow_html=True,
-    )
-    label = (
-        "기능 손상: 이 문제들 때문에 일·집안일·대인관계에 얼마나 어려움이 있었습니까? "
-        "(가장 가까운 수준을 선택해 주세요.)"
-    )
-    st.session_state.functional = st.radio(
-        label,
-        options=["전혀 어렵지 않음", "어렵지 않음", "어려움", "매우 어려움"],
-        index=None,
-        horizontal=True,
-        key="functional-impact",
-        label_visibility="collapsed",
-    )
+    with st.container():
+        st.markdown('<div class="q-card">', unsafe_allow_html=True)
+        st.markdown(
+            dedent(
+                """
+                <div class="q-head">
+                  <div class="q-no">기능 손상</div>
+                  <div class="q-text">
+                    이 문제들 때문에 일·집안일·대인관계에 얼마나 어려움이 있었습니까?
+                    <span class="small-muted">(가장 가까운 수준을 선택해 주세요.)</span>
+                  </div>
+                </div>
+                """
+            ).strip(),
+            unsafe_allow_html=True,
+        )
+        label = (
+            "기능 손상: 이 문제들 때문에 일·집안일·대인관계에 얼마나 어려움이 있었습니까? "
+            "(가장 가까운 수준을 선택해 주세요.)"
+        )
+        st.session_state.functional = st.radio(
+            label,
+            options=["전혀 어렵지 않음", "어렵지 않음", "어려움", "매우 어려움"],
+            index=None,
+            horizontal=True,
+            key="functional-impact",
+            label_visibility="collapsed",
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1353,6 +1319,37 @@ def render_survey() -> None:
     progress = answered_total / total_items if total_items else 0
 
     st.markdown('<div class="survey-shell">', unsafe_allow_html=True)
+    components.html(
+        """
+        <script>
+        const applyChipStyles = () => {
+          document.querySelectorAll('div[data-testid="stRadio"]').forEach((radio) => {
+            const inputs = radio.querySelectorAll('input[type="radio"]');
+            inputs.forEach((input) => {
+              const label = input.closest('label');
+              if (label) {
+                label.classList.toggle('chip-checked', input.checked);
+              }
+              if (input.dataset.chipBound) return;
+              input.dataset.chipBound = "true";
+              input.addEventListener('change', () => {
+                inputs.forEach((item) => {
+                  const itemLabel = item.closest('label');
+                  if (itemLabel) {
+                    itemLabel.classList.toggle('chip-checked', item.checked);
+                  }
+                });
+              });
+            });
+          });
+        };
+        applyChipStyles();
+        const observer = new MutationObserver(applyChipStyles);
+        observer.observe(document.body, { childList: true, subtree: true });
+        </script>
+        """,
+        height=0,
+    )
 
     st.markdown(
         dedent(
@@ -1417,11 +1414,11 @@ def render_survey() -> None:
     )
 
     submitted = False
-    with st.form("phq9-form"):
+    with st.form("phq_form"):
         for q in QUESTIONS:
             render_question_item(q)
         render_functional_block()
-        submitted = st.form_submit_button("결과 보기", type="primary", use_container_width=True)
+        submitted = st.form_submit_button("결과 보기", type="primary")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
