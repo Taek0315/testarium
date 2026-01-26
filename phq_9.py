@@ -173,11 +173,6 @@ body, p, div, span, li, button, label {{
   margin: 0 auto;
 }}
 
-.survey-shell div[data-testid="stForm"] {{
-  max-width: 960px;
-  margin: 0 auto;
-}}
-
 .survey-shell div[data-testid="stButton"] {{
   max-width: 960px;
   margin: 18px auto 0;
@@ -204,12 +199,8 @@ body, p, div, span, li, button, label {{
   border-radius: 18px;
   padding: 18px 20px;
   box-shadow: 0 10px 24px rgba(15,23,42,0.08);
-  margin: 14px auto;
+  margin: 0 auto 14px;
   width: 100%;
-}}
-
-.q-card * {{
-  margin-top: 0 !important;
 }}
 
 .q-no {{
@@ -658,14 +649,13 @@ div[data-testid="stPlotlyChart"] > div > div {{
 
 /* ───── 라디오 칩 ───── */
 .q-card div[data-testid="stRadio"] {{
-  margin-top: 10px !important;
+  margin-top: 12px;
 }}
 
-.q-card div[role="radiogroup"] {{
-  display: flex !important;
-  gap: 10px !important;
-  flex-wrap: wrap !important;
-  width: 100% !important;
+div[data-testid="stRadio"] > div[role="radiogroup"] {{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }}
 
 div[data-testid="stRadio"] input[type="radio"] {{
@@ -674,57 +664,27 @@ div[data-testid="stRadio"] input[type="radio"] {{
   pointer-events: none;
 }}
 
-.q-card div[role="radiogroup"] label {{
+div[data-testid="stRadio"] label {{
   border: 1px solid #CBD5E1;
   border-radius: 999px;
-  padding: 12px 14px;
+  padding: 10px 18px;
   background: #fff;
-  color: var(--ink);
-  font-weight: 800;
+  font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   transition: all 0.15s ease;
-  box-shadow: 0 8px 18px rgba(15,23,42,0.06);
-  opacity: 1 !important;
 }}
 
-.q-card div[role="radiogroup"] label > div:first-child {{
-  display: none !important;
-}}
-
-.q-card div[role="radiogroup"] label svg {{
-  display: none !important;
-}}
-
-.q-card div[role="radiogroup"] label span {{
-  color: var(--ink) !important;
-  -webkit-text-fill-color: var(--ink) !important;
-}}
-
-.q-card div[role="radiogroup"] label:hover {{
+div[data-testid="stRadio"] label:hover {{
   border-color: var(--brand);
   box-shadow: 0 6px 14px rgba(37, 99, 235, 0.18);
 }}
 
-.q-card div[role="radiogroup"] label.chip-checked {{
-  border-color: var(--brand);
+div[data-testid="stRadio"] label.chip-checked {{
   background: rgba(37,99,235,0.10);
-  box-shadow: 0 12px 24px rgba(37,99,235,0.12);
-}}
-
-@media (min-width: 720px) {{
-  .q-card div[role="radiogroup"] {{
-    display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 10px !important;
-    width: 100% !important;
-  }}
-  .q-card div[role="radiogroup"] label {{
-    width: 100% !important;
-    justify-content: center !important;
-  }}
+  border-color: var(--brand);
 }}
 
 /* 버튼 */
