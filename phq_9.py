@@ -98,7 +98,7 @@ body, p, div, span, li, button, label {{
 }}
 
 [data-testid="block-container"] {{
-  max-width: 1200px;
+  max-width: 1100px;
   padding: 0 1.5rem 3rem;
   margin: 0 auto;
 }}
@@ -161,6 +161,31 @@ body, p, div, span, li, button, label {{
   margin: 28px auto;
 }}
 
+.survey-shell {{
+  max-width: 960px;
+  margin: 0 auto;
+}}
+
+.survey-shell div[data-testid="stVerticalBlock"] {{
+  max-width: 960px;
+  margin: 0 auto 14px;
+}}
+
+.survey-shell div[data-testid="stForm"] {{
+  max-width: 960px;
+  margin: 0 auto;
+}}
+
+.survey-shell div[data-testid="stRadio"] {{
+  max-width: 960px;
+  margin: 0 auto;
+}}
+
+.survey-shell div[data-testid="stButton"] {{
+  max-width: 960px;
+  margin: 18px auto 0;
+}}
+
 .section-title {{
   font-size: 1.12rem;
   font-weight: 800;
@@ -174,6 +199,31 @@ body, p, div, span, li, button, label {{
   border-radius: 24px;
   padding: 26px 30px;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}}
+
+.q-card {{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 18px 22px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  margin: 12px auto 8px;
+  width: 100%;
+}}
+
+.q-card-title {{
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--brand);
+  letter-spacing: 0.6px;
+  margin-bottom: 6px;
+}}
+
+.q-card-text {{
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.55;
 }}
 
 .feature-grid {{
@@ -607,17 +657,20 @@ div[data-testid="stPlotlyChart"] > div > div {{
 }}
 
 /* ───── 라디오 카드 + 칩 ───── */
-.stRadio {{
+.survey-shell div[data-testid="stRadio"],
+.survey-shell .stRadio {{
   background: var(--inner-card);
   border: 1px solid var(--border);
   border-radius: 18px;
   padding: 18px 20px 12px;
-  margin: 14px auto 18px;
+  margin: 0 auto;
   max-width: 960px;
+  width: 100%;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }}
 
-.stRadio [data-testid="stWidgetLabel"] {{
+.survey-shell div[data-testid="stRadio"] [data-testid="stWidgetLabel"],
+.survey-shell .stRadio [data-testid="stWidgetLabel"] {{
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--ink);
@@ -626,14 +679,16 @@ div[data-testid="stPlotlyChart"] > div > div {{
   white-space: pre-line;
 }}
 
-.stRadio > div[role="radiogroup"] {{
+.survey-shell div[data-testid="stRadio"] > div[role="radiogroup"],
+.survey-shell .stRadio > div[role="radiogroup"] {{
   display: flex !important;
   gap: 8px !important;
   flex-wrap: wrap !important;
   align-items: center !important;
 }}
 
-.stRadio [role="radio"] {{
+.survey-shell div[data-testid="stRadio"] [role="radio"],
+.survey-shell .stRadio [role="radio"] {{
   display: inline-flex !important;
   align-items: center !important;
   padding: 10px 22px !important;
@@ -647,25 +702,29 @@ div[data-testid="stPlotlyChart"] > div > div {{
   color: var(--chip-text) !important;
 }}
 
-.stRadio [role="radio"] * {{
+.survey-shell div[data-testid="stRadio"] [role="radio"] *,
+.survey-shell .stRadio [role="radio"] * {{
   color: var(--chip-text) !important;
   -webkit-text-fill-color: var(--chip-text) !important;
   opacity: 1 !important;
 }}
 
-.stRadio [role="radio"]:hover {{
+.survey-shell div[data-testid="stRadio"] [role="radio"]:hover,
+.survey-shell .stRadio [role="radio"]:hover {{
   border-color: var(--brand) !important;
   box-shadow: 0 6px 14px rgba(37, 99, 235, 0.18);
 }}
 
-.stRadio [role="radio"][aria-checked="true"] {{
+.survey-shell div[data-testid="stRadio"] [role="radio"][aria-checked="true"],
+.survey-shell .stRadio [role="radio"][aria-checked="true"] {{
   background: rgba(37, 99, 235, 0.10) !important;
   border-color: var(--brand) !important;
   color: var(--ink) !important;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.10);
 }}
 
-.stRadio [role="radio"][aria-checked="true"] * {{
+.survey-shell div[data-testid="stRadio"] [role="radio"][aria-checked="true"] *,
+.survey-shell .stRadio [role="radio"][aria-checked="true"] * {{
   color: var(--ink) !important;
   -webkit-text-fill-color: var(--ink) !important;
   opacity: 1 !important;
@@ -992,20 +1051,46 @@ def scroll_to(anchor_id: str) -> None:
 
 
 def render_question_item(question: Dict[str, str | int]) -> None:
-    label = f"문항 {question['no']}\n{question['ko']}"
+    st.markdown(
+        dedent(
+            f"""
+            <div class="q-card">
+              <div class="q-card-title">문항 {question['no']}</div>
+              <div class="q-card-text">{question['ko']}</div>
+            </div>
+            """
+        ).strip(),
+        unsafe_allow_html=True,
+    )
+    label = f"문항 {question['no']}: {question['ko']}"
     st.session_state.answers[question["no"]] = st.radio(
         label=label,
         options=LABELS,
         index=None,
         horizontal=True,
         key=f"q{question['no']}",
+        label_visibility="collapsed",
     )
 
 
 def render_functional_block() -> None:
     st.markdown('<div class="functional-divider"></div>', unsafe_allow_html=True)
+    st.markdown(
+        dedent(
+            """
+            <div class="q-card">
+              <div class="q-card-title">기능 손상</div>
+              <div class="q-card-text">
+                이 문제들 때문에 일·집안일·대인관계에 얼마나 어려움이 있었습니까?
+                <span class="small-muted">(가장 가까운 수준을 선택해 주세요.)</span>
+              </div>
+            </div>
+            """
+        ).strip(),
+        unsafe_allow_html=True,
+    )
     label = (
-        "기능 손상\n이 문제들 때문에 일·집안일·대인관계에 얼마나 어려움이 있었습니까?\n"
+        "기능 손상: 이 문제들 때문에 일·집안일·대인관계에 얼마나 어려움이 있었습니까? "
         "(가장 가까운 수준을 선택해 주세요.)"
     )
     st.session_state.functional = st.radio(
@@ -1014,6 +1099,7 @@ def render_functional_block() -> None:
         index=None,
         horizontal=True,
         key="functional-impact",
+        label_visibility="collapsed",
     )
 
 
@@ -1266,6 +1352,8 @@ def render_survey() -> None:
     answered_total = answered_questions + functional_answered
     progress = answered_total / total_items if total_items else 0
 
+    st.markdown('<div class="survey-shell">', unsafe_allow_html=True)
+
     st.markdown(
         dedent(
             """
@@ -1328,11 +1416,14 @@ def render_survey() -> None:
         unsafe_allow_html=True,
     )
 
+    submitted = False
     with st.form("phq9-form"):
         for q in QUESTIONS:
             render_question_item(q)
         render_functional_block()
         submitted = st.form_submit_button("결과 보기", type="primary", use_container_width=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
     if submitted:
         scores, unanswered = [], 0
