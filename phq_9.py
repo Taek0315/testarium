@@ -13,20 +13,20 @@ import platform, shutil  # ← ORCA 자동탐지용
 
 import streamlit.components.v1 as components  # ← 창 닫기용
 
-def _reset_to_survey():
-    """앱 상태 초기화 후 설문 첫 화면으로 이동"""
+def _reset_state(target_page: str = "landing") -> None:
+    """앱 상태 초기화 후 지정한 페이지로 이동"""
     st.session_state.answers = {}
     st.session_state.functional = None
     st.session_state.summary = None
     for i in range(1, 10):
         st.session_state.pop(f"q{i}", None)
     st.session_state.pop("functional-impact", None)
-    st.session_state.page = "survey"
+    st.session_state.page = target_page
 
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 페이지 설정
-st.set_page_config(page_title="PHQ-9 자기보고 검사", page_icon="📝", layout="centered")
+st.set_page_config(page_title="PHQ-9 자기보고 검사", page_icon="📝", layout="wide")
 
 # ──────────────────────────────────────────────────────────────────────────────
 # ORCA 초기화 (필수: ORCA만 사용)
@@ -71,11 +71,9 @@ st.markdown(f"""
   --border: #E2E8F0;
   --brand: #2563EB;
   --accent: #DC2626;
-
   --soft: #F8FAFC;
   --shell-bg: rgba(255,255,255,0.98);
   --inner-card: #FFFFFF;
-
   --chip-bg: #FFFFFF;
   --chip-border: #CBD5E1;
   --chip-text: #0F172A;
@@ -88,13 +86,6 @@ st.markdown(f"""
 
 html, body {{
   color-scheme: light !important;
-}}
-
-[data-testid="stAppViewContainer"] * {{
-  color-scheme: light !important;
-}}
-
-html, body {{
   background: var(--bg);
   color: var(--ink);
   font-family: "Inter","Noto Sans KR",system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Helvetica,Arial,sans-serif;
@@ -107,54 +98,24 @@ body, p, div, span, li, button, label {{
 }}
 
 [data-testid="block-container"] {{
-  max-width: 1100px;
-  padding: 0 1.75rem 3rem;
+  max-width: 1200px;
+  padding: 0 1.5rem 3rem;
   margin: 0 auto;
 }}
 
-.page-frame {{
-  max-width: 960px;
-  margin: 16px auto;
-}}
-
-.section-card {{
+.hero-section {{
+  max-width: 1120px;
+  margin: 24px auto 18px;
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 28px 32px;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-}}
-
-.report-shell {{
-  background: var(--shell-bg);
-  border: 1px solid var(--border);
   border-radius: 32px;
-  padding: 32px;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  padding: 48px 56px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
 }}
 
-.report-shell.compact {{
-  padding: 24px 28px;
-}}
-
-.report-header {{
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 24px;
-}}
-
-.header-card {{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}}
-
-.header-badge {{
+.hero-badge {{
   display: inline-flex;
-  padding: 4px 14px;
+  padding: 6px 14px;
   border-radius: 999px;
   background: rgba(37,99,235,0.12);
   color: var(--brand);
@@ -164,10 +125,162 @@ body, p, div, span, li, button, label {{
   width: fit-content;
 }}
 
-.header-title {{
-  font-size: 1.32rem;
+.hero-title {{
+  font-size: 2.2rem;
   font-weight: 900;
-  letter-spacing: -0.4px;
+  letter-spacing: -0.6px;
+  margin: 14px 0 10px;
+  line-height: 1.2;
+}}
+
+.hero-subtitle {{
+  font-size: 1.05rem;
+  color: var(--subtle);
+  line-height: 1.6;
+  margin-bottom: 18px;
+}}
+
+.meta-chips {{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}}
+
+.meta-chip {{
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--soft);
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+}}
+
+.section {{
+  max-width: 960px;
+  margin: 28px auto;
+}}
+
+.section-title {{
+  font-size: 1.12rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  margin-bottom: 12px;
+}}
+
+.section-card {{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 26px 30px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}}
+
+.feature-grid {{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}}
+
+.feature-card {{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 22px 24px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}}
+
+.feature-card h4 {{
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-weight: 800;
+}}
+
+.feature-card p {{
+  margin: 0;
+  color: var(--subtle);
+  line-height: 1.6;
+}}
+
+.stepper {{
+  background: var(--soft);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 22px 24px;
+}}
+
+.steps {{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}}
+
+.step-card {{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}}
+
+.step-index {{
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--brand);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}}
+
+.faq-item {{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  margin-bottom: 12px;
+}}
+
+.notice-card {{
+  background: #FFFFFF;
+  border: 1px solid #F1C28E;
+  border-radius: 20px;
+  padding: 20px 22px;
+  color: #7C2D12;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}}
+
+.cta-row {{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}}
+
+.cta-row .nav-chip {{
+  display: inline-flex;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.9rem;
+}}
+
+.progress-track {{
+  width: 100%;
+  height: 10px;
+  background: rgba(226,232,240,0.9);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 10px 0 8px;
+}}
+
+.progress-fill {{
+  height: 100%;
+  background: var(--brand);
+  border-radius: 999px;
 }}
 
 .section-heading {{
@@ -194,132 +307,105 @@ body, p, div, span, li, button, label {{
   letter-spacing: -0.1px;
 }}
 
-.section-card, .report-shell, .report-card, .gauge-card, .narrative-card {{
+.report-shell {{
+  background: var(--shell-bg);
+  border: 1px solid var(--border);
+  border-radius: 32px;
+  padding: 32px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}}
+
+.report-shell.compact {{
+  padding: 24px 28px;
+}}
+
+.report-header {{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}}
+
+.summary-layout {{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+  align-items: stretch;
+  margin-top: 28px;
+}}
+
+.report-card {{
+  background: var(--inner-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}}
+
+.gauge-card {{
+  background: var(--inner-card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 32px 24px 36px;
+  text-align: center;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}}
+
+.gauge-circle {{
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+}}
+
+.gauge-circle::after {{
+  content: "";
+  position: absolute;
+  inset: 24px;
+  border-radius: 50%;
+  background: var(--card);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+}}
+
+.gauge-inner {{
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}}
+
+.gauge-number {{
+  font-size: 3.2rem;
+  font-weight: 900;
+  line-height: 1;
   color: var(--ink);
 }}
 
-  .report-grid {{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-  }}
+.gauge-denom {{
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--subtle);
+}}
 
-  .report-card {{
-    background: var(--inner-card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 24px;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-  }}
-
-  .summary-layout {{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 28px;
-    align-items: stretch;
-    margin-top: 28px;
-  }}
-
-  .gauge-card {{
-    background: var(--inner-card);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 32px 24px 36px;
-    text-align: center;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }}
-
-  .gauge-circle {{
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-    margin: 0 auto 10px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
-  }}
-
-  .gauge-circle::after {{
-    content: "";
-    position: absolute;
-    inset: 24px;
-    border-radius: 50%;
-    background: var(--card);
-    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
-  }}
-
-  .gauge-inner {{
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }}
-
-  .gauge-number {{
-    font-size: 3.2rem;
-    font-weight: 900;
-    line-height: 1;
-    color: var(--ink);
-  }}
-
-  .gauge-denom {{
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--subtle);
-  }}
-
-  .gauge-severity {{
-    display: inline-flex;
-    padding: 6px 20px;
-    border-radius: 999px;
-    font-weight: 800;
-    border: 1.5px solid currentColor;
-    font-size: 1rem;
-  }}
-
-  .narrative-card {{
-    background: var(--inner-card);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 28px 30px;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }}
-
-  .narrative-title {{
-    font-weight: 800;
-    font-size: 1rem;
-  }}
-
-  .functional-highlight {{
-    border-top: 1px solid var(--border);
-    padding-top: 16px;
-  }}
-
-  .functional-title {{
-    font-size: 0.92rem;
-    color: var(--subtle);
-    font-weight: 700;
-    margin-bottom: 6px;
-  }}
-
-  .functional-value {{
-    font-size: 1.05rem;
-  }}
-
-.report-score-card {{
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+.gauge-severity {{
+  display: inline-flex;
+  padding: 6px 20px;
+  border-radius: 999px;
+  font-weight: 800;
+  border: 1.5px solid currentColor;
+  font-size: 1rem;
 }}
 
 .metric-label {{
@@ -330,85 +416,41 @@ body, p, div, span, li, button, label {{
   text-transform: uppercase;
 }}
 
-.metric-value {{
+.narrative-card {{
+  background: var(--inner-card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 28px 30px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
   display: flex;
-  align-items: baseline;
-  gap: 12px;
+  flex-direction: column;
+  gap: 16px;
 }}
 
-.metric-number {{
-  font-size: 3.6rem;
-  font-weight: 900;
-  line-height: 1;
-  color: var(--ink);
+.narrative-title {{
+  font-weight: 800;
+  font-size: 1rem;
 }}
 
-.metric-denom {{
-  font-size: 1.2rem;
+.functional-highlight {{
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}}
+
+.functional-title {{
+  font-size: 0.92rem;
   color: var(--subtle);
-  font-weight: 600;
+  font-weight: 700;
+  margin-bottom: 6px;
 }}
 
-.severity-tag {{
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 18px;
-  border-radius: 999px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  width: fit-content;
-  border: 1.5px solid transparent;
-}}
-
-.report-card-title {{
-  font-size: 0.84rem;
-  letter-spacing: 1.3px;
-  text-transform: uppercase;
-  color: var(--subtle);
-  margin-bottom: 10px;
-  font-weight: 700;
+.functional-value {{
+  font-size: 1.05rem;
 }}
 
 .report-shell p {{
   line-height: 1.65;
   margin: 0 0 12px;
-}}
-
-.question-section {{
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  margin-bottom: 0;
-}}
-
-.question-meta {{
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}}
-
-.question-label {{
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--subtle);
-  letter-spacing: 0.2px;
-  text-transform: uppercase;
-}}
-
-.question-text {{
-  font-weight: 700;
-  font-size: 1.02rem;
-  line-height: 1.5;
-}}
-
-div[data-testid="stVerticalBlock"]:has(.question-meta),
-div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
-  max-width: 960px;
-  margin: 0 auto 12px;
-  background: var(--inner-card);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 22px 24px 12px;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }}
 
 .functional-divider {{
@@ -417,20 +459,6 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
   max-width: 960px;
   background: var(--border);
   margin: 10px auto 18px;
-}}
-
-.functional-label {{
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--subtle);
-  letter-spacing: 0.1px;
-  text-transform: uppercase;
-}}
-
-.functional-text {{
-  font-weight: 650;
-  font-size: 0.98rem;
-  line-height: 1.5;
 }}
 
 .severity-legend {{
@@ -529,8 +557,8 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
   background: #FFF7ED;
   border: 1px solid #FDBA74;
   color: #7C2D12;
-  border-radius:18px;
-  padding:16px 20px;
+  border-radius: 18px;
+  padding: 16px 20px;
   max-width: 960px;
   margin: 18px auto 0;
   font-weight: 600;
@@ -538,11 +566,11 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
 
 .safety {{
   background: #FFF1F2;
-  border: 1px solid #FDA4AF;
+  border: 2px solid #FDA4AF;
   color: var(--ink);
-  border-radius:22px;
-  padding:24px 28px;
-  max-width:960px;
+  border-radius: 22px;
+  padding: 24px 28px;
+  max-width: 960px;
   margin: 24px auto 0;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }}
@@ -574,35 +602,28 @@ div[data-testid="stPlotlyChart"] > div > div {{
   width: 100% !important;
 }}
 
-div[data-testid="stHorizontalBlock"] {{
-  max-width: 960px;
-  margin: 16px auto 0 !important;
-}}
-
-.button-anchor {{
-    display:none;
-}}
-
-div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
-    margin: 40px auto 0 !important;
-    background: var(--shell-bg);
-    border: 1px solid var(--border);
-    border-radius: 28px;
-    padding: 28px 32px 32px;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-}}
-
 [data-testid="stToolbar"], #MainMenu, header, footer {{
   display: none !important;
 }}
 
-/* ───── 라디오 칩 ───── */
+/* ───── 라디오 카드 + 칩 ───── */
 .stRadio {{
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-  margin: 6px 0 10px;
+  background: var(--inner-card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px 20px 12px;
+  margin: 14px auto 18px;
+  max-width: 960px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}}
+
+.stRadio [data-testid="stWidgetLabel"] {{
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
+  display: block;
+  white-space: pre-line;
 }}
 
 .stRadio > div[role="radiogroup"] {{
@@ -621,7 +642,7 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
   border: 1px solid var(--chip-border) !important;
   cursor: pointer !important;
   transition: all .15s ease;
-  font-weight:600 !important;
+  font-weight: 600 !important;
   opacity: 1 !important;
   color: var(--chip-text) !important;
 }}
@@ -638,7 +659,6 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
 }}
 
 .stRadio [role="radio"][aria-checked="true"] {{
-  /* Keep selected chip readable with brand indicator (dot/ring). */
   background: rgba(37, 99, 235, 0.10) !important;
   border-color: var(--brand) !important;
   color: var(--ink) !important;
@@ -653,8 +673,7 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
 
 /* 버튼 */
 .stButton {{
-  max-width: 960px;
-  margin: 0 auto 14px;
+  margin: 0 0 14px;
 }}
 
 .stButton > button {{
@@ -683,9 +702,23 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08) !important;
 }}
 
+button:focus-visible {{
+  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline-offset: 2px;
+}}
+
 @media (max-width: 640px) {{
   [data-testid="block-container"] {{
     padding: 0 1rem 2rem;
+  }}
+  .hero-section {{
+    padding: 28px 24px;
+  }}
+  .hero-title {{
+    font-size: 1.7rem;
+  }}
+  .section {{
+    margin: 22px auto;
   }}
   .report-shell {{
     padding: 24px;
@@ -700,143 +733,6 @@ div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
   .domain-score {{
     justify-self: start;
   }}
-    div[data-testid="stHorizontalBlock"]:has(.button-anchor) {{
-      padding: 20px;
-      margin: 28px auto 0 !important;
-    }}
-}}
-
-/* --- FIX: Question text becomes invisible on light background --- */
-div[data-testid="stVerticalBlock"]:has(.question-meta),
-div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
-  color: var(--ink) !important;
-}}
-
-div[data-testid="stVerticalBlock"]:has(.question-meta) .question-label,
-div[data-testid="stVerticalBlock"]:has(.question-meta) .question-text,
-div[data-testid="stVerticalBlock"]:has(.question-meta) p,
-div[data-testid="stVerticalBlock"]:has(.question-meta) span,
-div[data-testid="stVerticalBlock"]:has(.question-meta) div,
-div[data-testid="stVerticalBlock"]:has(.functional-meta) .functional-label,
-div[data-testid="stVerticalBlock"]:has(.functional-meta) .functional-text,
-div[data-testid="stVerticalBlock"]:has(.functional-meta) p,
-div[data-testid="stVerticalBlock"]:has(.functional-meta) span,
-div[data-testid="stVerticalBlock"]:has(.functional-meta) div {{
-  color: var(--ink) !important;
-  -webkit-text-fill-color: var(--ink) !important;
-  opacity: 1 !important;
-}}
-
-/* Also ensure the small-muted text stays readable */
-div[data-testid="stVerticalBlock"]:has(.question-meta) .small-muted,
-div[data-testid="stVerticalBlock"]:has(.functional-meta) .small-muted {{
-  color: var(--subtle) !important;
-  -webkit-text-fill-color: var(--subtle) !important;
-  opacity: 1 !important;
-}}
-
-/* Preserve radio chip text colors */
-div[data-testid="stVerticalBlock"]:has(.question-meta) .stRadio [role="radio"] *,
-div[data-testid="stVerticalBlock"]:has(.functional-meta) .stRadio [role="radio"] * {{
-  color: var(--chip-text) !important;
-  -webkit-text-fill-color: var(--chip-text) !important;
-  opacity: 1 !important;
-}}
-
-/* Preserve checked chip white text */
-div[data-testid="stVerticalBlock"]:has(.question-meta) .stRadio [role="radio"][aria-checked="true"] *,
-div[data-testid="stVerticalBlock"]:has(.functional-meta) .stRadio [role="radio"][aria-checked="true"] * {{
-  color: var(--ink) !important;
-  -webkit-text-fill-color: var(--ink) !important;
-}}
-
-/* (Optional but recommended) Make the question “card” background explicitly white */
-div[data-testid="stVerticalBlock"]:has(.question-meta),
-div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
-  background: #FFFFFF !important;
-}}
-
-/* =========================================================
-   RADIO: hollow when unchecked, dot when checked (stable)
-   Targets both SVG-based and DIV-based BaseWeb radios.
-   ========================================================= */
-
-.stRadio div[role="radiogroup"] label {{
-  color: var(--ink) !important;
-}}
-
-/* ---------- SVG-based radios (common) ---------- */
-/* Unchecked: force NO fill anywhere */
-.stRadio div[role="radiogroup"] label:not(:has(input:checked)) svg * {{
-  fill: transparent !important;
-}}
-
-/* Unchecked: keep only ring via stroke */
-.stRadio div[role="radiogroup"] label:not(:has(input:checked)) svg * {{
-  stroke: #94A3B8 !important;   /* soft gray ring */
-  stroke-width: 2 !important;
-  opacity: 1 !important;
-}}
-
-/* Checked: ring and dot in brand */
-.stRadio div[role="radiogroup"] label:has(input:checked) svg * {{
-  stroke: var(--brand) !important;
-  stroke-width: 2 !important;
-  opacity: 1 !important;
-}}
-
-/* If SVG has multiple shapes: last shape is often the inner dot */
-.stRadio div[role="radiogroup"] label:has(input:checked) svg *:last-child {{
-  fill: var(--brand) !important;
-}}
-
-/* ---------- DIV-based radios (some versions) ---------- */
-/* BaseWeb radio labels often have data-baseweb="radio" and a first-child indicator DIV */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child {{
-  width: 16px !important;
-  height: 16px !important;
-  min-width: 16px !important;
-  min-height: 16px !important;
-  border-radius: 999px !important;
-  box-sizing: border-box !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin-right: 10px !important;
-}}
-
-/* Unchecked (DIV): hollow ring only */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:not(:has(input:checked)) > div:first-child {{
-  border: 2px solid #94A3B8 !important;
-  background: transparent !important;
-}}
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:not(:has(input:checked)) > div:first-child * {{
-  background: transparent !important;
-}}
-
-/* Checked (DIV): ring + inner dot (brand) */
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) > div:first-child {{
-  border: 2px solid var(--brand) !important;
-  background: transparent !important;
-  position: relative !important;
-}}
-.stRadio div[role="radiogroup"] label[data-baseweb="radio"]:has(input:checked) > div:first-child::after {{
-  content: "" !important;
-  width: 8px !important;
-  height: 8px !important;
-  border-radius: 999px !important;
-  background: var(--brand) !important;
-  position: absolute !important;
-  left: 50% !important;
-  top: 50% !important;
-  transform: translate(-50%, -50%) !important;
-}}
-
-/* Keep label text readable */
-.stRadio div[role="radiogroup"] label * {{
-  color: var(--ink) !important;
-  -webkit-text-fill-color: var(--ink) !important;
-  opacity: 1 !important;
 }}
 </style>
 """, unsafe_allow_html=True)
@@ -844,7 +740,7 @@ div[data-testid="stVerticalBlock"]:has(.functional-meta) {{
 # ──────────────────────────────────────────────────────────────────────────────
 # 상태 관리
 if "page" not in st.session_state:
-    st.session_state.page = "survey"   # 'survey' | 'result'
+    st.session_state.page = "landing"   # 'landing' | 'survey' | 'result'
 if "answers" not in st.session_state:
     st.session_state.answers: Dict[int, str] = {}
 if "functional" not in st.session_state:
@@ -1079,48 +975,44 @@ def compose_narrative(total: int, severity: str, functional: str | None, item9: 
 
 # ──────────────────────────────────────────────────────────────────────────────
 # UI 헬퍼
-def render_question_item(question: Dict[str, str | int]) -> None:
-    st.markdown(
-        dedent(
-            f"""
-            <div class="question-meta">
-              <div class="question-label">문항 {question['no']}</div>
-              <div class="question-text">{question['ko']}</div>
-            </div>
-            """
-        ),
-        unsafe_allow_html=True,
+def scroll_to(anchor_id: str) -> None:
+    components.html(
+        f"""
+        <script>
+        const target = window.parent.document.getElementById("{anchor_id}");
+        if (target) {{
+          target.scrollIntoView({{behavior: "smooth", block: "start"}});
+        }} else {{
+          window.parent.location.hash = "{anchor_id}";
+        }}
+        </script>
+        """,
+        height=0,
     )
+
+
+def render_question_item(question: Dict[str, str | int]) -> None:
+    label = f"문항 {question['no']}\n{question['ko']}"
     st.session_state.answers[question["no"]] = st.radio(
-        label=f"문항 {question['no']}",
+        label=label,
         options=LABELS,
         index=None,
         horizontal=True,
-        label_visibility="collapsed",
         key=f"q{question['no']}",
     )
 
 
 def render_functional_block() -> None:
     st.markdown('<div class="functional-divider"></div>', unsafe_allow_html=True)
-    st.markdown(
-        dedent(
-            """
-            <div class="functional-meta">
-              <div class="functional-label">기능 손상</div>
-              <div class="functional-text">이 문제들 때문에 일·집안일·대인관계에 얼마나 어려움이 있었습니까?</div>
-              <div class="small-muted" style="margin-top:4px;">가장 가까운 수준을 선택해 주세요.</div>
-            </div>
-            """
-        ),
-        unsafe_allow_html=True,
+    label = (
+        "기능 손상\n이 문제들 때문에 일·집안일·대인관계에 얼마나 어려움이 있었습니까?\n"
+        "(가장 가까운 수준을 선택해 주세요.)"
     )
     st.session_state.functional = st.radio(
-        "기능 손상",
+        label,
         options=["전혀 어렵지 않음", "어렵지 않음", "어려움", "매우 어려움"],
         index=None,
         horizontal=True,
-        label_visibility="collapsed",
         key="functional-impact",
     )
 
@@ -1225,34 +1117,195 @@ def render_functional_block() -> None:
 #     return out.getvalue()
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 상단 헤더
-st.markdown(
-    dedent(
-        """
-        <div class="page-frame">
-          <div class="section-card header-card">
-            <div class="header-badge">PHQ-9</div>
-            <div class="header-title">우울 증상 자기보고 검사</div>
-            <p class="small-muted">지난 2주 동안 경험한 증상 빈도를 0~3점 척도로 기록하는 표준화된 자기보고 도구입니다.</p>
-          </div>
-        </div>
-        """
-    ),
-    unsafe_allow_html=True,
-)
-
-# ──────────────────────────────────────────────────────────────────────────────
-# 설문 페이지
-if st.session_state.page == "survey":
+# 페이지 렌더링
+def render_landing() -> None:
     st.markdown(
         dedent(
             """
-            <div class="page-frame">
-              <div class="section-card instruction-card">
-                <div class="section-heading">지시문</div>
+            <div class="hero-section">
+              <div class="hero-badge">PHQ-9</div>
+              <div class="hero-title">우울 증상을 빠르게 확인하는 PHQ-9 자기보고 검사</div>
+              <div class="hero-subtitle">
+                지난 2주 동안의 경험을 바탕으로 간단히 점검하고, 즉시 결과와 권장 안내를 확인하세요.
+              </div>
+              <div class="meta-chips">
+                <span class="meta-chip">소요 시간 2-3분</span>
+                <span class="meta-chip">응답 저장 없음</span>
+                <span class="meta-chip">성인/청소년 참고용</span>
+              </div>
+            </div>
+            """
+        ),
+        unsafe_allow_html=True,
+    )
+
+    if st.button("검사 시작하기", type="primary", use_container_width=True, key="cta-hero"):
+        _reset_state("survey")
+        st.rerun()
+
+    st.markdown(
+        dedent(
+            """
+            <div class="section">
+              <div class="cta-row">
+                <a class="nav-chip" href="#about">About</a>
+                <a class="nav-chip" href="#how">How</a>
+                <a class="nav-chip" href="#faq">FAQ</a>
+              </div>
+            </div>
+            """
+        ),
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        dedent(
+            """
+            <div id="about" class="section">
+              <div class="section-title">About</div>
+              <div class="feature-grid">
+                <div class="feature-card">
+                  <h4>표준화된 도구</h4>
+                  <p>국제적으로 검증된 PHQ-9으로 지난 2주의 우울 증상을 체계적으로 확인합니다.</p>
+                </div>
+                <div class="feature-card">
+                  <h4>즉시 결과</h4>
+                  <p>총점과 중증도를 바로 안내하고, 결과 요약을 쉽게 이해할 수 있도록 제공합니다.</p>
+                </div>
+                <div class="feature-card">
+                  <h4>영역별 프로파일</h4>
+                  <p>신체/생리와 인지/정서 영역으로 나누어 증상 분포를 함께 보여줍니다.</p>
+                </div>
+              </div>
+            </div>
+            """
+        ),
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        dedent(
+            """
+            <div id="how" class="section">
+              <div class="section-title">How it works</div>
+              <div class="stepper">
+                <div class="steps">
+                  <div class="step-card">
+                    <div class="step-index">STEP 1</div>
+                    <div><strong>답변하기</strong></div>
+                    <div class="small-muted">지난 2주 동안의 경험을 바탕으로 9문항을 선택합니다.</div>
+                  </div>
+                  <div class="step-card">
+                    <div class="step-index">STEP 2</div>
+                    <div><strong>결과 확인</strong></div>
+                    <div class="small-muted">총점, 중증도, 영역별 프로파일을 즉시 확인합니다.</div>
+                  </div>
+                  <div class="step-card">
+                    <div class="step-index">STEP 3</div>
+                    <div><strong>다음 단계 안내</strong></div>
+                    <div class="small-muted">상태에 맞는 권장 행동과 도움 자원을 확인합니다.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            """
+        ),
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        dedent(
+            """
+            <div class="section">
+              <div class="section-title">안내</div>
+              <div class="notice-card">
+                <strong>선별 도구 안내</strong><br>
+                PHQ-9는 자기보고 선별 도구이며, 진단을 대신하지 않습니다. 증상이 지속되거나 일상에
+                영향을 준다면 정신건강 전문가의 평가와 상담을 권장합니다.
+              </div>
+            </div>
+            """
+        ),
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        dedent(
+            """
+            <div id="faq" class="section">
+              <div class="section-title">FAQ</div>
+              <div class="faq-item">
+                <strong>검사 결과가 진단을 의미하나요?</strong>
+                <p class="small-muted">아니요. 결과는 증상 수준을 참고하기 위한 것이며, 정확한 진단은 전문가 상담이 필요합니다.</p>
+              </div>
+              <div class="faq-item">
+                <strong>응답이 저장되나요?</strong>
+                <p class="small-muted">앱은 응답을 저장하지 않으며, 결과는 현재 화면에서만 확인됩니다.</p>
+              </div>
+              <div class="faq-item">
+                <strong>누가 사용할 수 있나요?</strong>
+                <p class="small-muted">성인/청소년 모두 참고할 수 있지만, 우려가 있다면 전문가와 상의하세요.</p>
+              </div>
+            </div>
+            """
+        ),
+        unsafe_allow_html=True,
+    )
+
+    if st.button("검사 시작하기", type="primary", use_container_width=True, key="cta-bottom"):
+        _reset_state("survey")
+        st.rerun()
+
+
+def render_survey() -> None:
+    answered_questions = sum(
+        1 for i in range(1, 10) if st.session_state.get(f"q{i}") is not None
+    )
+    functional_answered = 1 if st.session_state.get("functional-impact") else 0
+    total_items = 10
+    answered_total = answered_questions + functional_answered
+    progress = answered_total / total_items if total_items else 0
+
+    st.markdown(
+        dedent(
+            """
+            <div class="section">
+              <div class="section-card">
+                <div class="section-heading">PHQ-9 자기보고 검사</div>
+                <p class="small-muted">지난 2주 동안 경험한 증상 빈도를 0-3점 척도로 선택해 주세요.</p>
+              </div>
+            </div>
+            """
+        ),
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        dedent(
+            f"""
+            <div class="section">
+              <div class="section-card">
+                <div class="section-title">진행률</div>
+                <div class="progress-track">
+                  <div class="progress-fill" style="width:{progress*100:.0f}%"></div>
+                </div>
+                <div class="small-muted">{answered_total} / {total_items} 완료 ({progress*100:.0f}%)</div>
+              </div>
+            </div>
+            """
+        ),
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        dedent(
+            """
+            <div class="section">
+              <div class="section-card">
+                <div class="section-title">지시문</div>
                 <ul class="instruction-list">
-                  <li>각 문항에 대해 지난 2주 동안의 빈도를 <b>전혀 아님(0)</b> · <b>며칠 동안(1)</b> · <b>절반 이상(2)</b> · <b>거의 매일(3)</b> 가운데 가장 가까운 값으로 선택합니다.</li>
-                  <li>모든 문항과 기능 손상 질문을 완료한 뒤 ‘결과 보기’를 누르면 총점, 중증도, 영역별 분석을 바로 확인할 수 있습니다.</li>
+                  <li>각 문항에 대해 지난 2주 동안의 빈도를 전혀 아님(0) · 며칠 동안(1) · 절반 이상(2) · 거의 매일(3) 가운데 가장 가까운 값으로 선택합니다.</li>
+                  <li>모든 문항과 기능 손상 질문을 완료한 뒤 ‘결과 보기’를 누르면 즉시 결과를 확인할 수 있습니다.</li>
                 </ul>
               </div>
             </div>
@@ -1264,10 +1317,10 @@ if st.session_state.page == "survey":
     st.markdown(
         dedent(
             """
-            <div class="page-frame">
-              <div class="section-card question-section">
-                <div class="section-heading">질문지 (지난 2주)</div>
-                <div class="small-muted">표준 PHQ-9 · 모든 문항은 동일한 0–3점 척도를 사용합니다.</div>
+            <div class="section">
+              <div class="section-card">
+                <div class="section-title">질문지 (지난 2주)</div>
+                <div class="small-muted">표준 PHQ-9 · 모든 문항은 동일한 0-3점 척도를 사용합니다.</div>
               </div>
             </div>
             """
@@ -1275,30 +1328,33 @@ if st.session_state.page == "survey":
         unsafe_allow_html=True,
     )
 
-    for q in QUESTIONS:
-        render_question_item(q)
+    with st.form("phq9-form"):
+        for q in QUESTIONS:
+            render_question_item(q)
+        render_functional_block()
+        submitted = st.form_submit_button("결과 보기", type="primary", use_container_width=True)
 
-    render_functional_block()
-
-    if st.button("결과 보기", type="primary", use_container_width=True):
+    if submitted:
         scores, unanswered = [], 0
-        for i in range(1,10):
+        for i in range(1, 10):
             lab = st.session_state.answers.get(i)
             if lab is None:
-                unanswered += 1; scores.append(0)
+                unanswered += 1
+                scores.append(0)
             else:
                 scores.append(LABEL2SCORE[lab])
         total = sum(scores)
-        sev   = phq_severity(total)
-        ts    = datetime.now().strftime("%Y-%m-%d %H:%M")
+        sev = phq_severity(total)
+        ts = datetime.now().strftime("%Y-%m-%d %H:%M")
         st.session_state.summary = (total, sev, st.session_state.functional, scores, ts, unanswered)
-        st.session_state.page = "result"; st.rerun()
+        st.session_state.page = "result"
+        st.rerun()
 
-# ──────────────────────────────────────────────────────────────────────────────
-# 결과 페이지
-if st.session_state.page == "result":
+
+def render_result() -> None:
     if not st.session_state.summary:
-        st.warning("먼저 설문을 완료해 주세요."); st.stop()
+        st.warning("먼저 설문을 완료해 주세요.")
+        st.stop()
 
     total, sev, functional, scores, ts, unanswered = st.session_state.summary
     item9_score = scores[8] if len(scores) >= 9 else 0
@@ -1310,7 +1366,7 @@ if st.session_state.page == "result":
     st.markdown(
         dedent(
             f"""
-            <div class="page-frame">
+            <div class="section">
               <div class="report-shell">
                 <div class="report-header">
                   <div>
@@ -1346,20 +1402,10 @@ if st.session_state.page == "result":
     )
 
     if unanswered > 0:
-        st.markdown(f'<div class="warn">⚠️ 미응답 {unanswered}개 문항은 0점으로 계산되었습니다.</div>', unsafe_allow_html=True)
-
-    domain_html = build_domain_profile_html(scores)
-    domain_section_html = dedent(
-        """
-        <div class="page-frame">
-          <div class="report-shell">
-            <div class="section-heading" style="margin-bottom:12px;">II. 증상 영역별 프로파일</div>
-            {domain_panel}
-          </div>
-        </div>
-        """
-    ).strip().format(domain_panel=domain_html)
-    st.markdown(domain_section_html, unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="warn">⚠️ 미응답 {unanswered}개 문항은 0점으로 계산되었습니다.</div>',
+            unsafe_allow_html=True,
+        )
 
     if item9_score > 0:
         st.markdown(
@@ -1375,18 +1421,50 @@ if st.session_state.page == "result":
             unsafe_allow_html=True,
         )
 
-    button_zone = st.container()
-    with button_zone:
-        st.markdown('<div class="button-anchor"></div>', unsafe_allow_html=True)
-        start_col, close_col = st.columns([1, 1], gap="medium")
-        with start_col:
-            if st.button("새 검사 시작", type="primary", use_container_width=True):
-                _reset_to_survey()
-                st.rerun()
-        with close_col:
-            if st.button("닫기", use_container_width=True):
-                components.html("<script>window.close();</script>", height=0)
-                st.info("창이 닫히지 않으면 브라우저 탭을 직접 닫거나 ‘새 검사 시작’을 눌러 주세요.", icon="ℹ️")
+    domain_html = build_domain_profile_html(scores)
+    domain_section_html = dedent(
+        """
+        <div class="section">
+          <div class="report-shell">
+            <div class="section-heading" style="margin-bottom:12px;">II. 증상 영역별 프로파일</div>
+            {domain_panel}
+          </div>
+        </div>
+        """
+    ).strip().format(domain_panel=domain_html)
+    st.markdown(domain_section_html, unsafe_allow_html=True)
+
+    st.markdown(
+        dedent(
+            f"""
+            <div class="section">
+              <div class="report-shell">
+                <div class="section-heading">III. 다음 단계</div>
+                <div class="report-card">
+                  <div class="narrative-title">권장 안내</div>
+                  <p>{SEVERITY_GUIDANCE[sev]}</p>
+                  <ul class="instruction-list">
+                    <li>일상 리듬(수면, 식사, 활동)과 증상 변화를 기록해 보세요.</li>
+                    <li>신뢰할 수 있는 사람과 현재 상태를 공유하는 것도 도움이 됩니다.</li>
+                    <li>필요 시 정신건강 전문가와 상담을 예약해 보세요.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            """
+        ),
+        unsafe_allow_html=True,
+    )
+
+    cta_cols = st.columns([1, 1], gap="medium")
+    with cta_cols[0]:
+        if st.button("다시 시작하기", type="primary", use_container_width=True):
+            _reset_state("survey")
+            st.rerun()
+    with cta_cols[1]:
+        if st.button("랜딩으로 돌아가기", use_container_width=True):
+            _reset_state("landing")
+            st.rerun()
 
     st.markdown(
         dedent(
@@ -1400,25 +1478,18 @@ if st.session_state.page == "result":
         unsafe_allow_html=True,
     )
 
-    # ───────── 결과 PNG 다운로드(비활성화 예시) ─────────
-    if False:
-        st.markdown('<div class="block-card"><div class="section-title">결과 저장</div>', unsafe_allow_html=True)
-        try:
-            if not _ORCA_PATH:
-                raise RuntimeError("ORCA 실행파일을 찾지 못했습니다. 서버 환경변수 PLOTLY_ORCA 또는 PATH에 orca를 등록해 주세요.")
-            png_bytes = make_result_png(st.session_state.summary)
-            st.download_button(
-                label="🖼 결과지 PNG 다운로드 (ORCA)",
-                data=png_bytes,
-                file_name=f"PHQ9_{datetime.now().strftime('%Y%m%d_%H%M')}.png",
-                mime="image/png",
-                use_container_width=True
-            )
-            st.caption(f"엔진: **ORCA** · 경로: `{_ORCA_PATH}`")
-        except Exception as e:
-            st.warning("서버에서 ORCA 엔진을 찾지 못해 PNG를 생성할 수 없습니다.")
-            st.error(str(e))
-        st.markdown('</div>', unsafe_allow_html=True)
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 페이지 라우팅
+if st.session_state.page == "landing":
+    render_landing()
+elif st.session_state.page == "survey":
+    render_survey()
+elif st.session_state.page == "result":
+    render_result()
+else:
+    st.session_state.page = "landing"
+    st.rerun()
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 끝
