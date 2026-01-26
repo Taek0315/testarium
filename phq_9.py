@@ -67,7 +67,8 @@ st.markdown(f"""
   --bg: #F6F8FB;
   --card: #FFFFFF;
   --ink: #0F172A;
-  --subtle: #475569;
+  --subtle: #334155;
+  --muted: #475569;
   --border: #E2E8F0;
   --brand: #2563EB;
   --accent: #DC2626;
@@ -158,20 +159,16 @@ body, p, div, span, li, button, label {{
 
 .section {{
   max-width: 960px;
-  margin: 28px auto;
+  margin: 22px auto 16px;
 }}
 
 .survey-shell {{
   max-width: 960px;
   margin: 0 auto;
+  padding: 0 14px;
 }}
 
 .survey-shell div[data-testid="stVerticalBlock"] {{
-  max-width: 960px;
-  margin: 0 auto 14px;
-}}
-
-.survey-shell div[data-testid="stForm"] {{
   max-width: 960px;
   margin: 0 auto;
 }}
@@ -346,7 +343,7 @@ body, p, div, span, li, button, label {{
 }}
 
 .small-muted {{
-  color: var(--subtle) !important;
+  color: var(--muted) !important;
   font-size: 0.92rem;
   letter-spacing: -0.1px;
 }}
@@ -737,7 +734,7 @@ button:focus-visible {{
     font-size: 1.7rem;
   }}
   .section {{
-    margin: 22px auto;
+    margin: 18px auto 12px;
   }}
   .report-shell {{
     padding: 24px;
